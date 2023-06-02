@@ -6,7 +6,7 @@ import org.scalatest.BeforeAndAfterAll
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
-class AbstractTypedAkkaTest(config: Config) extends AnyFlatSpec with BeforeAndAfterAll with Matchers {
+class AbstractTypedPekkoTest(config: Config) extends AnyFlatSpec with BeforeAndAfterAll with Matchers {
   protected val testKit: ActorTestKit = ActorTestKit("testSystem", config)
 
   override def afterAll(): Unit = testKit.shutdownTestKit()

@@ -5,7 +5,7 @@ import org.apache.pekko.actor.typed.scaladsl.Behaviors
 import org.apache.pekko.serialization.SerializationExtension
 import com.typesafe.config.ConfigFactory
 import io.altoo.pekko.serialization.kryo.KryoSerializer
-import io.altoo.pekko.serialization.kryo.typed.testkit.AbstractTypedAkkaTest
+import io.altoo.pekko.serialization.kryo.typed.testkit.AbstractTypedPekkoTest
 
 object TypedActorRefSerializerTest {
   private val testConfig =
@@ -32,7 +32,7 @@ object TypedActorRefSerializerTest {
   private trait Msg
 }
 
-class TypedActorRefSerializerTest extends AbstractTypedAkkaTest(ConfigFactory.parseString(TypedActorRefSerializerTest.testConfig)) {
+class TypedActorRefSerializerTest extends AbstractTypedPekkoTest(ConfigFactory.parseString(TypedActorRefSerializerTest.testConfig)) {
   import TypedActorRefSerializerTest._
 
   private val serialization = SerializationExtension(testKit.system.classicSystem)
