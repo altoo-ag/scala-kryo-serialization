@@ -1,13 +1,13 @@
 pekko-kryo-serialization - kryo-based serializers for Scala and Pekko
 =====================================================================
 
-Pekko Kryo Serialization is a fork of [Akka Kryo Serialization](https://github.com/altoo-ag/pekko-kryo-serialization)
+Pekko Kryo Serialization is a fork of [Akka Kryo Serialization](https://github.com/altoo-ag/pekko-kryo-serialization) providing the same functionality to pekko.
 
 =====================================================================
 [![Full test prior to release](https://github.com/altoo-ag/pekko-kryo-serialization/actions/workflows/fullTest.yml/badge.svg)](https://github.com/altoo-ag/pekko-kryo-serialization/actions/workflows/fullTest.yml)
 [![Latest version](https://index.scala-lang.org/altoo-ag/pekko-kryo-serialization/pekko-kryo-serialization/latest.svg)](https://index.scala-lang.org/altoo-ag/pekko-kryo-serialization/pekko-kryo-serialization)
 
-This library provides custom Kryo-based serializers for Scala and Akka. It can be
+This library provides custom Kryo-based serializers for Scala and Pekko. It can be
 used for more efficient pekko actor remoting.
 
 It can also be used for a general purpose and very efficient Kryo-based serialization
@@ -37,7 +37,7 @@ How to use this library in your project
 To use this serializer, you need to do two things:
 
 * Include a dependency on this library into your project:
-    `libraryDependencies += "io.altoo" %% "pekko-kryo-serialization" % "??? 1.0.0"`
+    `libraryDependencies += "io.altoo" %% "pekko-kryo-serialization" % "? not yet released"`
 
 * Register and configure the serializer in your Akka configuration file, e.g. `application.conf`.
 
@@ -56,7 +56,7 @@ Note that we use semantic versioning - see [semver.org](https://semver.org/).
 To use the latest stable release of pekko-kryo-serialization in sbt projects you just need to add
 this dependency:
 
-`libraryDependencies += "io.altoo" %% "pekko-kryo-serialization" % "2.5.0"`
+`libraryDependencies += "io.altoo" %% "pekko-kryo-serialization" % "1.0.0"`
 
 #### maven projects
 
@@ -370,8 +370,3 @@ If you wish to use it within an OSGi environment, you can add OSGi headers to th
 
 Note that the OSGi build uses the sbt-osgi plugin, which may not be available from Maven Central or the
 Typesafe repo, so it may require a local build as well. sbt-osgi can be found at [sbt/sbt-osgi](https://github.com/sbt/sbt-osgi).
-
-
-What about Akka BSL?
---------------------------------------
-We will keep depending on the last Open Source Akka release 2.6.20 and intend to provide support for its successor Pekko in the future.
