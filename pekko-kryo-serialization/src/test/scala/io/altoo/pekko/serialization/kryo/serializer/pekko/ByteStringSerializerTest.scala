@@ -4,7 +4,7 @@ import org.apache.pekko.serialization.SerializationExtension
 import org.apache.pekko.util.{ByteString, CompactByteString}
 import com.typesafe.config.ConfigFactory
 import io.altoo.pekko.serialization.kryo.KryoSerializer
-import io.altoo.pekko.serialization.kryo.testkit.AbstractAkkaTest
+import io.altoo.pekko.serialization.kryo.testkit.AbstractPekkoTest
 import io.altoo.pekko.serialization.kryo.KryoSerializer
 import org.scalatest.flatspec.AnyFlatSpecLike
 import org.scalatest.matchers.should.Matchers
@@ -32,7 +32,7 @@ object ByteStringSerializerTest {
       |""".stripMargin
 }
 
-class ByteStringSerializerTest extends AbstractAkkaTest(ConfigFactory.parseString(ByteStringSerializerTest.config)) with AnyFlatSpecLike with Matchers {
+class ByteStringSerializerTest extends AbstractPekkoTest(ConfigFactory.parseString(ByteStringSerializerTest.config)) with AnyFlatSpecLike with Matchers {
   private val serialization = SerializationExtension(system)
 
 

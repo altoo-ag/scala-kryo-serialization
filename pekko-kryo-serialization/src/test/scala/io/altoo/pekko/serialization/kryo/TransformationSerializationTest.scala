@@ -2,7 +2,7 @@ package io.altoo.pekko.serialization.kryo
 
 import org.apache.pekko.serialization.{ByteBufferSerializer, SerializationExtension}
 import com.typesafe.config.ConfigFactory
-import io.altoo.pekko.serialization.kryo.testkit.AbstractAkkaTest
+import io.altoo.pekko.serialization.kryo.testkit.AbstractPekkoTest
 
 import java.nio.ByteBuffer
 import scala.collection.immutable.{HashMap, TreeMap}
@@ -73,7 +73,7 @@ class UnsafeLZ4TransformationSerializationTest extends TransformationSerializati
     """.stripMargin
 )
 
-abstract class TransformationSerializationTest(name: String, config: String) extends AbstractAkkaTest(
+abstract class TransformationSerializationTest(name: String, config: String) extends AbstractPekkoTest(
   ConfigFactory.parseString(config)
       .withFallback(ConfigFactory.parseString(TransformationSerializationTest.defaultConfig))
 ) {

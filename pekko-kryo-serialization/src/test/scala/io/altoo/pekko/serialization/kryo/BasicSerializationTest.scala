@@ -2,7 +2,7 @@ package io.altoo.pekko.serialization.kryo
 
 import org.apache.pekko.serialization.{ByteBufferSerializer, SerializationExtension}
 import com.typesafe.config.ConfigFactory
-import io.altoo.pekko.serialization.kryo.testkit.AbstractAkkaTest
+import io.altoo.pekko.serialization.kryo.testkit.AbstractPekkoTest
 
 import java.nio.ByteBuffer
 import scala.util.Try
@@ -35,7 +35,7 @@ object BasicSerializationTest {
        |""".stripMargin
 }
 
-class BasicSerializationTest extends AbstractAkkaTest(ConfigFactory.parseString(BasicSerializationTest.config)) {
+class BasicSerializationTest extends AbstractPekkoTest(ConfigFactory.parseString(BasicSerializationTest.config)) {
   private val serialization = SerializationExtension(system)
 
   private val testList = List(1 to 40: _*)

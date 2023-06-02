@@ -5,7 +5,7 @@ import org.apache.pekko.serialization.{ByteBufferSerializer, SerializationExtens
 import com.esotericsoftware.kryo.util._
 import com.typesafe.config.{Config, ConfigFactory}
 import io.altoo.pekko.serialization.kryo.serializer.scala._
-import io.altoo.pekko.serialization.kryo.testkit.{AbstractAkkaTest, KryoSerializationTesting}
+import io.altoo.pekko.serialization.kryo.testkit.{AbstractPekkoTest, KryoSerializationTesting}
 import org.objenesis.strategy.StdInstantiatorStrategy
 
 import java.nio.ByteBuffer
@@ -48,7 +48,7 @@ object CryptoCustomKeySerializationTest {
   }
 }
 
-class CryptoCustomKeySerializationTest extends AbstractAkkaTest(ConfigFactory.parseString(CryptoCustomKeySerializationTest.config)) with KryoSerializationTesting {
+class CryptoCustomKeySerializationTest extends AbstractPekkoTest(ConfigFactory.parseString(CryptoCustomKeySerializationTest.config)) with KryoSerializationTesting {
   private val encryptedSerialization = SerializationExtension(system)
 
   protected val kryo: ScalaKryo = new ScalaKryo(new DefaultClassResolver(), new MapReferenceResolver())

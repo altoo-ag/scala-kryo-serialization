@@ -4,7 +4,7 @@ import org.apache.pekko.actor.{Actor, ActorRef, Props}
 import org.apache.pekko.serialization.SerializationExtension
 import com.typesafe.config.ConfigFactory
 import io.altoo.pekko.serialization.kryo.KryoSerializer
-import io.altoo.pekko.serialization.kryo.testkit.AbstractAkkaTest
+import io.altoo.pekko.serialization.kryo.testkit.AbstractPekkoTest
 import io.altoo.pekko.serialization.kryo.KryoSerializer
 
 object ActorRefSerializerTest {
@@ -29,7 +29,7 @@ object ActorRefSerializerTest {
       |""".stripMargin
 }
 
-class ActorRefSerializerTest extends AbstractAkkaTest(ConfigFactory.parseString(ActorRefSerializerTest.testConfig)) {
+class ActorRefSerializerTest extends AbstractPekkoTest(ConfigFactory.parseString(ActorRefSerializerTest.testConfig)) {
   private val serialization = SerializationExtension(system)
 
 
