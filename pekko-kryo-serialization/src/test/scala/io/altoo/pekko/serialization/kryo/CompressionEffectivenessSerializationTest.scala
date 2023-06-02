@@ -33,13 +33,13 @@ object CompressionEffectivenessSerializationTest {
 
   private val config =
     s"""
-       |akka {
-       |  loggers = ["akka.event.Logging$$DefaultLogger"]
+       |pekko {
+       |  loggers = ["org.apache.pekko.event.Logging$$DefaultLogger"]
        |  loglevel = "WARNING"
        |
        |  actor {
        |    serializers {
-       |      kryo = "io.altoo.akka.serialization.kryo.KryoSerializer"
+       |      kryo = "io.altoo.pekko.serialization.kryo.KryoSerializer"
        |    }
        |
        |    serialization-bindings {
@@ -50,12 +50,12 @@ object CompressionEffectivenessSerializationTest {
        |      "${ScalaVersionRegistry.immutableHashSetImpl}" = kryo
        |      "scala.collection.immutable.TreeMap" = kryo
        |      "[Ljava.lang.Object;" = kryo
-       |      "akka.actor.ActorRef" = kryo # test only - should not be done in production!
+       |      "org.apache.pekko.actor.ActorRef" = kryo # test only - should not be done in production!
        |    }
        |  }
        |}
        |
-       |akka-kryo-serialization {
+       |pekko-kryo-serialization {
        |  trace = true
        |  id-strategy = "incremental"
        |  implicit-registration-logging = true
@@ -65,7 +65,7 @@ object CompressionEffectivenessSerializationTest {
 
   private val compressionConfig =
     s"""
-       |akka-kryo-serialization {
+       |pekko-kryo-serialization {
        |  post-serialization-transformations = lz4
        |}
        |""".stripMargin

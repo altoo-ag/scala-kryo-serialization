@@ -10,17 +10,17 @@ import io.altoo.pekko.serialization.kryo.KryoSerializer
 object ActorRefSerializerTest {
   private val testConfig =
     """
-      |akka {
+      |pekko {
       |  actor {
       |    serializers {
-      |      kryo = "io.altoo.akka.serialization.kryo.KryoSerializer"
+      |      kryo = "io.altoo.pekko.serialization.kryo.KryoSerializer"
       |    }
       |    serialization-bindings {
-      |      "akka.actor.ActorRef" = kryo
+      |      "org.apache.pekko.actor.ActorRef" = kryo
       |    }
       |  }
       |}
-      |akka-kryo-serialization {
+      |pekko-kryo-serialization {
       |  trace = true
       |  id-strategy = "default"
       |  implicit-registration-logging = true

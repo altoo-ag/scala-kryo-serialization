@@ -14,23 +14,23 @@ import scala.util.{Success, Try}
 object ParallelActorSystemSerializationTest {
   private val config =
     s"""
-       |akka {
-       |  loggers = ["akka.event.Logging$$DefaultLogger"]
+       |pekko {
+       |  loggers = ["org.apache.pekko.event.Logging$$DefaultLogger"]
        |  loglevel = "WARNING"
        |
        |  actor {
        |    serializers {
-       |      kryo = "io.altoo.akka.serialization.kryo.KryoSerializer"
+       |      kryo = "io.altoo.pekko.serialization.kryo.KryoSerializer"
        |    }
        |
        |    serialization-bindings {
-       |      "io.altoo.akka.serialization.kryo.Sample" = kryo
+       |      "io.altoo.pekko.serialization.kryo.Sample" = kryo
        |    }
        |  }
        |  jvm-exit-on-fatal-error = false
        |}
        |
-       |akka-kryo-serialization {
+       |pekko-kryo-serialization {
        |  use-unsafe = false
        |  trace = true
        |  id-strategy = "automatic"
@@ -55,7 +55,7 @@ class ParallelActorSystemSerializationTest extends AnyFlatSpec with Matchers wit
   private val system1 = ActorSystem("sys1", config)
   private val system2 = ActorSystem("sys2", config)
 
-  // regression test against https://github.com/altoo-ag/akka-kryo-serialization/issues/237
+  // regression test against https://github.com/altoo-ag/pekko-kryo-serialization/issues/237
   it should "be able to serialize/deserialize in highly concurrent load" in {
     val testClass = Sample("auth-store-syncer")
 

@@ -1,4 +1,4 @@
-package io.altoo.akka.serialization.kryo
+package io.altoo.pekko.serialization.kryo
 
 import com.esotericsoftware.kryo.Kryo
 import io.altoo.pekko.serialization.kryo.serializer.scala.{ScalaCollectionSerializer, ScalaImmutableMapSerializer, ScalaImmutableSetSerializer}

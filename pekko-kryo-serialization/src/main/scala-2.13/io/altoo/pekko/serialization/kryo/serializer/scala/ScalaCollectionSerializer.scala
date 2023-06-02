@@ -16,7 +16,7 @@
  * ****************************************************************************
  */
 
-package io.altoo.akka.serialization.kryo.serializer.scala
+package io.altoo.pekko.serialization.kryo.serializer.scala
 
 import com.esotericsoftware.kryo.io.{Input, Output}
 import com.esotericsoftware.kryo.{Kryo, Serializer}

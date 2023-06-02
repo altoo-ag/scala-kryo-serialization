@@ -12,17 +12,17 @@ import scala.concurrent.{Await, Future}
 object EnumSerializationTest {
   private val config = {
     """
-      |akka {
+      |pekko {
       |  actor {
       |    serializers {
-      |      kryo = "io.altoo.akka.serialization.kryo.KryoSerializer"
+      |      kryo = "io.altoo.pekko.serialization.kryo.KryoSerializer"
       |    }
       |    serialization-bindings {
       |      "java.io.Serializable" = kryo
       |    }
       |  }
       |}
-      |akka-kryo-serialization {
+      |pekko-kryo-serialization {
       |  id-strategy = "default"
       |}
       |""".stripMargin

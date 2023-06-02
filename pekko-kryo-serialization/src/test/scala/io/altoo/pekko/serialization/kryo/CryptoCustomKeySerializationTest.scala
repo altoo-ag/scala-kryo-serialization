@@ -18,10 +18,10 @@ class KryoCryptoTestKey extends DefaultKeyProvider {
 object CryptoCustomKeySerializationTest {
   private val config = {
     s"""
-       |akka {
+       |pekko {
        |  actor {
        |    serializers {
-       |      kryo = "io.altoo.akka.serialization.kryo.KryoSerializer"
+       |      kryo = "io.altoo.pekko.serialization.kryo.KryoSerializer"
        |    }
        |    serialization-bindings {
        |      "scala.collection.immutable.HashMap" = kryo
@@ -34,11 +34,11 @@ object CryptoCustomKeySerializationTest {
        |  }
        |}
        |
-       |akka-kryo-serialization {
+       |pekko-kryo-serialization {
        |  post-serialization-transformations = aes
        |  encryption {
        |    aes {
-       |      key-provider = "io.altoo.akka.serialization.kryo.KryoCryptoTestKey"
+       |      key-provider = "io.altoo.pekko.serialization.kryo.KryoCryptoTestKey"
        |      mode = "AES/GCM/NoPadding"
        |      iv-length = 12
        |    }

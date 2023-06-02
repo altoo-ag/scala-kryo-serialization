@@ -72,7 +72,7 @@ private[kryo] class KryoSerializationSettings(val config: Config) {
 
 class KryoSerializer(val system: ExtendedActorSystem) extends Serializer with ByteBufferSerializer {
 
-  protected def configKey: String = "akka-kryo-serialization"
+  protected def configKey: String = "pekko-kryo-serialization"
 
   private val log = Logging(system, getClass.getName)
   private val config = system.settings.config.getConfig(configKey)

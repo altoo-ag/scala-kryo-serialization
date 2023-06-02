@@ -19,18 +19,18 @@ object CompressionPerformanceTests {
   private class PerformanceTests extends AnyFlatSpec with BeforeAndAfterAllConfigMap {
     private val defaultConfig = ConfigFactory.parseString(
       """
-      akka {
+      pekko {
         actor {
           allow-java-serialization = true
 
           serializers {
-            java = "akka.serialization.JavaSerializer"
-            kryo = "io.altoo.akka.serialization.kryo.KryoSerializer"
+            java = "org.apache.pekkoserialization.JavaSerializer"
+            kryo = "io.altoo.pekko.serialization.kryo.KryoSerializer"
           }
 
           serialization-bindings {
             "scala.Product" = kryo
-            "akka.actor.ActorRef" = kryo
+            "org.apache.pekko.actor.ActorRef" = kryo
 
             "scala.collection.immutable.TreeMap" = kryo
             "[Lscala.collection.immutable.TreeMap;" = kryo
@@ -72,7 +72,7 @@ object CompressionPerformanceTests {
           }
         }
       }
-      akka-kryo-serialization {
+      pekko-kryo-serialization {
         type = "nograph"
         id-strategy = "incremental"
         kryo-reference-map = false
@@ -81,7 +81,7 @@ object CompressionPerformanceTests {
         implicit-registration-logging = true
         encryption {
           aes {
-            key-provider = "io.altoo.akka.serialization.kryo.DefaultKeyProvider"
+            key-provider = "io.altoo.pekko.serialization.kryo.DefaultKeyProvider"
             mode = "AES/GCM/NoPadding"
             iv-length = 12
             password = "j68KkRjq21ykRGAQ"
@@ -565,28 +565,28 @@ object CompressionPerformanceTests {
 
     }
 
-    testConfig("Zip", "akka-kryo-serialization.post-serialization-transformations = deflate")
-    testConfig("LZ4", "akka-kryo-serialization.post-serialization-transformations = lz4")
-    testConfig("AES", "akka-kryo-serialization.post-serialization-transformations = aes")
+    testConfig("Zip", "pekko-kryo-serialization.post-serialization-transformations = deflate")
+    testConfig("LZ4", "pekko-kryo-serialization.post-serialization-transformations = lz4")
+    testConfig("AES", "pekko-kryo-serialization.post-serialization-transformations = aes")
     testConfig("ZipAES",
       """
-        |akka-kryo-serialization.post-serialization-transformations = "deflate,aes"
+        |pekko-kryo-serialization.post-serialization-transformations = "deflate,aes"
     """.stripMargin)
     testConfig("LZ4AES",
       """
-        |akka-kryo-serialization.post-serialization-transformations = "lz4,aes"
+        |pekko-kryo-serialization.post-serialization-transformations = "lz4,aes"
     """.stripMargin)
     testConfig("Off", "")
-    testConfig("Unsafe", "akka-kryo-serialization.use-unsafe = true")
+    testConfig("Unsafe", "pekko-kryo-serialization.use-unsafe = true")
     testConfig("UnsafeLZ4",
       """
-        |akka-kryo-serialization.use-unsafe = true
-        |akka-kryo-serialization.post-serialization-transformations = lz4
+        |pekko-kryo-serialization.use-unsafe = true
+        |pekko-kryo-serialization.post-serialization-transformations = lz4
     """.stripMargin)
     testConfig("Java",
-      """akka.actor.serialization-bindings {
+      """org.apache.pekko.actor.serialization-bindings {
         |"scala.Product" = java
-        |"akka.actor.ActorRef" = java
+        |"org.apache.pekko.actor.ActorRef" = java
         |"scala.collection.immutable.TreeMap" = java
         |"[Lscala.collection.immutable.TreeMap;" = java
         |"scala.collection.mutable.HashMap" = java

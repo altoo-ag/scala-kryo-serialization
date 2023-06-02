@@ -55,7 +55,7 @@ lazy val core: Project = Project("pekko-kryo-serialization", file("pekko-kryo-se
 
 lazy val typed: Project = Project("pekko-kryo-serialization-typed", file("pekko-kryo-serialization-typed"))
     .settings(moduleSettings)
-    .settings(description := "pekko-serialization implementation using kryo - extension including serialization for akka-typed")
+    .settings(description := "pekko-serialization implementation using kryo - extension including serialization for pekko-typed")
     .settings(libraryDependencies ++= typedDeps ++ testingDeps)
     .dependsOn(core)
 
@@ -121,7 +121,7 @@ lazy val scalacBasicOptions = Seq(
           "-Xlog-reflective-calls",
           "-Ywarn-unused:-nowarn",
           "-opt:l:inline",
-          "-opt-inline-from:io.altoo.akka.serialization.kryo.*"
+          "-opt-inline-from:io.altoo.pekko.serialization.kryo.*"
         )
       case "3" =>
         Seq(

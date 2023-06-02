@@ -12,18 +12,18 @@ import org.scalatest.matchers.should.Matchers
 object ByteStringSerializerTest {
   private val config =
     """
-      |akka {
+      |pekko {
       |  actor {
       |    serializers {
-      |      kryo = "io.altoo.akka.serialization.kryo.KryoSerializer"
+      |      kryo = "io.altoo.pekko.serialization.kryo.KryoSerializer"
       |    }
       |    serialization-bindings {
-      |      "akka.util.ByteString$ByteString1C" = kryo
-      |      "akka.util.ByteString" = kryo
+      |      "org.apache.pekko.util.ByteString$ByteString1C" = kryo
+      |      "org.apache.pekko.util.ByteString" = kryo
       |    }
       |  }
       |}
-      |akka-kryo-serialization {
+      |pekko-kryo-serialization {
       |  trace = true
       |  id-strategy = "default"
       |  implicit-registration-logging = true

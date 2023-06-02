@@ -12,11 +12,11 @@ import scala.util.Try
 object TransformationSerializationTest {
   private val defaultConfig =
     """
-      |akka {
+      |pekko {
       |  actor {
       |   allow-java-serialization = off
       |   serializers {
-      |      kryo = "io.altoo.akka.serialization.kryo.KryoSerializer"
+      |      kryo = "io.altoo.pekko.serialization.kryo.KryoSerializer"
       |    }
       |    serialization-bindings {
       |      "java.io.Serializable" = none
@@ -39,7 +39,7 @@ object TransformationSerializationTest {
       |    }
       |  }
       |}
-      |akka-kryo-serialization {
+      |pekko-kryo-serialization {
       |  type = "nograph"
       |  id-strategy = "incremental"
       |  kryo-reference-map = false
@@ -48,7 +48,7 @@ object TransformationSerializationTest {
       |  implicit-registration-logging = true
       |  encryption {
       |    aes {
-      |      key-provider = "io.altoo.akka.serialization.kryo.DefaultKeyProvider"
+      |      key-provider = "io.altoo.pekko.serialization.kryo.DefaultKeyProvider"
       |      mode = "AES/GCM/NoPadding"
       |      iv-length = 12
       |      password = "j68KkRjq21ykRGAQ"
@@ -59,17 +59,17 @@ object TransformationSerializationTest {
       |""".stripMargin
 }
 
-class ZipTransformationSerializationTest extends TransformationSerializationTest("Zip", "akka-kryo-serialization.post-serialization-transformations = deflate")
-class Lz4TransformationSerializationTest extends TransformationSerializationTest("LZ4", "akka-kryo-serialization.post-serialization-transformations = lz4")
-class AESTransformationSerializationTest extends TransformationSerializationTest("AES", "akka-kryo-serialization.post-serialization-transformations = aes")
-class ZipAESTransformationSerializationTest extends TransformationSerializationTest("ZipAES", """akka-kryo-serialization.post-serialization-transformations = "deflate,aes"""")
-class LZ4AESTransformationSerializationTest extends TransformationSerializationTest("LZ4AES", """akka-kryo-serialization.post-serialization-transformations = "lz4,aes"""")
+class ZipTransformationSerializationTest extends TransformationSerializationTest("Zip", "pekko-kryo-serialization.post-serialization-transformations = deflate")
+class Lz4TransformationSerializationTest extends TransformationSerializationTest("LZ4", "pekko-kryo-serialization.post-serialization-transformations = lz4")
+class AESTransformationSerializationTest extends TransformationSerializationTest("AES", "pekko-kryo-serialization.post-serialization-transformations = aes")
+class ZipAESTransformationSerializationTest extends TransformationSerializationTest("ZipAES", """pekko-kryo-serialization.post-serialization-transformations = "deflate,aes"""")
+class LZ4AESTransformationSerializationTest extends TransformationSerializationTest("LZ4AES", """pekko-kryo-serialization.post-serialization-transformations = "lz4,aes"""")
 class OffTransformationSerializationTest extends TransformationSerializationTest("Off", "")
-class UnsafeTransformationSerializationTest extends TransformationSerializationTest("Unsafe", "akka-kryo-serialization.use-unsafe = true")
+class UnsafeTransformationSerializationTest extends TransformationSerializationTest("Unsafe", "pekko-kryo-serialization.use-unsafe = true")
 class UnsafeLZ4TransformationSerializationTest extends TransformationSerializationTest("UnsafeLZ4",
   """
-    |akka-kryo-serialization.use-unsafe = true
-    |akka-kryo-serialization.post-serialization-transformations = lz4
+    |pekko-kryo-serialization.use-unsafe = true
+    |pekko-kryo-serialization.post-serialization-transformations = lz4
     """.stripMargin
 )
 

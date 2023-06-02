@@ -51,28 +51,28 @@ object PersistenceSerializationTest {
 
   private val config =
     s"""
-       |akka {
+       |pekko {
        |  actor {
        |    serializers {
-       |      kryo = "io.altoo.akka.serialization.kryo.KryoSerializer"
+       |      kryo = "io.altoo.pekko.serialization.kryo.KryoSerializer"
        |    }
        |    serialization-bindings {
        |      "scala.collection.immutable.$$colon$$colon" = kryo
        |      "scala.collection.immutable.List" = kryo
-       |      "io.altoo.akka.serialization.kryo.PersistenceSerializationTest$$Person" = kryo
-       |      "akka.persistence.serialization.Snapshot" = kryo
-       |      "akka.persistence.SnapshotMetadata" = kryo
+       |      "io.altoo.pekko.serialization.kryo.PersistenceSerializationTest$$Person" = kryo
+       |      "org.apache.pekko.persistence.serialization.Snapshot" = kryo
+       |      "org.apache.pekko.persistence.SnapshotMetadata" = kryo
        |    }
        |  }
        |
        |  persistence {
-       |    journal.plugin = "akka.persistence.journal.inmem"
-       |    snapshot-store.plugin = "akka.persistence.snapshot-store.local"
+       |    journal.plugin = "pekko.persistence.journal.inmem"
+       |    snapshot-store.plugin = "pekko.persistence.snapshot-store.local"
        |    snapshot-store.local.dir = "target/test-snapshots"
        |  }
        |}
        |
-       |akka-kryo-serialization {
+       |pekko-kryo-serialization {
        |  type = "nograph"
        |  id-strategy = "incremental"
        |  kryo-reference-map = false
@@ -80,7 +80,7 @@ object PersistenceSerializationTest {
        |  post-serialization-transformations = "lz4,aes"
        |  encryption {
        |    aes {
-       |      key-provider = "io.altoo.akka.serialization.kryo.DefaultKeyProvider"
+       |      key-provider = "io.altoo.pekko.serialization.kryo.DefaultKeyProvider"
        |      mode = "AES/GCM/NoPadding"
        |      iv-length = 12
        |      password = "j68KkRjq21ykRGAQ"
@@ -96,7 +96,7 @@ class PersistenceSerializationTest extends TestKit(ActorSystem("testSystem", Con
   import PersistenceSerializationTest._
 
   private val config = system.settings.config
-  private val storageLocations = List("akka.persistence.snapshot-store.local.dir").map(s => new File(config.getString(s)))
+  private val storageLocations = List("pekko.persistence.snapshot-store.local.dir").map(s => new File(config.getString(s)))
   private val persistentActor = system.actorOf(Props(new SnapshotTestPersistentActor("PersistentActor", testActor)))
 
   override def beforeAll(): Unit = {

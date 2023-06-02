@@ -11,13 +11,13 @@ object BasicSerializationTest {
 
   private val config =
     s"""
-       |akka {
-       |  loggers = ["akka.event.Logging$$DefaultLogger"]
+       |pekko {
+       |  loggers = ["org.apache.pekko.event.Logging$$DefaultLogger"]
        |  loglevel = "WARNING"
        |
        |  actor {
        |    serializers {
-       |      kryo = "io.altoo.akka.serialization.kryo.KryoSerializer"
+       |      kryo = "io.altoo.pekko.serialization.kryo.KryoSerializer"
        |    }
        |
        |    serialization-bindings {
@@ -26,7 +26,7 @@ object BasicSerializationTest {
        |  }
        |}
        |
-       |akka-kryo-serialization {
+       |pekko-kryo-serialization {
        |  trace = true
        |  id-strategy = "incremental"
        |  implicit-registration-logging = true

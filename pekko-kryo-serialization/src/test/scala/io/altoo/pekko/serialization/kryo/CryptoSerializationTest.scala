@@ -13,10 +13,10 @@ import scala.collection.immutable.HashMap
 object CryptoSerializationTest {
   private val config =
     """
-      |akka {
+      |pekko {
       |  actor {
       |    serializers {
-      |      kryo = "io.altoo.akka.serialization.kryo.KryoSerializer"
+      |      kryo = "io.altoo.pekko.serialization.kryo.KryoSerializer"
       |    }
       |    serialization-bindings {
       |      "scala.collection.immutable.HashMap" = kryo
@@ -26,11 +26,11 @@ object CryptoSerializationTest {
       |    }
       |  }
       |}
-      |akka-kryo-serialization {
+      |pekko-kryo-serialization {
       |  post-serialization-transformations = aes
       |  encryption {
       |    aes {
-      |      key-provider = "io.altoo.akka.serialization.kryo.DefaultKeyProvider"
+      |      key-provider = "io.altoo.pekko.serialization.kryo.DefaultKeyProvider"
       |      mode = "AES/GCM/NoPadding"
       |      iv-length = 12
       |      password = "j68KkRjq21ykRGAQ"
