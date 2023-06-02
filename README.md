@@ -3,6 +3,8 @@ pekko-kryo-serialization - kryo-based serializers for Scala and Pekko
 
 **transition from akka to pekko in progress**
 
+Pekko Kryo Serialization is a fork of [Akka Kryo Serialization](https://github.com/altoo-ag/akka-kryo-serialization)
+
 
 akka-kryo-serialization - kryo-based serializers for Scala and Akka
 =====================================================================
