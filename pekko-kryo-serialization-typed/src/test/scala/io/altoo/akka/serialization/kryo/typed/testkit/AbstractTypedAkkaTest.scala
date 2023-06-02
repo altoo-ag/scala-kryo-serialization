@@ -1,6 +1,6 @@
 package io.altoo.akka.serialization.kryo.typed.testkit
 
-import akka.actor.testkit.typed.scaladsl.ActorTestKit
+import org.apache.pekko.actor.testkit.typed.scaladsl.ActorTestKit
 import com.typesafe.config.Config
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.flatspec.AnyFlatSpec

@@ -1,7 +1,7 @@
 package io.altoo.akka.serialization.kryo
 
 import java.util
-import akka.serialization.Serializer
+import org.apache.pekko.serialization.Serializer
 import org.agrona.concurrent.ManyToManyConcurrentArrayQueue
 
 import scala.reflect.ClassTag

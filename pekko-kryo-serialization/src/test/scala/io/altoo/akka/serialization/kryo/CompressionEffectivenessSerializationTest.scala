@@ -16,8 +16,8 @@ limitations under the License.
 
 package io.altoo.akka.serialization.kryo
 
-import akka.actor.ActorSystem
-import akka.serialization.{Serialization, _}
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.serialization.{Serialization, _}
 import com.esotericsoftware.minlog.Log
 import com.typesafe.config.ConfigFactory
 import io.altoo.akka.serialization.kryo.serializer.scala.ScalaVersionRegistry

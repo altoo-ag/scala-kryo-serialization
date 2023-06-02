@@ -1,7 +1,7 @@
 package io.altoo.akka.serialization.kryo.typed
 
-import akka.actor.ExtendedActorSystem
-import akka.actor.typed
+import org.apache.pekko.actor.ExtendedActorSystem
+import org.apache.pekko.actor.typed
 import io.altoo.akka.serialization.kryo.DefaultKryoInitializer
 import io.altoo.akka.serialization.kryo.serializer.scala.ScalaKryo
 import io.altoo.akka.serialization.kryo.typed.serializer.TypedActorRefSerializer

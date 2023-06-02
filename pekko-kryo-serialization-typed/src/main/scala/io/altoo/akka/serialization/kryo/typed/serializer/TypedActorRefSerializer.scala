@@ -18,7 +18,7 @@
 
 package io.altoo.akka.serialization.kryo.typed.serializer
 
-import akka.actor.typed._
+import org.apache.pekko.actor.typed._
 import com.esotericsoftware.kryo.io.{Input, Output}
 import com.esotericsoftware.kryo.{Kryo, Serializer}
 

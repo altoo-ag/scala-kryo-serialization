@@ -1,7 +1,7 @@
 package io.altoo.akka.serialization.kryo
 
-import akka.actor.ActorSystem
-import akka.serialization.{ByteBufferSerializer, SerializationExtension}
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.serialization.{ByteBufferSerializer, SerializationExtension}
 import com.typesafe.config.ConfigFactory
 import org.scalatest.Inside
 import org.scalatest.flatspec.AnyFlatSpec

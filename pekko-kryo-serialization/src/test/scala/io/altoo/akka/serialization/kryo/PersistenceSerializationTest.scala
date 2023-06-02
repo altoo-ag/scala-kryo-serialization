@@ -2,10 +2,10 @@ package io.altoo.akka.serialization.kryo
 
 import java.io.File
 
-import akka.actor._
-import akka.persistence._
-import akka.serialization.SerializationExtension
-import akka.testkit.{ImplicitSender, TestKit}
+import org.apache.pekko.actor._
+import org.apache.pekko.persistence._
+import org.apache.pekko.serialization.SerializationExtension
+import org.apache.pekko.testkit.{ImplicitSender, TestKit}
 import com.typesafe.config.ConfigFactory
 import org.apache.commons.io.FileUtils
 import org.scalatest._

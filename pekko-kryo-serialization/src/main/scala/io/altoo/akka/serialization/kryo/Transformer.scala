@@ -3,7 +3,7 @@ package io.altoo.akka.serialization.kryo
 import java.nio.{ByteBuffer, ByteOrder}
 import java.security.SecureRandom
 import java.util.zip.{Deflater, Inflater}
-import akka.annotation.InternalApi
+import org.apache.pekko.annotation.InternalApi
 
 import javax.crypto.Cipher
 import javax.crypto.spec.{GCMParameterSpec, SecretKeySpec}

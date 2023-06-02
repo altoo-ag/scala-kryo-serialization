@@ -18,8 +18,8 @@
 
 package io.altoo.akka.serialization.kryo.serializer.akka
 
-import akka.actor.{ActorRef, ExtendedActorSystem}
-import akka.serialization.Serialization
+import org.apache.pekko.actor.{ActorRef, ExtendedActorSystem}
+import org.apache.pekko.serialization.Serialization
 import com.esotericsoftware.kryo.io.{Input, Output}
 import com.esotericsoftware.kryo.{Kryo, Serializer}
 

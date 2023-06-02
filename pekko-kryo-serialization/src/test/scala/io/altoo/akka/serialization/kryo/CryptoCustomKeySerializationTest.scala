@@ -1,7 +1,7 @@
 package io.altoo.akka.serialization.kryo
 
-import akka.actor.ExtendedActorSystem
-import akka.serialization.{ByteBufferSerializer, SerializationExtension}
+import org.apache.pekko.actor.ExtendedActorSystem
+import org.apache.pekko.serialization.{ByteBufferSerializer, SerializationExtension}
 import com.esotericsoftware.kryo.util._
 import com.typesafe.config.{Config, ConfigFactory}
 import io.altoo.akka.serialization.kryo.serializer.scala._

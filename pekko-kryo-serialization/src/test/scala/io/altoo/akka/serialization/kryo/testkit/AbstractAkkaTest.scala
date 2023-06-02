@@ -1,7 +1,7 @@
 package io.altoo.akka.serialization.kryo.testkit
 
-import akka.actor.ActorSystem
-import akka.testkit.TestKit
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.testkit.TestKit
 import com.typesafe.config.{Config, ConfigFactory}
 import org.scalatest.{BeforeAndAfterAll, Inside}
 import org.scalatest.flatspec.AnyFlatSpecLike

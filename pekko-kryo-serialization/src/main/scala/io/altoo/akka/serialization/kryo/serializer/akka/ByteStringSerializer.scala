@@ -18,7 +18,7 @@
 
 package io.altoo.akka.serialization.kryo.serializer.akka
 
-import akka.util.ByteString
+import org.apache.pekko.util.ByteString
 import com.esotericsoftware.kryo.io.{Input, Output}
 import com.esotericsoftware.kryo.{Kryo, Serializer}
 

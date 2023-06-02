@@ -1,6 +1,6 @@
 package io.altoo.akka.serialization.kryo
 
-import akka.annotation.InternalApi
+import org.apache.pekko.annotation.InternalApi
 
 /**
  * Returns a SerializerPool, useful to reduce GC overhead.

@@ -1,6 +1,6 @@
 package io.altoo.akka.serialization.kryo
 
-import akka.serialization.SerializationExtension
+import org.apache.pekko.serialization.SerializationExtension
 import com.typesafe.config.ConfigFactory
 import io.altoo.akka.serialization.kryo.performance.Time
 import io.altoo.akka.serialization.kryo.performance.Time.Time

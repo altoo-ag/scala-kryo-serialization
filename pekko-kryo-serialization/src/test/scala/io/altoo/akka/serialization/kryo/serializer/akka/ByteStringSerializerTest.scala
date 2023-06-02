@@ -1,7 +1,7 @@
 package io.altoo.akka.serialization.kryo.serializer.akka
 
-import akka.serialization.SerializationExtension
-import akka.util.{ByteString, CompactByteString}
+import org.apache.pekko.serialization.SerializationExtension
+import org.apache.pekko.util.{ByteString, CompactByteString}
 import com.typesafe.config.ConfigFactory
 import io.altoo.akka.serialization.kryo.KryoSerializer
 import io.altoo.akka.serialization.kryo.testkit.AbstractAkkaTest

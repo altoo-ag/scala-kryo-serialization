@@ -1,6 +1,6 @@
 package io.altoo.akka.serialization.kryo
 
-import akka.actor.{ActorRef, ExtendedActorSystem}
+import org.apache.pekko.actor.{ActorRef, ExtendedActorSystem}
 import com.esotericsoftware.kryo.Serializer
 import com.esotericsoftware.kryo.serializers.FieldSerializer
 import io.altoo.akka.serialization.kryo.serializer.akka.{ActorRefSerializer, ByteStringSerializer}
@@ -33,7 +33,7 @@ class DefaultKryoInitializer {
    * Registers serializer for standard akka classes - override only if you know what you are doing!
    */
   def initAkkaSerializer(kryo: ScalaKryo, system: ExtendedActorSystem): Unit = {
-    kryo.addDefaultSerializer(classOf[akka.util.ByteString], classOf[ByteStringSerializer])
+    kryo.addDefaultSerializer(classOf[org.apache.pekko.util.ByteString], classOf[ByteStringSerializer])
     kryo.addDefaultSerializer(classOf[ActorRef], new ActorRefSerializer(system))
   }
 

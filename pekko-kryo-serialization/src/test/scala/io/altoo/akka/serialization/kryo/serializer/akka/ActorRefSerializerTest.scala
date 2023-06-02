@@ -1,7 +1,7 @@
 package io.altoo.akka.serialization.kryo.serializer.akka
 
-import akka.actor.{Actor, ActorRef, Props}
-import akka.serialization.SerializationExtension
+import org.apache.pekko.actor.{Actor, ActorRef, Props}
+import org.apache.pekko.serialization.SerializationExtension
 import com.typesafe.config.ConfigFactory
 import io.altoo.akka.serialization.kryo.KryoSerializer
 import io.altoo.akka.serialization.kryo.testkit.AbstractAkkaTest

@@ -1,7 +1,7 @@
 package io.altoo.akka.serialization.kryo.performance
 
-import akka.actor.ActorSystem
-import akka.serialization._
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.serialization._
 import com.typesafe.config.ConfigFactory
 import io.altoo.akka.serialization.kryo.KryoSerializer
 import org.scalatest._

@@ -1,8 +1,8 @@
 package io.altoo.akka.serialization.kryo.typed.serializer
 
-import akka.actor.typed.ActorRef
-import akka.actor.typed.scaladsl.Behaviors
-import akka.serialization.SerializationExtension
+import org.apache.pekko.actor.typed.ActorRef
+import org.apache.pekko.actor.typed.scaladsl.Behaviors
+import org.apache.pekko.serialization.SerializationExtension
 import com.typesafe.config.ConfigFactory
 import io.altoo.akka.serialization.kryo.KryoSerializer
 import io.altoo.akka.serialization.kryo.typed.testkit.AbstractTypedAkkaTest

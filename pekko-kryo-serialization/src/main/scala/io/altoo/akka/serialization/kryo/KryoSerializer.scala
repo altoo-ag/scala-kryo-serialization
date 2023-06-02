@@ -18,9 +18,9 @@
 
 package io.altoo.akka.serialization.kryo
 
-import akka.actor.ExtendedActorSystem
-import akka.event.Logging
-import akka.serialization._
+import org.apache.pekko.actor.ExtendedActorSystem
+import org.apache.pekko.event.Logging
+import org.apache.pekko.serialization._
 import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryo.util._
 import com.esotericsoftware.minlog.{Log => MiniLog}

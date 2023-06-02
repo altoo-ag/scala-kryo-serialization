@@ -1,9 +1,9 @@
 package io.altoo.akka.serialization.kryo
 
-import akka.actor.ExtendedActorSystem
-import akka.annotation.InternalApi
-import akka.event.LoggingAdapter
-import akka.serialization.{ByteBufferSerializer, Serializer}
+import org.apache.pekko.actor.ExtendedActorSystem
+import org.apache.pekko.annotation.InternalApi
+import org.apache.pekko.event.LoggingAdapter
+import org.apache.pekko.serialization.{ByteBufferSerializer, Serializer}
 import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryo.io.{ByteBufferInput, ByteBufferOutput, Input, Output}
 import com.esotericsoftware.kryo.unsafe.{UnsafeInput, UnsafeOutput}
