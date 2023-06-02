@@ -27,16 +27,16 @@ addCommandAlias("validatePullRequest", ";+test")
 lazy val root: Project = project.in(file("."))
     .settings(Test / parallelExecution := false)
     .settings(commonSettings)
-    .settings(name := "akka-kryo-serialization")
+    .settings(name := "pekko-kryo-serialization")
     .settings(releaseProcess := releaseSettings)
     .settings(publish / skip := true)
     .settings(OsgiKeys.privatePackage := Nil)
     .settings(OsgiKeys.exportPackage := Seq("io.altoo.*"))
     .aggregate(core, typed)
 
-lazy val core: Project = Project("akka-kryo-serialization", file("akka-kryo-serialization"))
+lazy val core: Project = Project("pekko-kryo-serialization", file("pekko-kryo-serialization"))
     .settings(moduleSettings)
-    .settings(description := "akka-serialization implementation using kryo - core implementation")
+    .settings(description := "pekko-serialization implementation using kryo - core implementation")
     .settings(libraryDependencies ++= coreDeps ++ testingDeps)
     .settings(Compile / unmanagedSourceDirectories += {
       scalaBinaryVersion.value match {
@@ -53,9 +53,9 @@ lazy val core: Project = Project("akka-kryo-serialization", file("akka-kryo-seri
       }
     })
 
-lazy val typed: Project = Project("akka-kryo-serialization-typed", file("akka-kryo-serialization-typed"))
+lazy val typed: Project = Project("pekko-kryo-serialization-typed", file("pekko-kryo-serialization-typed"))
     .settings(moduleSettings)
-    .settings(description := "akka-serialization implementation using kryo - extension including serialization for akka-typed")
+    .settings(description := "pekko-serialization implementation using kryo - extension including serialization for akka-typed")
     .settings(libraryDependencies ++= typedDeps ++ testingDeps)
     .dependsOn(core)
 
