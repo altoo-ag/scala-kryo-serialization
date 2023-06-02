@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [ 11, 17 ]
+        java: [ 11, 17, 20 ]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK ${{ matrix.java }}
@@ -16,5 +16,5 @@ jobs:
         with:
           java-version: '${{ matrix.java }}'
           distribution: 'adopt'
-      - name: Run tests with Akka 2.6 and Scala 2.12,2.13,3.1
+      - name: Run tests with Pekko 1.0.x and Scala 2.12,2.13,3.1
         run: sbt +test +doc
