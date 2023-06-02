@@ -1,3 +1,9 @@
+pekko-kryo-serialization - kryo-based serializers for Scala and Pekko
+=====================================================================
+
+**transition from akka to pekko in progress**
+
+
 akka-kryo-serialization - kryo-based serializers for Scala and Akka
 =====================================================================
 [![Full test prior to release](https://github.com/altoo-ag/akka-kryo-serialization/actions/workflows/fullTest.yml/badge.svg)](https://github.com/altoo-ag/akka-kryo-serialization/actions/workflows/fullTest.yml)
