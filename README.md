@@ -7,8 +7,8 @@ Pekko Kryo Serialization is a fork of [Akka Kryo Serialization](https://github.c
 [![Full test prior to release](https://github.com/altoo-ag/pekko-kryo-serialization/actions/workflows/fullTest.yml/badge.svg)](https://github.com/altoo-ag/pekko-kryo-serialization/actions/workflows/fullTest.yml)
 [![Latest version](https://index.scala-lang.org/altoo-ag/pekko-kryo-serialization/pekko-kryo-serialization/latest.svg)](https://index.scala-lang.org/altoo-ag/pekko-kryo-serialization/pekko-kryo-serialization)
 
-This library provides custom Kryo-based serializers for Scala and Pekko. It can be
-used for more efficient pekko actor remoting.
+This library provides custom [Kryo](https://github.com/EsotericSoftware/kryo)-based serializers for Scala and Pekko. It can be
+used for more efficient [pekko](https://github.com/apache/incubator-pekko) actor remoting.
 
 It can also be used for a general purpose and very efficient Kryo-based serialization
 of such Scala types like Option, Tuple, Enumeration and most of Scala's collection types.
