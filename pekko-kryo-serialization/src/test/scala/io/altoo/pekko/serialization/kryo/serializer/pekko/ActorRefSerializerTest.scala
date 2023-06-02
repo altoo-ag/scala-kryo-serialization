@@ -5,7 +5,6 @@ import org.apache.pekko.serialization.SerializationExtension
 import com.typesafe.config.ConfigFactory
 import io.altoo.pekko.serialization.kryo.KryoSerializer
 import io.altoo.pekko.serialization.kryo.testkit.AbstractPekkoTest
-import io.altoo.pekko.serialization.kryo.KryoSerializer
 
 object ActorRefSerializerTest {
   private val testConfig =

@@ -4,7 +4,6 @@ import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.serialization._
 import com.typesafe.config.ConfigFactory
 import io.altoo.pekko.serialization.kryo.KryoSerializer
-import io.altoo.pekko.serialization.kryo.KryoSerializer
 import org.scalatest._
 import org.scalatest.flatspec.AnyFlatSpec
 

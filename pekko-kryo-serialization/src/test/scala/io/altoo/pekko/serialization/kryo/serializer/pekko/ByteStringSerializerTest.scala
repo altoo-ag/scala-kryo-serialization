@@ -5,7 +5,6 @@ import org.apache.pekko.util.{ByteString, CompactByteString}
 import com.typesafe.config.ConfigFactory
 import io.altoo.pekko.serialization.kryo.KryoSerializer
 import io.altoo.pekko.serialization.kryo.testkit.AbstractPekkoTest
-import io.altoo.pekko.serialization.kryo.KryoSerializer
 import org.scalatest.flatspec.AnyFlatSpecLike
 import org.scalatest.matchers.should.Matchers
 
