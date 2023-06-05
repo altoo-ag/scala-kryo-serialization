@@ -13,7 +13,7 @@ val mainScalaVersion = "3.3.0"
 val secondayScalaVersions = Seq("2.12.18", "2.13.11")
 
 val kryoVersion = "5.4.0"
-val defaultPekkoVersion = "0.0.0+26656-898c6970-SNAPSHOT"
+val defaultPekkoVersion = "0.0.0+26669-ec5b6764-SNAPSHOT"
 val pekkoVersion =
   System.getProperty("pekko.build.version", defaultPekkoVersion) match {
     case "default" => defaultPekkoVersion
