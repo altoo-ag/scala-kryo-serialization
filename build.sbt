@@ -64,7 +64,7 @@ lazy val typed: Project = Project("pekko-kryo-serialization-typed", file("pekko-
 // Dependencies
 lazy val coreDeps = Seq(
   "com.esotericsoftware" % "kryo" % kryoVersion,
-  ("org.apache.pekko" %% "pekko-actor" % pekkoVersion).cross(CrossVersion.for3Use2_13),
+  "org.apache.pekko" %% "pekko-actor" % pekkoVersion,
   "org.agrona" % "agrona" % "1.15.1", // should match pekko-remote/aeron inherited version
   "org.lz4" % "lz4-java" % "1.8.0",
   "commons-io" % "commons-io" % "2.11.0" % Test,
@@ -73,13 +73,13 @@ lazy val coreDeps = Seq(
 lazy val typedDeps = Seq(
   "org.apache.pekko" %% "pekko-actor-typed" % pekkoVersion,
   "org.apache.pekko" %% "pekko-actor-testkit-typed" % pekkoVersion % Test
-).map(_.cross(CrossVersion.for3Use2_13))
+)
 
 lazy val testingDeps = Seq(
   "org.scalatest" %% "scalatest" % "3.2.14" % Test,
   "ch.qos.logback" % "logback-classic" % "1.2.11" % Test,
-  ("org.apache.pekko" %% "pekko-testkit" % pekkoVersion % Test).cross(CrossVersion.for3Use2_13),
-  ("org.apache.pekko" %% "pekko-persistence" % pekkoVersion % Test).cross(CrossVersion.for3Use2_13)
+  "org.apache.pekko" %% "pekko-testkit" % pekkoVersion % Test,
+  "org.apache.pekko" %% "pekko-persistence" % pekkoVersion % Test
 )
 
 
