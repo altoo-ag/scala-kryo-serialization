@@ -8,8 +8,9 @@ val sonatypeSnapshot = "Sonatype Snapshots Repository" at "https://oss.sonatype.
 //todo resolvers += Resolver.jcenterRepo
 //todo resolvers += Resolver.ApacheMavenSnapshotsRepo
 
-val mainScalaVersion = "3.1.3" // note: Scala 3.2 is not forward compatible - publishing with 3.2 would force users to Scala 3.2
-val secondayScalaVersions = Seq("2.12.17", "2.13.10")
+// note: keep in sync to pekko https://github.com/apache/incubator-pekko/blob/main/project/Dependencies.scala
+val mainScalaVersion = "3.3.0"
+val secondayScalaVersions = Seq("2.12.18", "2.13.11")
 
 val kryoVersion = "5.4.0"
 val defaultPekkoVersion = "0.0.0+26656-898c6970-SNAPSHOT"
