@@ -3,10 +3,6 @@ import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 
 
 // Basics
-val apacheSnapshot = "Apache Snapshots".at("https://repository.apache.org/content/repositories/snapshots/")
-val sonatypeSnapshot = "Sonatype Snapshots Repository" at "https://oss.sonatype.org/content/repositories/snapshots/"
-//todo resolvers += Resolver.jcenterRepo
-//todo resolvers += Resolver.ApacheMavenSnapshotsRepo
 
 // note: keep in sync to pekko https://github.com/apache/incubator-pekko/blob/main/project/Dependencies.scala
 val mainScalaVersion = "3.3.0"
@@ -19,6 +15,7 @@ val pekkoVersion =
     case "default" => defaultPekkoVersion
     case x => x
   }
+val apacheSnapshot = Resolver.ApacheMavenSnapshotsRepo
 
 enablePlugins(SbtOsgi, ReleasePlugin)
 addCommandAlias("validatePullRequest", ";+test")
@@ -86,8 +83,7 @@ lazy val testingDeps = Seq(
 // Settings
 lazy val commonSettings: Seq[Setting[_]] = Seq(
   organization := "io.altoo",
-  resolvers += apacheSnapshot,
-  resolvers += sonatypeSnapshot
+  resolvers += apacheSnapshot
 )
 
 lazy val moduleSettings: Seq[Setting[_]] = commonSettings ++ noReleaseInSubmoduleSettings ++ scalacBasicOptions ++ scalacStrictOptions ++ scalacLintOptions ++ Seq(
