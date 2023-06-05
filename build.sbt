@@ -3,21 +3,22 @@ import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 
 
 // Basics
-val typesafe = "Typesafe Repository" at "https://repo.typesafe.com/typesafe/releases/"
-val typesafeSnapshot = "Typesafe Snapshots Repository" at "https://repo.typesafe.com/typesafe/snapshots/"
+val apacheSnapshot = "Apache Snapshots".at("https://repository.apache.org/content/repositories/snapshots/")
 val sonatypeSnapshot = "Sonatype Snapshots Repository" at "https://oss.sonatype.org/content/repositories/snapshots/"
+//todo resolvers += Resolver.jcenterRepo
+//todo resolvers += Resolver.ApacheMavenSnapshotsRepo
 
-val mainScalaVersion = "3.1.3" // note: Scala 3.2 is not forward compatible - publishing with 3.2 would force users to Scala 3.2
-val secondayScalaVersions = Seq("2.12.17", "2.13.10")
+// note: keep in sync to pekko https://github.com/apache/incubator-pekko/blob/main/project/Dependencies.scala
+val mainScalaVersion = "3.3.0"
+val secondayScalaVersions = Seq("2.12.18", "2.13.11")
 
 val kryoVersion = "5.4.0"
-val defaultAkkaVersion = "2.6.20"
-val akkaVersion =
-  System.getProperty("akka.build.version", defaultAkkaVersion) match {
-    case "default" => defaultAkkaVersion
+val defaultPekkoVersion = "0.0.0+26669-ec5b6764-SNAPSHOT"
+val pekkoVersion =
+  System.getProperty("pekko.build.version", defaultPekkoVersion) match {
+    case "default" => defaultPekkoVersion
     case x => x
   }
-
 
 enablePlugins(SbtOsgi, ReleasePlugin)
 addCommandAlias("validatePullRequest", ";+test")
@@ -27,16 +28,16 @@ addCommandAlias("validatePullRequest", ";+test")
 lazy val root: Project = project.in(file("."))
     .settings(Test / parallelExecution := false)
     .settings(commonSettings)
-    .settings(name := "akka-kryo-serialization")
+    .settings(name := "pekko-kryo-serialization")
     .settings(releaseProcess := releaseSettings)
     .settings(publish / skip := true)
     .settings(OsgiKeys.privatePackage := Nil)
     .settings(OsgiKeys.exportPackage := Seq("io.altoo.*"))
     .aggregate(core, typed)
 
-lazy val core: Project = Project("akka-kryo-serialization", file("akka-kryo-serialization"))
+lazy val core: Project = Project("pekko-kryo-serialization", file("pekko-kryo-serialization"))
     .settings(moduleSettings)
-    .settings(description := "akka-serialization implementation using kryo - core implementation")
+    .settings(description := "pekko-serialization implementation using kryo - core implementation")
     .settings(libraryDependencies ++= coreDeps ++ testingDeps)
     .settings(Compile / unmanagedSourceDirectories += {
       scalaBinaryVersion.value match {
@@ -53,9 +54,9 @@ lazy val core: Project = Project("akka-kryo-serialization", file("akka-kryo-seri
       }
     })
 
-lazy val typed: Project = Project("akka-kryo-serialization-typed", file("akka-kryo-serialization-typed"))
+lazy val typed: Project = Project("pekko-kryo-serialization-typed", file("pekko-kryo-serialization-typed"))
     .settings(moduleSettings)
-    .settings(description := "akka-serialization implementation using kryo - extension including serialization for akka-typed")
+    .settings(description := "pekko-serialization implementation using kryo - extension including serialization for pekko-typed")
     .settings(libraryDependencies ++= typedDeps ++ testingDeps)
     .dependsOn(core)
 
@@ -63,30 +64,29 @@ lazy val typed: Project = Project("akka-kryo-serialization-typed", file("akka-kr
 // Dependencies
 lazy val coreDeps = Seq(
   "com.esotericsoftware" % "kryo" % kryoVersion,
-  ("com.typesafe.akka" %% "akka-actor" % akkaVersion).cross(CrossVersion.for3Use2_13),
-  "org.agrona" % "agrona" % "1.15.1", // should match akka-remote/aeron inherited version
+  "org.apache.pekko" %% "pekko-actor" % pekkoVersion,
+  "org.agrona" % "agrona" % "1.15.1", // should match pekko-remote/aeron inherited version
   "org.lz4" % "lz4-java" % "1.8.0",
   "commons-io" % "commons-io" % "2.11.0" % Test,
   "org.scala-lang.modules" %% "scala-collection-compat" % "2.9.0"
 )
 lazy val typedDeps = Seq(
-  "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
-  "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion % Test
-).map(_.cross(CrossVersion.for3Use2_13))
+  "org.apache.pekko" %% "pekko-actor-typed" % pekkoVersion,
+  "org.apache.pekko" %% "pekko-actor-testkit-typed" % pekkoVersion % Test
+)
 
 lazy val testingDeps = Seq(
   "org.scalatest" %% "scalatest" % "3.2.14" % Test,
   "ch.qos.logback" % "logback-classic" % "1.2.11" % Test,
-  ("com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test).cross(CrossVersion.for3Use2_13),
-  ("com.typesafe.akka" %% "akka-persistence" % akkaVersion % Test).cross(CrossVersion.for3Use2_13)
+  "org.apache.pekko" %% "pekko-testkit" % pekkoVersion % Test,
+  "org.apache.pekko" %% "pekko-persistence" % pekkoVersion % Test
 )
 
 
 // Settings
 lazy val commonSettings: Seq[Setting[_]] = Seq(
   organization := "io.altoo",
-  resolvers += typesafe,
-  resolvers += typesafeSnapshot,
+  resolvers += apacheSnapshot,
   resolvers += sonatypeSnapshot
 )
 
@@ -122,7 +122,7 @@ lazy val scalacBasicOptions = Seq(
           "-Xlog-reflective-calls",
           "-Ywarn-unused:-nowarn",
           "-opt:l:inline",
-          "-opt-inline-from:io.altoo.akka.serialization.kryo.*"
+          "-opt-inline-from:io.altoo.pekko.serialization.kryo.*"
         )
       case "3" =>
         Seq(
@@ -233,7 +233,7 @@ lazy val releaseSettings = Seq[ReleaseStep](
 )
 releaseCrossBuild := true
 
-lazy val pomExtras = <url>https://github.com/altoo-ag/akka-kryo-serialization</url>
+lazy val pomExtras = <url>https://github.com/altoo-ag/pekko-kryo-serialization</url>
     <licenses>
       <license>
         <name>The Apache Software License, Version 2.0</name>
@@ -242,8 +242,8 @@ lazy val pomExtras = <url>https://github.com/altoo-ag/akka-kryo-serialization</u
       </license>
     </licenses>
     <scm>
-      <url>git@github.com:altoo-ag/akka-kryo-serialization.git</url>
-      <connection>scm:git:git@github.com:altoo-ag/akka-kryo-serialization.git</connection>
+      <url>git@github.com:altoo-ag/pekko-kryo-serialization.git</url>
+      <connection>scm:git:git@github.com:altoo-ag/pekko-kryo-serialization.git</connection>
     </scm>
     <developers>
       <developer>

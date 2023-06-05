@@ -1,24 +1,19 @@
 pekko-kryo-serialization - kryo-based serializers for Scala and Pekko
 =====================================================================
 
-**transition from akka to pekko in progress**
+Pekko Kryo Serialization is a fork of [Akka Kryo Serialization](https://github.com/altoo-ag/pekko-kryo-serialization) providing the same functionality to pekko.
 
-
-akka-kryo-serialization - kryo-based serializers for Scala and Akka
 =====================================================================
-[![Full test prior to release](https://github.com/altoo-ag/akka-kryo-serialization/actions/workflows/fullTest.yml/badge.svg)](https://github.com/altoo-ag/akka-kryo-serialization/actions/workflows/fullTest.yml)
-[![Latest version](https://index.scala-lang.org/altoo-ag/akka-kryo-serialization/akka-kryo-serialization/latest.svg)](https://index.scala-lang.org/altoo-ag/akka-kryo-serialization/akka-kryo-serialization)
+[![Full test prior to release](https://github.com/altoo-ag/pekko-kryo-serialization/actions/workflows/fullTest.yml/badge.svg)](https://github.com/altoo-ag/pekko-kryo-serialization/actions/workflows/fullTest.yml)
+[![Latest version](https://index.scala-lang.org/altoo-ag/pekko-kryo-serialization/pekko-kryo-serialization/latest.svg)](https://index.scala-lang.org/altoo-ag/pekko-kryo-serialization/pekko-kryo-serialization)
 
-:warning: **We found issues serializing Scala 3 Enums. If you use akka-kryo-serialization with Scala 3 you should upgrade to 2.4.1 or newer asap.**
-
-This library provides custom Kryo-based serializers for Scala and Akka. It can be
-used for more efficient akka actor's remoting.
+This library provides custom [Kryo](https://github.com/EsotericSoftware/kryo)-based serializers for Scala and Pekko. It can be
+used for more efficient [pekko](https://github.com/apache/incubator-pekko) actor remoting.
 
 It can also be used for a general purpose and very efficient Kryo-based serialization
 of such Scala types like Option, Tuple, Enumeration and most of Scala's collection types.
 
 For upgrading from previous versions see [migration-guide](migration-guide.md). 
-Note that due to the upgrade to Kryo 5 with version 2.0.0, data written with older versions based on Kryo 4 is most likely not readable anymore.
 
 
 Features
@@ -32,7 +27,7 @@ Features
 * Supports transparent AES encryption and different modes of compression
 * Apache 2.0 license
 
-Note that this serializer is mainly intended to be used for akka-remoting and not for (long term) persisted data. 
+Note that this serializer is mainly intended to be used for pekko-remoting and not for (long term) persisted data. 
 The underlying kryo serializer does not guarantee compatibility between major versions.
 
 
@@ -42,52 +37,30 @@ How to use this library in your project
 To use this serializer, you need to do two things:
 
 * Include a dependency on this library into your project:
-    `libraryDependencies += "io.altoo" %% "akka-kryo-serialization" % "2.5.0"`
+    `libraryDependencies += "io.altoo" %% "pekko-kryo-serialization" % "? not yet released"`
 
 * Register and configure the serializer in your Akka configuration file, e.g. `application.conf`.
 
 We provide several versions of the library:
 
-Version | Akka & Kryo Compatibility | Available Scala Versions | Tested with                                                                            |
---------|---------------------------|--------------------------|----------------------------------------------------------------------------------------|
-v2.5.x  | Akka-2.6 and Kryo-5.4     | 2.12,2.13,3.1            | JDK: OpenJdk11,OpenJdk17           Scala: 2.12.17,2.13.10,3.1.3 Akka: 2.6.20           |
-v2.4.x  | Akka-2.5,2.6 and Kryo-5.3 | 2.12,2.13,3.0            | JDK: OpenJdk11,OpenJdk17           Scala: 2.12.15,2.13.8,3.0.2 Akka: 2.5.32,2.6.18     |
-v2.3.x  | Akka-2.5,2.6 and Kryo-5.2 | 2.12,2.13,3.0            | JDK: OpenJdk11,OpenJdk15           Scala: 2.12.15,2.13.6,3.0.2 Akka: 2.5.32,2.6.17     |
-v2.2.x  | Akka-2.5,2.6 and Kryo-5.1 | 2.12,2.13,3.0            | JDK: OpenJdk11,OpenJdk15           Scala: 2.12.14,2.13.6,3.0.0 Akka: 2.5.32,2.6.15     |
-v2.1.x  | Akka-2.5,2.6 and Kryo-5.0 | 2.12,2.13                | JDK: OpenJdk8,OpenJdk11,OpenJdk15  Scala: 2.12.13,2.13.4 Akka: 2.5.32,2.6.12           |
-v2.0.x  | Akka-2.5,2.6 and Kryo-5.0 | 2.12,2.13                | JDK: OpenJdk8,OpenJdk11,OpenJdk13  Scala: 2.12.12,2.13.3 Akka: 2.5.32,2.6.10           |
-v1.1.x  | Akka-2.5,2.6 and Kryo-4.0 | 2.12,2.13                | JDK: OpenJdk8,OpenJdk11,OpenJdk13  Scala: 2.12.11,2.13.2 Akka: 2.5.26,2.6.4            |
-v1.0.x  | Akka-2.5,2.6 and Kryo-4.0 | 2.11,2.12,2.13           | JDK: OpenJdk8,OpenJdk11            Scala: 2.11.12,2.12.10,2.13.1 Akka: 2.5.25,2.6.0-M7 |
-For past versions see [Legacy.md](Legacy.md).
+Version | Akka & Kryo Compatibility | Available Scala Versions | Tested with                                                                 |
+--------|---------------------------|--------------------------|-----------------------------------------------------------------------------|
+v1.0.x  | Pekko-1.0 and Kryo-5.4    | 2.12,2.13,3.1            | JDK: OpenJdk11,OpenJdk17           Scala: 2.12.17,2.13.10,3.1.3 Pekko: ??? |
 
-From 2.1.0 onward we also provide support for akka-typed. This is done as a separate artifact so that the standard does not pull all the typed akka dependencies.
-* Include:
-  `libraryDependencies += "io.altoo" %% "akka-kryo-serialization-typed" % "2.5.0"`
-
-Version 2.2.0 requires JDK 11 or higher in favor of optimizations using ByteBuffer. 
 
 Note that we use semantic versioning - see [semver.org](https://semver.org/).
 
 
-Which Maven repository contains this library?
----------------------------------------------
-
-You can find the JARs on [Sonatype's Maven repository](https://repo1.maven.org/maven2/io/altoo/).
-
 #### sbt projects
 
-To use the latest stable release of akka-kryo-serialization in sbt projects you just need to add
+To use the latest stable release of pekko-kryo-serialization in sbt projects you just need to add
 this dependency:
 
-`libraryDependencies += "io.altoo" %% "akka-kryo-serialization" % "2.5.0"`
-
-To use with Akka 2.5 (or older versions of Akka 2.6) you need to exclude transitive dependencies to prevent unintended inclusion newer versions of Akka:
-
-`libraryDependencies += "io.altoo" %% "akka-kryo-serialization" % "2.5.0" excludeAll (ExclusionRule("com.typesafe.akka", "akka-actor_2.13"), ExclusionRule("org.agrona", "agrona"))`
+`libraryDependencies += "io.altoo" %% "pekko-kryo-serialization" % "1.0.0"`
 
 #### maven projects
 
-To use the official release of akka-kryo-serialization in Maven projects, please use the following snippet in your pom.xml
+To use the official release of pekko-kryo-serialization in Maven projects, please use the following snippet in your pom.xml
 
 ```xml
     <repository>
@@ -101,7 +74,7 @@ To use the official release of akka-kryo-serialization in Maven projects, please
 
     <dependency>
         <groupId>io.altoo</groupId>
-        <artifactId>akka-kryo-serialization_2.13</artifactId>
+        <artifactId>pekko-kryo-serialization_2.13</artifactId>
         <version>2.5.0</version>
     </dependency>
 ```
@@ -109,25 +82,25 @@ To use the official release of akka-kryo-serialization in Maven projects, please
 For snapshots see [Snapshots.md](Snapshots.md)
 
 
-Configuration of akka-kryo-serialization
+Configuration of pekko-kryo-serialization
 ----------------------------------------------
 
 The following options are available for configuring this serializer:
 
-* You can add a new `akka-kryo-serialization` section to the configuration to customize the serializer.
-    Consult the supplied [reference.conf](https://github.com/altoo-ag/akka-kryo-serialization/blob/master/akka-kryo-serialization/src/main/resources/reference.conf) for a detailed explanation of all the options available.
+* You can add a new `pekko-kryo-serialization` section to the configuration to customize the serializer.
+    Consult the supplied [reference.conf](https://github.com/altoo-ag/pekko-kryo-serialization/blob/master/pekko-kryo-serialization/src/main/resources/reference.conf) for a detailed explanation of all the options available.
 
-* You should declare in the `akka.actor.serializers` section a new kind of serializer:
+* You should declare in the `pekko.actor.serializers` section a new kind of serializer:
     
     ```
     serializers {
-        java = "akka.serialization.JavaSerializer"
+        java = "org.apache.pekko.serialization.JavaSerializer"
         # Define kryo serializer
-        kryo = "io.altoo.akka.serialization.kryo.KryoSerializer"
+        kryo = "io.altoo.pekko.serialization.kryo.KryoSerializer"
     }
     ```
 
-* As usual, you should declare in the Akka `serialization-bindings` section which
+* As usual, you should declare in the Pekko `serialization-bindings` section which
 classes should use kryo serialization. One thing to keep in mind is that classes that
 you register in this section are supposed to be *TOP-LEVEL* classes that you wish to
 serialize. I.e. this is a class of object that you send over the wire. It should not
@@ -177,8 +150,8 @@ the assigned class IDs are the same for senders and for receivers!
 How to customize kryo initialization
 ------------------------------------
 
-To further customize kryo you can extend the `io.altoo.akka.serialization.kryo.DefaultKryoInitializer` and 
-configure the FQCN under `akka-kryo-serialization.kryo-initializer`.
+To further customize kryo you can extend the `io.altoo.pekko.serialization.kryo.DefaultKryoInitializer` and 
+configure the FQCN under `pekko-kryo-serialization.kryo-initializer`.
 
 #### Configuring default field serializers
 In `preInit` a different default serializer can be configured 
@@ -244,7 +217,7 @@ class XyzKryoInitializer extends DefaultKryoInitializer {
 
 And register the custom initializer in your `application.conf` by overriding
 
-    akka-kryo-serialization.kryo-initializer = "com.example.XyzKryoInitializer"
+    pekko-kryo-serialization.kryo-initializer = "com.example.XyzKryoInitializer"
 
 To configure the field serializer a serializer factory can be used as described here: https://github.com/EsotericSoftware/kryo#serializer-factories
 
@@ -252,7 +225,7 @@ How to configure and customize encryption
 -----------------------------------------
 
 Using the `DefaultKeyProvider` an encryption key can statically be set by defining `encryption.aes.password` and `encryption.aes.salt`.
-Refere to the [reference.conf](https://github.com/altoo-ag/akka-kryo-serialization/blob/master/akka-kryo-serialization/src/main/resources/reference.conf) for an example configuration.
+Refere to the [reference.conf](https://github.com/altoo-ag/pekko-kryo-serialization/blob/master/pekko-kryo-serialization/src/main/resources/reference.conf) for an example configuration.
 
 Sometimes you need to pass a custom aes key, depending on the context you are in,
 instead of having a static key. For example, you might have the key in a data
@@ -292,8 +265,8 @@ specialized subclasses that are used as necessary. Examples include:
 
 * scala.collection.immutable.Map
 * scala.collection.immutable.Set
-* akka.actor.ActorRef
-* akka.actor.ActorPath
+* pekko.actor.ActorRef
+* pekko.actor.ActorPath
 
 The problem is that Kryo thinks in terms of the *exact* class being serialized, but you are
 rarely working with the actual implementation class -- the application code only cares about
@@ -337,7 +310,7 @@ To support this the `KryoSerializer` can be extended to use a different configur
 
 Define a custom configuration:
 ```hocon
-akka-kryo-serialization-xyz = ${akka-kryo-serialization} {
+pekko-kryo-serialization-xyz = ${pekko-kryo-serialization} {
   # configuration overrides like...
   # id-strategy = "explicit"
 }
@@ -348,14 +321,14 @@ Create new serializer subclass overriding the config key to the matching config 
 package xyz
 
 class XyzKryoSerializer(system: ExtendedActorSystem) extends KryoSerializer(system) {
-  override def configKey: String = "akka-kryo-serialization-xyz"
+  override def configKey: String = "pekko-kryo-serialization-xyz"
 }
 ```
 
 And finally declare the custom serializer in the `akka.actor.serializers` section:
 ```hocon
     serializers {
-        kryo = "io.altoo.akka.serialization.kryo.KryoSerializer"
+        kryo = "io.altoo.pekko.serialization.kryo.KryoSerializer"
         # define additional kryo serializer
         kryo-xyz = "xyz.XyzKryoSerializer"
     }
@@ -366,15 +339,10 @@ Enum Serialization
 ------------------
 
 Serialization of Java and Scala 3 enums is done by name (and not by index) to avoid having reordering of enum values breaking serialization.
-As of 2.5.0, the default serializer for `scala.Enumeration` has been switched to a name base serializer for consistency.
-
-To change current default back to old index based (order of definition) serialization, a custom Kryo initializer must be defined and the following override has to be done:
 
 ```scala
 protected override def defaultEnumerationSerializer: Class[_ <: Serializer[Enumeration#Value]] = classOf[EnumerationSerializer]
 ```
-
-Note: this serializer will be removed in the future. If needed, you can reimplement it in your own project.
 
 Using Kryo on JDK 17
 --------------------
@@ -390,25 +358,6 @@ To use unsafe transformations, the following access must be granted:
 javaOptions ++= Seq("--add-opens", "java.base/java.nio=ALL-UNNAMED", "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED"),
 ```
 
-
-Kryo shaded and ASM (pre 2.x)
------------------------------
-Kryo depends on [ASM](https://asm.ow2.io), which is used by many different projects in different versions.
-This can lead to unintended version conflicts. To avoid this, Kryo provides a [shaded](https://maven.apache.org/plugins/maven-shade-plugin/) 
-version to work around this issue. For easier usage we depend on the shaded Kryo. Note that only the ASM dependency is shaded and not kryo itself.
-
-If you prefer to re-use Kryo you can override the dependency (but be sure to pick compatible versions):
-    
-```scala
-lazy val kryoSerializationDeps = Seq(
-  "io.altoo" %% "akka-kryo-serialization" % "1.0.0" excludeAll ExclusionRule("com.esotericsoftware", "kryo-shaded"),
-  "com.esotericsoftware" % "kryo" % "5.4.0"
-)
-```
-    
-If this would be a common use case we could provide different artifacts with both dependencies.
-
-
 How do I build this library on my own?
 --------------------------------------
 If you wish to build the library on your own, you need to check out the project from Github and do
@@ -421,8 +370,3 @@ If you wish to use it within an OSGi environment, you can add OSGi headers to th
 
 Note that the OSGi build uses the sbt-osgi plugin, which may not be available from Maven Central or the
 Typesafe repo, so it may require a local build as well. sbt-osgi can be found at [sbt/sbt-osgi](https://github.com/sbt/sbt-osgi).
-
-
-What about Akka BSL?
---------------------------------------
-We will keep depending on the last Open Source Akka release 2.6.20 and intend to provide support for its successor Pekko in the future.
