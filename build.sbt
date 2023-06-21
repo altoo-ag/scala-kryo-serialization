@@ -18,9 +18,6 @@ val pekkoVersion =
 enablePlugins(SbtOsgi, ReleasePlugin)
 addCommandAlias("validatePullRequest", ";+test")
 
-ThisProject / resolvers += Resolver.ApacheMavenSnapshotsRepo
-ThisProject / resolvers += "apache-staging" at "https://repository.apache.org/content/repositories/staging"
-
 // Projects
 lazy val root: Project = project.in(file("."))
     .settings(Test / parallelExecution := false)
@@ -82,7 +79,9 @@ lazy val testingDeps = Seq(
 
 // Settings
 lazy val commonSettings: Seq[Setting[_]] = Seq(
-  organization := "io.altoo"
+  organization := "io.altoo",
+  resolvers += Resolver.ApacheMavenSnapshotsRepo,
+  resolvers += "apache-staging" at "https://repository.apache.org/content/repositories/staging"
 )
 
 lazy val moduleSettings: Seq[Setting[_]] = commonSettings ++ noReleaseInSubmoduleSettings ++ scalacBasicOptions ++ scalacStrictOptions ++ scalacLintOptions ++ Seq(
