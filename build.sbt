@@ -9,17 +9,17 @@ val mainScalaVersion = "3.3.0"
 val secondayScalaVersions = Seq("2.12.18", "2.13.11")
 
 val kryoVersion = "5.4.0"
-val defaultPekkoVersion = "0.0.0+26669-ec5b6764-SNAPSHOT"
+val defaultPekkoVersion = "1.0.0-rc1"
 val pekkoVersion =
   System.getProperty("pekko.build.version", defaultPekkoVersion) match {
     case "default" => defaultPekkoVersion
     case x => x
   }
-val apacheSnapshot = Resolver.ApacheMavenSnapshotsRepo
-
 enablePlugins(SbtOsgi, ReleasePlugin)
 addCommandAlias("validatePullRequest", ";+test")
 
+ThisProject / resolvers += Resolver.ApacheMavenSnapshotsRepo
+ThisProject / resolvers += "apache-staging" at "https://repository.apache.org/content/repositories/staging"
 
 // Projects
 lazy val root: Project = project.in(file("."))
@@ -82,8 +82,7 @@ lazy val testingDeps = Seq(
 
 // Settings
 lazy val commonSettings: Seq[Setting[_]] = Seq(
-  organization := "io.altoo",
-  resolvers += apacheSnapshot
+  organization := "io.altoo"
 )
 
 lazy val moduleSettings: Seq[Setting[_]] = commonSettings ++ noReleaseInSubmoduleSettings ++ scalacBasicOptions ++ scalacStrictOptions ++ scalacLintOptions ++ Seq(
