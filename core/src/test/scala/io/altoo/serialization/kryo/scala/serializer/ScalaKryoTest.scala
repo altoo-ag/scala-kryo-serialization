@@ -1,7 +1,6 @@
 package io.altoo.serialization.kryo.scala.serializer
 
 import com.esotericsoftware.kryo.util.{DefaultClassResolver, ListReferenceResolver}
-import io.altoo.serialization.kryo.scala.serializer.scala.ScalaKryo
 import io.altoo.serialization.kryo.scala.testkit.KryoSerializationTesting
 import org.scalatest.flatspec.AnyFlatSpec
 

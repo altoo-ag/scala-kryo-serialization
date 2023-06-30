@@ -1,11 +1,11 @@
 package io.altoo.serialization.kryo.scala.serializer
 
-import io.altoo.serialization.kryo.scala.serializer.scala.{ScalaImmutableAbstractMapSerializer, ScalaImmutableAbstractSetSerializer, ScalaImmutableMapSerializer, SubclassResolver}
 import io.altoo.serialization.kryo.scala.testkit.AbstractKryoTest
+
 
 class SubclassResolverTest extends AbstractKryoTest {
 
-  override val useSubclassResolver:Boolean = true
+  override val useSubclassResolver: Boolean = true
 
 
   behavior of "SubclassResolver"

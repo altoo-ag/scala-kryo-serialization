@@ -3,12 +3,12 @@ package io.altoo.serialization.kryo.scala.serializer
 
 import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryo.io.{Input, Output}
-import io.altoo.serialization.kryo.scala.serializer.scala.*
-import io.altoo.serialization.kryo.scala.serializer.scala.language.implicitConversions
 import org.scalatest.flatspec.AnyFlatSpec
 
+import scala.language.implicitConversions
+
 /** @author romix */
-class EnumerationSerializerTest extends AnyFlatSpec {
+class EnumerationNameSerializerTest extends AnyFlatSpec {
   import Planet.*
   import Time.*
   import WeekDay.*
@@ -19,7 +19,7 @@ class EnumerationSerializerTest extends AnyFlatSpec {
   it should "serialize and deserialize" in {
     var kryo: Kryo = new Kryo()
     kryo.setRegistrationRequired(false)
-    kryo.addDefaultSerializer(classOf[scala.Enumeration#Value], classOf[EnumerationSerializer])
+    kryo.addDefaultSerializer(classOf[scala.Enumeration#Value], classOf[EnumerationNameSerializer])
     kryo.register(Class.forName("scala.Enumeration$Val"))
     kryo.register(classOf[scala.Enumeration#Value])
     kryo.register(WeekDay.getClass, 40)
@@ -44,7 +44,7 @@ class EnumerationSerializerTest extends AnyFlatSpec {
 
     kryo = new Kryo()
     kryo.setRegistrationRequired(false)
-    kryo.addDefaultSerializer(classOf[scala.Enumeration#Value], classOf[EnumerationSerializer])
+    kryo.addDefaultSerializer(classOf[scala.Enumeration#Value], classOf[EnumerationNameSerializer])
     kryo.register(Class.forName("scala.Enumeration$Val"))
     kryo.register(classOf[scala.Enumeration#Value])
     kryo.register(WeekDay.getClass, 40)

@@ -21,7 +21,7 @@ import com.esotericsoftware.kryo._
 import com.esotericsoftware.kryo.serializers.FieldSerializer
 
 class ScalaKryo(classResolver: ClassResolver, referenceResolver: ReferenceResolver)
-  extends Kryo(classResolver, referenceResolver) {
+    extends Kryo(classResolver, referenceResolver) {
 
   lazy val objSer = new ScalaObjectSerializer[AnyRef]
 

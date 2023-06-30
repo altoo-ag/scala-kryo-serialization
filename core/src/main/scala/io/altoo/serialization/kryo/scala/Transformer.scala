@@ -3,7 +3,6 @@ package io.altoo.serialization.kryo.scala
 import java.nio.{ByteBuffer, ByteOrder}
 import java.security.SecureRandom
 import java.util.zip.{Deflater, Inflater}
-import org.apache.pekko.annotation.InternalApi
 
 import javax.crypto.Cipher
 import javax.crypto.spec.{GCMParameterSpec, SecretKeySpec}
@@ -11,7 +10,6 @@ import net.jpountz.lz4.LZ4Factory
 
 import scala.collection.mutable
 
-@InternalApi
 private[kryo] class KryoTransformer(transformations: List[Transformer]) {
   private[this] val toPipeLine = transformations.map(x => x.toBinary(_: Array[Byte])).reduceLeftOption(_.andThen(_)).getOrElse(identity(_: Array[Byte]))
   private[this] val fromPipeLine = transformations.map(x => x.fromBinary(_: Array[Byte])).reverse.reduceLeftOption(_.andThen(_)).getOrElse(identity(_: Array[Byte]))
@@ -58,7 +56,7 @@ trait Transformer {
   def toBinary(inputBuff: Array[Byte]): Array[Byte]
 
   def toBinary(inputBuff: Array[Byte], outputBuff: ByteBuffer): Unit
-    = outputBuff.put(toBinary(inputBuff))
+  = outputBuff.put(toBinary(inputBuff))
 
   def fromBinary(inputBuff: Array[Byte]): Array[Byte]
 

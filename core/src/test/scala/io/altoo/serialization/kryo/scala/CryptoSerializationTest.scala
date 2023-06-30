@@ -1,7 +1,5 @@
 package io.altoo.serialization.kryo.scala
 
-import org.apache.pekko.actor.ActorSystem
-import org.apache.pekko.serialization.{ByteBufferSerializer, SerializationExtension}
 import com.typesafe.config.ConfigFactory
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.flatspec.AnyFlatSpec
@@ -13,20 +11,7 @@ import scala.collection.immutable.HashMap
 object CryptoSerializationTest {
   private val config =
     """
-      |pekko {
-      |  actor {
-      |    serializers {
-      |      kryo = "io.altoo.serialization.kryo.scala.KryoSerializer"
-      |    }
-      |    serialization-bindings {
-      |      "scala.collection.immutable.HashMap" = kryo
-      |      "[Lscala.collection.immutable.HashMap;" = kryo
-      |      "scala.collection.mutable.LongMap" = kryo
-      |      "[Lscala.collection.mutable.LongMap;" = kryo
-      |    }
-      |  }
-      |}
-      |pekko-kryo-serialization {
+      |scala-kryo-serialization {
       |  post-serialization-transformations = aes
       |  encryption {
       |    aes {
@@ -42,16 +27,11 @@ object CryptoSerializationTest {
 }
 
 class CryptoSerializationTest extends AnyFlatSpec with Matchers with BeforeAndAfterAll {
-  private val sourceSystem = ActorSystem("source", ConfigFactory.parseString(CryptoSerializationTest.config))
-  private val targetSystem = ActorSystem("target", ConfigFactory.parseString(CryptoSerializationTest.config))
-  private val sourceSerialization = SerializationExtension(sourceSystem)
-  private val targetSerialization = SerializationExtension(targetSystem)
+  private val config = ConfigFactory.parseString(CryptoSerializationTest.config)
+    .withFallback(ConfigFactory.defaultReference())
 
-  override protected def afterAll(): Unit = {
-    sourceSystem.terminate()
-    targetSystem.terminate()
-  }
-
+  private val sourceSerializer = new ScalaKryoSerializer(config, getClass.getClassLoader)
+  private val targetSerializer = new ScalaKryoSerializer(config, getClass.getClassLoader)
 
   behavior of "Encrypted serialization"
 
@@ -63,20 +43,14 @@ class CryptoSerializationTest extends AnyFlatSpec with Matchers with BeforeAndAf
         "baz" -> 124L)
     }.toArray
 
-    val serializer = sourceSerialization.findSerializerFor(atm)
-    val deserializer = targetSerialization.findSerializerFor(atm)
-
-    val serialized = serializer.toBinary(atm)
-    val deserialized = deserializer.fromBinary(serialized)
-    atm shouldBe deserialized
-
-    val bufferSerializer = sourceSerialization.findSerializerFor(atm).asInstanceOf[ByteBufferSerializer]
-    val bufferDeserializer = targetSerialization.findSerializerFor(atm).asInstanceOf[ByteBufferSerializer]
+    val serialized = sourceSerializer.serialize(atm).get
+    val deserialized = targetSerializer.deserialize[Array[HashMap[String, Any]]](serialized)
+    deserialized.get should contain theSameElementsInOrderAs atm
 
     val bb = ByteBuffer.allocate(serialized.length * 2)
-    bufferSerializer.toBinary(atm, bb)
+    sourceSerializer.serialize(atm, bb)
     bb.flip()
-    val bufferDeserialized = bufferDeserializer.fromBinary(bb, atm.getClass.toString)
-    atm shouldBe bufferDeserialized
+    val bufferDeserialized = targetSerializer.deserialize[Array[HashMap[String, Any]]](bb)
+    bufferDeserialized.get should contain theSameElementsInOrderAs atm
   }
 }

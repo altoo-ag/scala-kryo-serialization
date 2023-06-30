@@ -1,9 +1,8 @@
 package io.altoo.serialization.kryo.scala
 
-import java.util
-import org.apache.pekko.serialization.Serializer
 import org.agrona.concurrent.ManyToManyConcurrentArrayQueue
 
+import java.util
 import scala.reflect.ClassTag
 
 /**
@@ -12,12 +11,6 @@ import scala.reflect.ClassTag
  * you could use for example a bounded non-blocking queue.
  */
 class DefaultQueueBuilder {
-  /**
-   * Override to use a different queue.
-   */
-  @deprecated("Deprecated in favor of build[T]", since = "2.2.0")
-  def build: util.Queue[Serializer] = build[Serializer]
-
   /**
    * Override to use a different queue.
    */

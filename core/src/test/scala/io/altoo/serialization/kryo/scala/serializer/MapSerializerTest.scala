@@ -3,13 +3,12 @@ package io.altoo.serialization.kryo.scala.serializer
 import com.esotericsoftware.kryo.io.{Input, Output}
 import com.esotericsoftware.kryo.serializers.MapSerializer
 import com.esotericsoftware.kryo.{Kryo, Serializer}
-import io.altoo.serialization.kryo.scala.serializer.scala.*
-import io.altoo.serialization.kryo.scala.serializer.scala.collection.immutable.{Map, Set, Vector}
 import io.altoo.serialization.kryo.scala.testkit.AbstractKryoTest
 
 import java.util
 import java.util.Random
 import java.util.concurrent.ConcurrentHashMap
+import scala.collection.immutable.{Map, Set, Vector}
 
 class MapSerializerTest extends AbstractKryoTest {
 
@@ -131,7 +130,7 @@ class MapSerializerTest extends AbstractKryoTest {
 
   it should "roundtrip custom classes and maps/vectors/lists of them" in {
     kryo.setRegistrationRequired(false)
-    kryo.addDefaultSerializer(classOf[scala.Enumeration#Value], classOf[EnumerationSerializer])
+    kryo.addDefaultSerializer(classOf[scala.Enumeration#Value], classOf[EnumerationNameSerializer])
     kryo.addDefaultSerializer(classOf[scala.collection.immutable.Set[_]], classOf[ScalaImmutableSetSerializer])
     kryo.addDefaultSerializer(classOf[scala.collection.Map[_, _]], classOf[ScalaImmutableMapSerializer])
     kryo.addDefaultSerializer(classOf[scala.collection.immutable.Seq[_]], classOf[ScalaCollectionSerializer])
@@ -163,7 +162,7 @@ class MapSerializerTest extends AbstractKryoTest {
     kryo.register(classOf[scala.Tuple4[Any, Any, Any, Any]], 48)
     kryo.register(classOf[scala.Tuple5[Any, Any, Any, Any, Any]], 49)
     kryo.register(classOf[scala.Tuple6[Any, Any, Any, Any, Any, Any]], 50)
-    kryo.addDefaultSerializer(classOf[scala.Enumeration#Value], classOf[EnumerationSerializer])
+    kryo.addDefaultSerializer(classOf[scala.Enumeration#Value], classOf[EnumerationNameSerializer])
     kryo.addDefaultSerializer(classOf[scala.collection.immutable.Set[_]], classOf[ScalaImmutableSetSerializer])
     kryo.addDefaultSerializer(classOf[scala.collection.immutable.List[_]], classOf[ScalaCollectionSerializer])
 
@@ -189,7 +188,7 @@ class MapSerializerTest extends AbstractKryoTest {
     kryo.register(classOf[scala.Tuple4[Any, Any, Any, Any]], 48)
     kryo.register(classOf[scala.Tuple5[Any, Any, Any, Any, Any]], 49)
     kryo.register(classOf[scala.Tuple6[Any, Any, Any, Any, Any, Any]], 50)
-    kryo.addDefaultSerializer(classOf[scala.Enumeration#Value], classOf[EnumerationSerializer])
+    kryo.addDefaultSerializer(classOf[scala.Enumeration#Value], classOf[EnumerationNameSerializer])
     var map1 = Set.empty[String]
 
     0 until hugeCollectionSize foreach { i => map1 += ("k" + i) }
@@ -208,7 +207,7 @@ class MapSerializerTest extends AbstractKryoTest {
     // Support serialization of Scala collections
     kryo.register(classOf[scala.collection.immutable.$colon$colon[_]], 60)
     kryo.addDefaultSerializer(classOf[scala.collection.immutable.List[_]], classOf[ScalaCollectionSerializer])
-    kryo.addDefaultSerializer(classOf[scala.Enumeration#Value], classOf[EnumerationSerializer])
+    kryo.addDefaultSerializer(classOf[scala.Enumeration#Value], classOf[EnumerationNameSerializer])
 
     var map1 = List.empty[String]
 
@@ -226,7 +225,7 @@ class MapSerializerTest extends AbstractKryoTest {
   it should "roundtrip big immutable sequences" in {
     kryo.setRegistrationRequired(false)
     kryo.register(classOf[scala.collection.immutable.$colon$colon[_]], 40)
-    kryo.addDefaultSerializer(classOf[scala.Enumeration#Value], classOf[EnumerationSerializer])
+    kryo.addDefaultSerializer(classOf[scala.Enumeration#Value], classOf[EnumerationNameSerializer])
     kryo.addDefaultSerializer(classOf[scala.collection.immutable.Set[_]], classOf[ScalaImmutableSetSerializer])
     kryo.addDefaultSerializer(classOf[scala.collection.immutable.List[_]], classOf[ScalaCollectionSerializer])
     val map1 = Seq("Rome", "Italy", "London", "England", "Paris", "France")
@@ -297,8 +296,4 @@ class MapSerializerTest extends AbstractKryoTest {
   }
 }
 
-case class ScalaClass1(
-                          var opt: Option[java.lang.Integer] = Some(3),
-                          var vector11: Vector[String] = Vector("LL", "ee", "oo"),
-                          var list11: List[String] = List("LL", "ee", "oo"),
-                          var map11: Map[String, String] = Map("Leo" -> "John", "Luke" -> "Lea"))
+case class ScalaClass1(var opt: Option[java.lang.Integer] = Some(3), var vector11: Vector[String] = Vector("LL", "ee", "oo"), var list11: List[String] = List("LL", "ee", "oo"),  var map11: Map[String, String] = Map("Leo" -> "John", "Luke" -> "Lea"))

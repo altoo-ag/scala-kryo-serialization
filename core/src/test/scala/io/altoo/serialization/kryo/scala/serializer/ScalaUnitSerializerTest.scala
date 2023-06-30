@@ -1,6 +1,5 @@
 package io.altoo.serialization.kryo.scala.serializer
 
-import io.altoo.serialization.kryo.scala.serializer.scala.ScalaUnitSerializer
 import io.altoo.serialization.kryo.scala.testkit.AbstractKryoTest
 
 

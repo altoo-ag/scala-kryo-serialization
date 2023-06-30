@@ -3,8 +3,8 @@ package io.altoo.serialization.kryo.scala.serializer
 
 import io.altoo.serialization.kryo.scala.testkit.AbstractKryoTest
 
+
 /** @author romix */
-// @Ignore
 class TupleSerializationTest extends AbstractKryoTest {
 
   type IntTuple6 = (Int, Int, Int, Int, Int, Int)

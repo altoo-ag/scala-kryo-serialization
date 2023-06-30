@@ -25,14 +25,14 @@ class KryoClassResolver(val logImplicits: Boolean) extends DefaultClassResolver 
   override def registerImplicit(typ: Class[_]): Registration = {
     if (kryo.isRegistrationRequired) {
       throw new IllegalArgumentException("Class is not registered: " + typ.getName
-        + "\nNote: To register this class use: kryo.register(" + typ.getName + ".class);")
+                                         + "\nNote: To register this class use: kryo.register(" + typ.getName + ".class);")
     }
     // registerInternal(new Registration(typ, kryo.getDefaultSerializer(typ), DefaultClassResolver.NAME))
     /* TODO: This does not work if sender and receiver are
-		 * initialized independently and using different order of classes
-		 * Try to ensure that the same ID is assigned to the same classname 
-		 * by every Kryo instance:
-		 */
+     * initialized independently and using different order of classes
+     * Try to ensure that the same ID is assigned to the same classname 
+     * by every Kryo instance:
+     */
     // Take a next available ID
     //		register(typ, kryo.getDefaultSerializer(typ))
     // Use typename hashCode as an ID. It is pretty unique and is independent of the order of class registration

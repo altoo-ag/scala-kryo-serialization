@@ -1,15 +1,15 @@
 package io.altoo.serialization.kryo.scala.testkit
 
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
-
 import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryo.io.{Input, Output}
 import com.esotericsoftware.kryo.util.MapReferenceResolver
-import io.altoo.serialization.kryo.scala.serializer.scala.SubclassResolver
+import io.altoo.serialization.kryo.scala.serializer.SubclassResolver
 import org.objenesis.strategy.StdInstantiatorStrategy
 import org.scalatest.Outcome
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
+
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 
 /**
  * Testing directly with a configured Kryo instance.

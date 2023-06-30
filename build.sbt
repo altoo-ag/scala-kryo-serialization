@@ -12,32 +12,32 @@ enablePlugins(ReleasePlugin)
 addCommandAlias("validatePullRequest", ";+test")
 
 lazy val root: Project = project.in(file("."))
-    .settings(Test / parallelExecution := false)
-    .settings(commonSettings)
-    .settings(name := "scala-kryo-serialization")
-    .settings(releaseProcess := releaseSettings)
-    .settings(publish / skip := true)
-    .aggregate(core)
+  .settings(Test / parallelExecution := false)
+  .settings(commonSettings)
+  .settings(name := "scala-kryo-serialization")
+  .settings(releaseProcess := releaseSettings)
+  .settings(publish / skip := true)
+  .aggregate(core)
 
 lazy val core: Project = Project("core", file("core"))
-    .settings(moduleSettings)
-    .settings(description := "pekko-serialization implementation using kryo - core implementation")
-    .settings(name := "scala-kryo-serialization")
-    .settings(libraryDependencies ++= coreDeps ++ testingDeps)
-    .settings(Compile / unmanagedSourceDirectories += {
-      scalaBinaryVersion.value match {
-        case "2.12" => baseDirectory.value / "src" / "main" / "scala-2.12"
-        case "2.13" => baseDirectory.value / "src" / "main" / "scala-2.13"
-        case _      => baseDirectory.value / "src" / "main" / "scala-3"
-      }
-    })
-    .settings(Test / unmanagedSourceDirectories += {
-      scalaBinaryVersion.value match {
-        case "2.12" => baseDirectory.value / "src" / "test" / "scala-2.12"
-        case "2.13" => baseDirectory.value / "src" / "test" / "scala-2.13"
-        case _      => baseDirectory.value / "src" / "test" / "scala-3"
-      }
-    })
+  .settings(moduleSettings)
+  .settings(description := "pekko-serialization implementation using kryo - core implementation")
+  .settings(name := "scala-kryo-serialization")
+  .settings(libraryDependencies ++= coreDeps ++ testingDeps)
+  .settings(Compile / unmanagedSourceDirectories += {
+    scalaBinaryVersion.value match {
+      case "2.12" => baseDirectory.value / "src" / "main" / "scala-2.12"
+      case "2.13" => baseDirectory.value / "src" / "main" / "scala-2.13"
+      case _      => baseDirectory.value / "src" / "main" / "scala-3"
+    }
+  })
+  .settings(Test / unmanagedSourceDirectories += {
+    scalaBinaryVersion.value match {
+      case "2.12" => baseDirectory.value / "src" / "test" / "scala-2.12"
+      case "2.13" => baseDirectory.value / "src" / "test" / "scala-2.13"
+      case _      => baseDirectory.value / "src" / "test" / "scala-3"
+    }
+  })
 
 // Dependencies
 lazy val coreDeps = Seq(
@@ -89,7 +89,7 @@ lazy val scalacBasicOptions = Seq(
           "-Xlog-reflective-calls",
           "-Ywarn-unused:-nowarn",
           "-opt:l:inline",
-          "-opt-inline-from:io.altoo.serialization.kryo.scala.*")
+          "-opt-inline-from:io.altoo.pekko.serialization.kryo.*")
       case "3" =>
         Seq(
           "-encoding", "utf8",
@@ -187,26 +187,26 @@ lazy val releaseSettings = Seq[ReleaseStep](
 releaseCrossBuild := true
 
 lazy val pomExtras = <url>https://github.com/altoo-ag/scala-kryo-serialization</url>
-    <licenses>
-      <license>
-        <name>The Apache Software License, Version 2.0</name>
-        <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-        <distribution>repo</distribution>
-      </license>
-    </licenses>
-    <scm>
-      <url>git@github.com:altoo-ag/scala-kryo-serialization.git</url>
-      <connection>scm:git:git@github.com:altoo-ag/scala-kryo-serialization.git</connection>
-    </scm>
-    <developers>
-      <developer>
-        <id>danischroeter</id>
-        <name>Daniel Schröter</name>
-        <email>dsc@scaling.ch</email>
-      </developer>
-      <developer>
-        <id>nvollmar</id>
-        <name>Nicolas Vollmar</name>
-        <email>nvo@scaling.ch</email>
-      </developer>
-    </developers>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <scm>
+    <url>git@github.com:altoo-ag/scala-kryo-serialization.git</url>
+    <connection>scm:git:git@github.com:altoo-ag/scala-kryo-serialization.git</connection>
+  </scm>
+  <developers>
+    <developer>
+      <id>danischroeter</id>
+      <name>Daniel Schröter</name>
+      <email>dsc@scaling.ch</email>
+    </developer>
+    <developer>
+      <id>nvollmar</id>
+      <name>Nicolas Vollmar</name>
+      <email>nvo@scaling.ch</email>
+    </developer>
+  </developers>

@@ -1,6 +1,5 @@
 package io.altoo.serialization.kryo.scala
 
-import org.apache.pekko.annotation.InternalApi
 
 /**
  * Returns a SerializerPool, useful to reduce GC overhead.
@@ -8,7 +7,6 @@ import org.apache.pekko.annotation.InternalApi
  * @param queueBuilder queue builder.
  * @param newInstance  Serializer instance builder.
  */
-@InternalApi
 private[kryo] class SerializerPool(queueBuilder: DefaultQueueBuilder, newInstance: () => KryoSerializerBackend) {
 
   private val pool = queueBuilder.build[KryoSerializerBackend]

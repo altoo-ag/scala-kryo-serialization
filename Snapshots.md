@@ -10,7 +10,7 @@ For the latest snapshots you need to add the Sonatype's snapshot repository to y
 
 And the snapshot dependency to your project
 
-`libraryDependencies += "io.altoo" %% "pekko-kryo-serialization" % "1.0.0-SNAPSHOT"`
+`libraryDependencies += "io.altoo" %% "scala-kryo-serialization" % "1.0.0-SNAPSHOT"`
 
 
 #### maven projects
@@ -27,7 +27,7 @@ For the latest snapshots use:
 
     <dependency>
         <groupId>io.altoo</groupId>
-        <artifactId>pekko-kryo-serialization_2.13</artifactId>
+        <artifactId>scala-kryo-serialization_2.13</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </dependency>
 ```

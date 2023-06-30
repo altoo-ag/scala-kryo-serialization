@@ -1,10 +1,7 @@
 package io.altoo.serialization.kryo.scala
 
-import org.apache.pekko.actor.{ActorRef, ExtendedActorSystem}
-import com.esotericsoftware.kryo.Serializer
 import com.esotericsoftware.kryo.serializers.FieldSerializer
-import io.altoo.serialization.kryo.scala.serializer.pekko.{ActorRefSerializer, ByteStringSerializer}
-import io.altoo.serialization.kryo.scala.serializer.scala._
+import io.altoo.serialization.kryo.scala.serializer.*
 
 import scala.util.{Failure, Success}
 
@@ -17,44 +14,28 @@ class DefaultKryoInitializer {
    * Can be overridden to set a different field serializer before other serializer are initialized.
    * Note: register custom classes/serializer in `postInit`, otherwise default order might break.
    */
-  def preInit(kryo: ScalaKryo, system: ExtendedActorSystem): Unit = {
-    kryo.setDefaultSerializer(classOf[com.esotericsoftware.kryo.serializers.FieldSerializer[_]])
-    preInit(kryo)
+  def preInit(kryo: ScalaKryo): Unit = {
+    kryo.setDefaultSerializer(classOf[com.esotericsoftware.kryo.serializers.FieldSerializer[?]])
   }
-
-  /**
-   * Can be overridden to set a different field serializer before other serializer are initialized.
-   * Note: register custom classes/serializer in `postInit`, otherwise default order might break.
-   */
-  @deprecatedOverriding("Use preInit(kryo,system) instead", since = "2.0.0")
-  def preInit(kryo: ScalaKryo): Unit = ()
-
-  /**
-   * Registers serializer for standard akka classes - override only if you know what you are doing!
-   */
-  def initAkkaSerializer(kryo: ScalaKryo, system: ExtendedActorSystem): Unit = {
-    kryo.addDefaultSerializer(classOf[org.apache.pekko.util.ByteString], classOf[ByteStringSerializer])
-    kryo.addDefaultSerializer(classOf[ActorRef], new ActorRefSerializer(system))
-  }
-
-
-  /**
-   * Overwrite to change default enumeration serializer from [[io.altoo.serialization.kryo.scala.serializer.scala.EnumerationNameSerializer]] to old [[io.altoo.serialization.kryo.scala.serializer.scala.EnumerationSerializer]].
-   *
-   * @deprecated Will be removed with [[io.altoo.serialization.kryo.scala.serializer.scala.EnumerationSerializer]] in the future.
-   */
-  @Deprecated
-  protected def defaultEnumerationSerializer: Class[_ <: Serializer[Enumeration#Value]] = classOf[EnumerationNameSerializer]
 
   /**
    * Registers serializer for standard/often used scala classes - override only if you know what you are doing!
    */
-  def initScalaSerializer(kryo: ScalaKryo, system: ExtendedActorSystem): Unit = {
+  def init(kryo: ScalaKryo): Unit = {
+    initScalaSerializer(kryo)
+  }
+
+  /**
+   * Can be overridden to register additional serializer and classes explicitly or reconfigure kryo.
+   */
+  def postInit(kryo: ScalaKryo): Unit = ()
+
+  protected def initScalaSerializer(kryo: ScalaKryo): Unit = {
     // Support serialization of some standard or often used Scala classes
-    kryo.addDefaultSerializer(classOf[scala.Enumeration#Value], defaultEnumerationSerializer)
-    system.dynamicAccess.getClassFor[AnyRef]("scala.Enumeration$Val") match {
+    kryo.addDefaultSerializer(classOf[scala.Enumeration#Value], classOf[EnumerationNameSerializer])
+    ReflectionHelper.getClassFor("scala.Enumeration$Val", classOf[Enumeration].getClassLoader) match {
       case Success(clazz) => kryo.register(clazz)
-      case Failure(e) => throw e
+      case Failure(e)     => throw e
     }
     kryo.register(classOf[scala.Enumeration#Value])
 
@@ -62,37 +43,24 @@ class DefaultKryoInitializer {
     kryo.addDefaultSerializer(classOf[scala.runtime.BoxedUnit], classOf[ScalaUnitSerializer])
 
     // mutable maps
-    kryo.addDefaultSerializer(classOf[scala.collection.mutable.Map[_, _]], classOf[ScalaMutableMapSerializer])
+    kryo.addDefaultSerializer(classOf[scala.collection.mutable.Map[?, ?]], classOf[ScalaMutableMapSerializer])
 
     // immutable maps - specialized by mutable, immutable and sortable
-    kryo.addDefaultSerializer(classOf[scala.collection.immutable.SortedMap[_, _]], classOf[ScalaSortedMapSerializer])
-    kryo.addDefaultSerializer(classOf[scala.collection.immutable.Map[_, _]], classOf[ScalaImmutableMapSerializer])
+    kryo.addDefaultSerializer(classOf[scala.collection.immutable.SortedMap[?, ?]], classOf[ScalaSortedMapSerializer])
+    kryo.addDefaultSerializer(classOf[scala.collection.immutable.Map[?, ?]], classOf[ScalaImmutableMapSerializer])
 
     // Sets - specialized by mutability and sortability
     kryo.addDefaultSerializer(classOf[scala.collection.immutable.BitSet], classOf[FieldSerializer[scala.collection.immutable.BitSet]])
-    kryo.addDefaultSerializer(classOf[scala.collection.immutable.SortedSet[_]], classOf[ScalaImmutableSortedSetSerializer])
-    kryo.addDefaultSerializer(classOf[scala.collection.immutable.Set[_]], classOf[ScalaImmutableSetSerializer])
+    kryo.addDefaultSerializer(classOf[scala.collection.immutable.SortedSet[?]], classOf[ScalaImmutableSortedSetSerializer])
+    kryo.addDefaultSerializer(classOf[scala.collection.immutable.Set[?]], classOf[ScalaImmutableSetSerializer])
 
     kryo.addDefaultSerializer(classOf[scala.collection.mutable.BitSet], classOf[FieldSerializer[scala.collection.mutable.BitSet]])
-    kryo.addDefaultSerializer(classOf[scala.collection.mutable.SortedSet[_]], classOf[ScalaMutableSortedSetSerializer])
-    kryo.addDefaultSerializer(classOf[scala.collection.mutable.Set[_]], classOf[ScalaMutableSetSerializer])
+    kryo.addDefaultSerializer(classOf[scala.collection.mutable.SortedSet[?]], classOf[ScalaMutableSortedSetSerializer])
+    kryo.addDefaultSerializer(classOf[scala.collection.mutable.Set[?]], classOf[ScalaMutableSetSerializer])
 
     // Map/Set Factories
     ScalaVersionSerializers.mapAndSet(kryo)
     ScalaVersionSerializers.iterable(kryo)
     ScalaVersionSerializers.enums(kryo)
   }
-
-  /**
-   * Can be overridden to register additional serializer and classes explicitely or reconfigure kryo.
-   */
-  def postInit(kryo: ScalaKryo, system: ExtendedActorSystem): Unit = {
-    postInit(kryo)
-  }
-
-  /**
-   * Can be overridden to register additional serializer and classes explicitely or reconfigure kryo.
-   */
-  @deprecatedOverriding("Use postInit(kryo,system) instead", since = "2.0.0")
-  def postInit(kryo: ScalaKryo): Unit = ()
 }

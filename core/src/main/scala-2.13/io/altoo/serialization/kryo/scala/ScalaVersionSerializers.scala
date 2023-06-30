@@ -1,7 +1,7 @@
 package io.altoo.serialization.kryo.scala
 
 import com.esotericsoftware.kryo.Kryo
-import io.altoo.serialization.kryo.scala.serializer.scala.{ScalaCollectionSerializer, ScalaImmutableMapSerializer}
+import io.altoo.serialization.kryo.scala.serializer.{ScalaCollectionSerializer, ScalaImmutableMapSerializer}
 
 private[kryo] object ScalaVersionSerializers {
   def mapAndSet(kryo: Kryo): Unit = {

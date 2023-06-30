@@ -1,54 +1,30 @@
-package io.altoo.serialization.kryo.scala
+package io.altoo.serializer.kryo.scala
 
-import org.apache.pekko.serialization.{ByteBufferSerializer, SerializationExtension}
 import com.typesafe.config.ConfigFactory
-import io.altoo.serialization.kryo.scala.testkit.AbstractPekkoTest
+import io.altoo.serialization.kryo.scala.{KryoSerializer, ScalaKryoSerializer}
+import org.scalatest.Inside
+import org.scalatest.flatspec.{AnyFlatSpec, AnyFlatSpecLike}
+import org.scalatest.matchers.should.Matchers
 
 import java.nio.ByteBuffer
+import scala.collection.{immutable, mutable}
 import scala.collection.immutable.{HashMap, TreeMap}
 import scala.collection.mutable.AnyRefMap
 import scala.util.Try
 
-object TransformationSerializationTest {
+object TransformationserializerTest {
   private val defaultConfig =
     """
-      |pekko {
-      |  actor {
-      |   allow-java-serialization = off
-      |   serializers {
-      |      kryo = "io.altoo.serialization.kryo.scala.KryoSerializer"
-      |    }
-      |    serialization-bindings {
-      |      "java.io.Serializable" = none
-      |      "scala.collection.immutable.TreeMap" = kryo
-      |      "[Lscala.collection.immutable.TreeMap;" = kryo
-      |      "scala.collection.immutable.HashMap" = kryo
-      |      "[Lscala.collection.immutable.HashMap;" = kryo
-      |      "scala.collection.immutable.HashSet" = kryo
-      |      "[Lscala.collection.immutable.HashSet;" = kryo
-      |      "scala.collection.immutable.TreeSet" = kryo
-      |      "[Lscala.collection.immutable.TreeSet;" = kryo
-      |      "scala.collection.mutable.HashMap" = kryo
-      |      "[Lscala.collection.mutable.HashMap;" = kryo
-      |      "scala.collection.mutable.AnyRefMap" = kryo
-      |      "[Lscala.collection.mutable.AnyRefMap;" = kryo
-      |      "scala.collection.mutable.HashSet" = kryo
-      |      "[Lscala.collection.mutable.HashSet;" = kryo
-      |      "scala.collection.mutable.TreeSet" = kryo
-      |      "[Lscala.collection.mutable.TreeSet;" = kryo
-      |    }
-      |  }
-      |}
-      |pekko-kryo-serialization {
+      |scala-kryo-serializer {
       |  type = "nograph"
       |  id-strategy = "incremental"
       |  kryo-reference-map = false
       |  buffer-size = 65536
-      |  post-serialization-transformations = off
+      |  post-serializer-transformations = off
       |  implicit-registration-logging = true
       |  encryption {
       |    aes {
-      |      key-provider = "io.altoo.serialization.kryo.scala.DefaultKeyProvider"
+      |      key-provider = "io.altoo.serializer.kryo.scala.DefaultKeyProvider"
       |      mode = "AES/GCM/NoPadding"
       |      iv-length = 12
       |      password = "j68KkRjq21ykRGAQ"
@@ -59,28 +35,27 @@ object TransformationSerializationTest {
       |""".stripMargin
 }
 
-class ZipTransformationSerializationTest extends TransformationSerializationTest("Zip", "pekko-kryo-serialization.post-serialization-transformations = deflate")
-class Lz4TransformationSerializationTest extends TransformationSerializationTest("LZ4", "pekko-kryo-serialization.post-serialization-transformations = lz4")
-class AESTransformationSerializationTest extends TransformationSerializationTest("AES", "pekko-kryo-serialization.post-serialization-transformations = aes")
-class ZipAESTransformationSerializationTest extends TransformationSerializationTest("ZipAES", """pekko-kryo-serialization.post-serialization-transformations = "deflate,aes"""")
-class LZ4AESTransformationSerializationTest extends TransformationSerializationTest("LZ4AES", """pekko-kryo-serialization.post-serialization-transformations = "lz4,aes"""")
-class OffTransformationSerializationTest extends TransformationSerializationTest("Off", "")
-class UnsafeTransformationSerializationTest extends TransformationSerializationTest("Unsafe", "pekko-kryo-serialization.use-unsafe = true")
-class UnsafeLZ4TransformationSerializationTest extends TransformationSerializationTest("UnsafeLZ4",
-  """
-    |pekko-kryo-serialization.use-unsafe = true
-    |pekko-kryo-serialization.post-serialization-transformations = lz4
-    """.stripMargin
-)
+class ZipTransformationserializerTest extends TransformationserializerTest("Zip", "scala-kryo-serializer.post-serializer-transformations = deflate")
+class Lz4TransformationserializerTest extends TransformationserializerTest("LZ4", "scala-kryo-serializer.post-serializer-transformations = lz4")
+class AESTransformationserializerTest extends TransformationserializerTest("AES", "scala-kryo-serializer.post-serializer-transformations = aes")
+class ZipAESTransformationserializerTest extends TransformationserializerTest("ZipAES", """scala-kryo-serializer.post-serializer-transformations = "deflate,aes"""")
+class LZ4AESTransformationserializerTest extends TransformationserializerTest("LZ4AES", """scala-kryo-serializer.post-serializer-transformations = "lz4,aes"""")
+class OffTransformationserializerTest extends TransformationserializerTest("Off", "")
+class UnsafeTransformationserializerTest extends TransformationserializerTest("Unsafe", "scala-kryo-serializer.use-unsafe = true")
+class UnsafeLZ4TransformationserializerTest extends TransformationserializerTest("UnsafeLZ4",
+      """
+    |scala-kryo-serializer.use-unsafe = true
+    |scala-kryo-serializer.post-serializer-transformations = lz4
+    """.stripMargin)
 
-abstract class TransformationSerializationTest(name: String, config: String) extends AbstractPekkoTest(
-  ConfigFactory.parseString(config)
-      .withFallback(ConfigFactory.parseString(TransformationSerializationTest.defaultConfig))
-) {
-  private val serialization = SerializationExtension(system)
+abstract class TransformationserializerTest(name: String, testConfig: String) extends AnyFlatSpec with Matchers with Inside {
+  private val config = ConfigFactory.parseString(testConfig)
+    .withFallback(ConfigFactory.parseString(TransformationserializerTest.defaultConfig))
+    .withFallback(ConfigFactory.defaultReference())
 
+  private val serializer = new ScalaKryoSerializer(config, getClass.getClassLoader)
 
-  behavior of s"$name transformation serialization"
+  behavior of s"$name transformation serializer"
 
   it should "serialize and deserialize immutable TreeMap[String,Any] successfully" in {
     val tm = TreeMap[String, Any](
@@ -90,23 +65,16 @@ abstract class TransformationSerializationTest(name: String, config: String) ext
       "boom" -> true,
       "hash" -> HashMap[Int, Int](1 -> 200, 2 -> 300, 500 -> 3))
 
-    serialization.findSerializerFor(tm) shouldBe a[KryoSerializer]
-
-    val serialized = serialization.serialize(tm)
-    serialized shouldBe a[util.Success[_]]
-
-    val deserialized = serialization.deserialize(serialized.get, classOf[TreeMap[String, Any]])
+    val serialized = serializer.serialize(tm).get
+    val deserialized = serializer.deserialize[TreeMap[String, Any]](serialized)
     deserialized shouldBe util.Success(tm)
 
-    val bufferSerializer = serialization.findSerializerFor(tm).asInstanceOf[ByteBufferSerializer]
-    val bb = ByteBuffer.allocate(serialized.get.length * 2)
+    val bb = ByteBuffer.allocate(serialized.length * 2)
 
-    val bufferSerialized = Try(bufferSerializer.toBinary(tm, bb))
-    bufferSerialized shouldBe a[util.Success[_]]
-
+    serializer.serialize(tm, bb)
     bb.flip()
 
-    val bufferDeserialized = Try(bufferSerializer.fromBinary(bb, classOf[TreeMap[String, Any]].getClass.getName))
+    val bufferDeserialized = serializer.deserialize[TreeMap[String, Any]](bb)
     bufferDeserialized shouldBe util.Success(tm)
   }
 
@@ -118,23 +86,16 @@ abstract class TransformationSerializationTest(name: String, config: String) ext
       "boom" -> true,
       "hash" -> HashMap[Int, Int](1 -> 200, 2 -> 300, 500 -> 3))
 
-    serialization.findSerializerFor(tm) shouldBe a[KryoSerializer]
-
-    val serialized = serialization.serialize(tm)
-    serialized shouldBe a[util.Success[_]]
-
-    val deserialized = serialization.deserialize(serialized.get, classOf[HashMap[String, Any]])
+    val serialized = serializer.serialize(tm).get
+    val deserialized = serializer.deserialize[HashMap[String, Any]](serialized)
     deserialized shouldBe util.Success(tm)
 
-    val bufferSerializer = serialization.findSerializerFor(tm).asInstanceOf[ByteBufferSerializer]
-    val bb = ByteBuffer.allocate(serialized.get.length * 2)
+    val bb = ByteBuffer.allocate(serialized.length * 2)
 
-    val bufferSerialized = Try(bufferSerializer.toBinary(tm, bb))
-    bufferSerialized shouldBe a[util.Success[_]]
-
+    serializer.serialize(tm, bb) shouldBe a[util.Success[?]]
     bb.flip()
 
-    val bufferDeserialized = Try(bufferSerializer.fromBinary(bb, classOf[HashMap[String, Any]].getClass.getName))
+    val bufferDeserialized = serializer.deserialize[HashMap[String, Any]](bb)
     bufferDeserialized shouldBe util.Success(tm)
   }
 
@@ -146,23 +107,16 @@ abstract class TransformationSerializationTest(name: String, config: String) ext
       "baz" -> 124L,
       "hash" -> HashMap[Int, Int](r.nextInt() -> r.nextInt(), 5 -> 500, 10 -> r.nextInt()))
 
-    serialization.findSerializerFor(tm) shouldBe a[KryoSerializer]
-
-    val serialized = serialization.serialize(tm)
-    serialized shouldBe a[util.Success[_]]
-
-    val deserialized = serialization.deserialize(serialized.get, classOf[AnyRefMap[String, Any]])
+    val serialized = serializer.serialize(tm).get
+    val deserialized = serializer.deserialize[AnyRefMap[String, Any]](serialized)
     deserialized shouldBe util.Success(tm)
 
-    val bufferSerializer = serialization.findSerializerFor(tm).asInstanceOf[ByteBufferSerializer]
-    val bb = ByteBuffer.allocate(serialized.get.length * 2)
+    val bb = ByteBuffer.allocate(serialized.length * 2)
 
-    val bufferSerialized = Try(bufferSerializer.toBinary(tm, bb))
-    bufferSerialized shouldBe a[util.Success[_]]
-
+    serializer.serialize(tm, bb) shouldBe a[util.Success[?]]
     bb.flip()
 
-    val bufferDeserialized = Try(bufferSerializer.fromBinary(bb, classOf[AnyRefMap[String, Any]].getClass.getName))
+    val bufferDeserialized = serializer.deserialize[AnyRefMap[String, Any]](bb)
     bufferDeserialized shouldBe util.Success(tm)
   }
 
@@ -174,23 +128,16 @@ abstract class TransformationSerializationTest(name: String, config: String) ext
       "boom" -> true,
       "hash" -> HashMap[Int, Int](1 -> 200, 2 -> 300, 500 -> 3))
 
-    serialization.findSerializerFor(tm) shouldBe a[KryoSerializer]
-
-    val serialized = serialization.serialize(tm)
-    serialized shouldBe a[util.Success[_]]
-
-    val deserialized = serialization.deserialize(serialized.get, classOf[scala.collection.mutable.HashMap[String, Any]])
+    val serialized = serializer.serialize(tm).get
+    val deserialized = serializer.deserialize[mutable.HashMap[String, Any]](serialized)
     deserialized shouldBe util.Success(tm)
 
-    val bufferSerializer = serialization.findSerializerFor(tm).asInstanceOf[ByteBufferSerializer]
-    val bb = ByteBuffer.allocate(serialized.get.length * 2)
+    val bb = ByteBuffer.allocate(serialized.length * 2)
 
-    val bufferSerialized = Try(bufferSerializer.toBinary(tm, bb))
-    bufferSerialized shouldBe a[util.Success[_]]
-
+    serializer.serialize(tm, bb) shouldBe a[util.Success[?]]
     bb.flip()
 
-    val bufferDeserialized = Try(bufferSerializer.fromBinary(bb, classOf[scala.collection.mutable.HashMap[String, Any]].getClass.getName))
+    val bufferDeserialized = serializer.deserialize[mutable.HashMap[String, Any]](bb)
     bufferDeserialized shouldBe util.Success(tm)
   }
 
@@ -198,92 +145,64 @@ abstract class TransformationSerializationTest(name: String, config: String) ext
   it should "serialize and deserialize immutable HashSet[String] successfully" in {
     val tm = scala.collection.immutable.HashSet[String]("foo", "bar", "baz", "boom")
 
-    serialization.findSerializerFor(tm) shouldBe a[KryoSerializer]
-
-    val serialized = serialization.serialize(tm)
-    serialized shouldBe a[util.Success[_]]
-
-    val deserialized = serialization.deserialize(serialized.get, classOf[scala.collection.immutable.HashSet[String]])
+    val serialized = serializer.serialize(tm).get
+    val deserialized = serializer.deserialize[immutable.HashSet[String]](serialized)
     deserialized shouldBe util.Success(tm)
 
-    val bufferSerializer = serialization.findSerializerFor(tm).asInstanceOf[ByteBufferSerializer]
-    val bb = ByteBuffer.allocate(serialized.get.length * 2)
+    val bb = ByteBuffer.allocate(serialized.length * 2)
 
-    val bufferSerialized = Try(bufferSerializer.toBinary(tm, bb))
-    bufferSerialized shouldBe a[util.Success[_]]
-
+    serializer.serialize(tm, bb) shouldBe a[util.Success[?]]
     bb.flip()
 
-    val bufferDeserialized = Try(bufferSerializer.fromBinary(bb, classOf[scala.collection.immutable.HashSet[String]].getClass.getName))
+    val bufferDeserialized = serializer.deserialize[immutable.HashSet[String]](bb)
     bufferDeserialized shouldBe util.Success(tm)
   }
 
   it should "serialize and deserialize immutable TreeSet[String] successfully" in {
     val tm = scala.collection.immutable.TreeSet[String]("foo", "bar", "baz", "boom")
 
-    serialization.findSerializerFor(tm) shouldBe a[KryoSerializer]
-
-    val serialized = serialization.serialize(tm)
-    serialized shouldBe a[util.Success[_]]
-
-    val deserialized = serialization.deserialize(serialized.get, classOf[scala.collection.immutable.TreeSet[String]])
+    val serialized = serializer.serialize(tm).get
+    val deserialized = serializer.deserialize[immutable.TreeSet[String]](serialized)
     deserialized shouldBe util.Success(tm)
 
-    val bufferSerializer = serialization.findSerializerFor(tm).asInstanceOf[ByteBufferSerializer]
-    val bb = ByteBuffer.allocate(serialized.get.length * 2)
+    val bb = ByteBuffer.allocate(serialized.length * 2)
 
-    val bufferSerialized = Try(bufferSerializer.toBinary(tm, bb))
-    bufferSerialized shouldBe a[util.Success[_]]
-
+    serializer.serialize(tm, bb) shouldBe a[util.Success[?]]
     bb.flip()
 
-    val bufferDeserialized = Try(bufferSerializer.fromBinary(bb, classOf[scala.collection.immutable.TreeSet[String]].getClass.getName))
+    val bufferDeserialized = serializer.deserialize[immutable.TreeSet[String]](bb)
     bufferDeserialized shouldBe util.Success(tm)
   }
 
   it should "serialize and deserialize mutable HashSet[String] successfully" in {
     val tm = scala.collection.mutable.HashSet[String]("foo", "bar", "baz", "boom")
 
-    serialization.findSerializerFor(tm) shouldBe a[KryoSerializer]
-
-    val serialized = serialization.serialize(tm)
-    serialized shouldBe a[util.Success[_]]
-
-    val deserialized = serialization.deserialize(serialized.get, classOf[scala.collection.mutable.HashSet[String]])
+    val serialized = serializer.serialize(tm).get
+    val deserialized = serializer.deserialize[mutable.HashSet[String]](serialized)
     deserialized shouldBe util.Success(tm)
 
-    val bufferSerializer = serialization.findSerializerFor(tm).asInstanceOf[ByteBufferSerializer]
-    val bb = ByteBuffer.allocate(serialized.get.length * 2)
+    val bb = ByteBuffer.allocate(serialized.length * 2)
 
-    val bufferSerialized = Try(bufferSerializer.toBinary(tm, bb))
-    bufferSerialized shouldBe a[util.Success[_]]
-
+    serializer.serialize(tm, bb) shouldBe a[util.Success[?]]
     bb.flip()
 
-    val bufferDeserialized = Try(bufferSerializer.fromBinary(bb, classOf[scala.collection.mutable.HashSet[String]].getClass.getName))
+    val bufferDeserialized = serializer.deserialize[mutable.HashSet[String]](bb)
     bufferDeserialized shouldBe util.Success(tm)
   }
 
   it should "serialize and deserialize mutable TreeSet[String] successfully" in {
     val tm = scala.collection.mutable.TreeSet[String]("foo", "bar", "baz", "boom")
 
-    serialization.findSerializerFor(tm) shouldBe a[KryoSerializer]
-
-    val serialized = serialization.serialize(tm)
-    serialized shouldBe a[util.Success[_]]
-
-    val deserialized = serialization.deserialize(serialized.get, classOf[scala.collection.mutable.TreeSet[String]])
+    val serialized = serializer.serialize(tm).get
+    val deserialized = serializer.deserialize[mutable.TreeSet[String]](serialized)
     deserialized shouldBe util.Success(tm)
 
-    val bufferSerializer = serialization.findSerializerFor(tm).asInstanceOf[ByteBufferSerializer]
-    val bb = ByteBuffer.allocate(serialized.get.length * 2)
+    val bb = ByteBuffer.allocate(serialized.length * 2)
 
-    val bufferSerialized = Try(bufferSerializer.toBinary(tm, bb))
-    bufferSerialized shouldBe a[util.Success[_]]
-
+    serializer.serialize(tm, bb) shouldBe a[util.Success[?]]
     bb.flip()
 
-    val bufferDeserialized = Try(bufferSerializer.fromBinary(bb, classOf[scala.collection.mutable.TreeSet[String]].getClass.getName))
+    val bufferDeserialized = serializer.deserialize[mutable.TreeSet[String]](bb)
     bufferDeserialized shouldBe util.Success(tm)
   }
 }

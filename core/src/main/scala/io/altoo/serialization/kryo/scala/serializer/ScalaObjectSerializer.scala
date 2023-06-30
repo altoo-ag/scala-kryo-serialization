@@ -18,11 +18,10 @@
 
 package io.altoo.serialization.kryo.scala.serializer
 
-import _root_.java.lang.reflect.Field
-
-import com.esotericsoftware.kryo.{Kryo, Serializer}
 import com.esotericsoftware.kryo.io.{Input, Output}
+import com.esotericsoftware.kryo.{Kryo, Serializer}
 
+import _root_.java.lang.reflect.Field
 import scala.collection.mutable.{Map => MMap}
 import scala.util.control.Exception.allCatch
 
@@ -47,7 +46,7 @@ class ScalaObjectSerializer[T] extends Serializer[T] {
 
   protected def moduleField(klass: Class[_]): Option[Field] =
     Some(klass)
-      .filter { _.getName.last == '$' }
-      .flatMap { k => allCatch.opt(k.getDeclaredField("MODULE$")) }
+        .filter { _.getName.last == '$' }
+        .flatMap { k => allCatch.opt(k.getDeclaredField("MODULE$")) }
 }
 

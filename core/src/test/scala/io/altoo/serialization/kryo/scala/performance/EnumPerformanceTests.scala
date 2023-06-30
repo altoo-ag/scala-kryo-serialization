@@ -1,11 +1,9 @@
 package io.altoo.serialization.kryo.scala.performance
 
-import org.apache.pekko.actor.ActorSystem
-import org.apache.pekko.serialization.SerializationExtension
-import org.apache.pekko.testkit.TestKit
 import com.typesafe.config.ConfigFactory
-import org.scalatest._
-import org.scalatest.flatspec.AnyFlatSpecLike
+import io.altoo.serialization.kryo.scala.ScalaKryoSerializer
+import org.scalatest.*
+import org.scalatest.flatspec.{AnyFlatSpec, AnyFlatSpecLike}
 
 object Time extends Enumeration {
   type Time = Value
@@ -20,25 +18,15 @@ object EnumPerformanceTests {
 
   private val defaultConfig =
     """
-  pekko {
-    actor {
-      serializers {
-        kryo = "io.altoo.serialization.kryo.scala.KryoSerializer"
-      }
-      serialization-bindings {
-        "java.io.Serializable" = kryo
-      }
-    }
-  }
-  pekko-kryo-serialization {
-    id-strategy = "default"
-  }
-  """
+      |scala-kryo-serialization {
+      |    id-strategy = "default"
+      |  }
+      |""".stripMargin
 
-  class PerformanceTests extends TestKit(ActorSystem("testSystem", ConfigFactory.parseString(EnumPerformanceTests.defaultConfig))) with AnyFlatSpecLike with BeforeAndAfterAllConfigMap {
-    import Time._
+  class PerformanceTests extends AnyFlatSpec with BeforeAndAfterAllConfigMap {
+    import Time.*
 
-    private val serialization = SerializationExtension(system)
+    private val serializer = new ScalaKryoSerializer(ConfigFactory.parseString(EnumPerformanceTests.defaultConfig).withFallback(ConfigFactory.defaultReference()), getClass.getClassLoader)
 
     private def timeIt[A](name: String, loops: Int)(a: () => A): Unit = {
       val now = System.nanoTime
@@ -51,22 +39,21 @@ object EnumPerformanceTests {
       println(f"$name%s:\t$ms%.1f\tms\t=\t${loops * 1000 / ms}%.0f\tops/s")
     }
 
-
     behavior of "Enumeration serialization"
 
     it should "be fast" in {
       val iterations = 10000
 
-      val listOfTimes = 1 to 1000 flatMap { _ => Time.values.toList }
-      timeIt("Enum Serialize:   ", iterations) { () => serialization.serialize(listOfTimes) }
-      timeIt("Enum Serialize:   ", iterations) { () => serialization.serialize(listOfTimes) }
-      timeIt("Enum Serialize:   ", iterations) { () => serialization.serialize(listOfTimes) }
+      val listOfTimes = (1 to 1000).flatMap { _ => Time.values.toList }
+      timeIt("Enum Serialize:   ", iterations) { () => serializer.serialize(listOfTimes).get }
+      timeIt("Enum Serialize:   ", iterations) { () => serializer.serialize(listOfTimes).get }
+      timeIt("Enum Serialize:   ", iterations) { () => serializer.serialize(listOfTimes).get }
 
-      val bytes = serialization.serialize(listOfTimes).get
+      val bytes = serializer.serialize(listOfTimes).get
 
-      timeIt("Enum Deserialize: ", iterations)(() => serialization.deserialize(bytes, classOf[List[Time]]))
-      timeIt("Enum Deserialize: ", iterations)(() => serialization.deserialize(bytes, classOf[List[Time]]))
-      timeIt("Enum Deserialize: ", iterations)(() => serialization.deserialize(bytes, classOf[List[Time]]))
+      timeIt("Enum Deserialize: ", iterations)(() => serializer.deserialize[List[Time]](bytes))
+      timeIt("Enum Deserialize: ", iterations)(() => serializer.deserialize[List[Time]](bytes))
+      timeIt("Enum Deserialize: ", iterations)(() => serializer.deserialize[List[Time]](bytes))
     }
   }
 }

@@ -1,10 +1,10 @@
 package io.altoo.serialization.kryo.scala
 
-import org.apache.pekko.serialization.SerializationExtension
 import com.typesafe.config.ConfigFactory
 import io.altoo.serialization.kryo.scala.performance.Time
 import io.altoo.serialization.kryo.scala.performance.Time.Time
-import io.altoo.serialization.kryo.scala.testkit.AbstractPekkoTest
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
@@ -12,16 +12,6 @@ import scala.concurrent.{Await, Future}
 object EnumSerializationTest {
   private val config = {
     """
-      |pekko {
-      |  actor {
-      |    serializers {
-      |      kryo = "io.altoo.serialization.kryo.scala.KryoSerializer"
-      |    }
-      |    serialization-bindings {
-      |      "java.io.Serializable" = kryo
-      |    }
-      |  }
-      |}
       |pekko-kryo-serialization {
       |  id-strategy = "default"
       |}
@@ -29,9 +19,8 @@ object EnumSerializationTest {
   }
 }
 
-class EnumSerializationTest extends AbstractPekkoTest(ConfigFactory.parseString(EnumSerializationTest.config)) {
-  private val serialization = SerializationExtension(system)
-
+class EnumSerializationTest extends AnyFlatSpec with Matchers {
+  private val serializer = new ScalaKryoSerializer(ConfigFactory.parseString(EnumSerializationTest.config).withFallback(ConfigFactory.defaultReference()), getClass.getClassLoader)
 
   behavior of "Enumeration serialization"
 
@@ -39,10 +28,11 @@ class EnumSerializationTest extends AbstractPekkoTest(ConfigFactory.parseString(
     import scala.concurrent.ExecutionContext.Implicits.global
 
     val listOfTimes = Time.values.toList
-    val bytes = serialization.serialize(listOfTimes).get
-    val futures = 1 to 2 map (_ => Future[List[Time]] {
-      serialization.deserialize(bytes.clone, classOf[List[Time]]).get
-    })
+    val bytes = serializer.serialize(listOfTimes).get
+    val futures = (1 to 2).map(_ =>
+      Future[List[Time]] {
+        serializer.deserialize[List[Time]](bytes).get
+      })
 
     val result = Await.result(Future.sequence(futures), Duration.Inf)
 

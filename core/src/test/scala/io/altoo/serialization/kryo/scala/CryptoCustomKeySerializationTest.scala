@@ -1,12 +1,12 @@
 package io.altoo.serialization.kryo.scala
 
-import org.apache.pekko.actor.ExtendedActorSystem
-import org.apache.pekko.serialization.{ByteBufferSerializer, SerializationExtension}
-import com.esotericsoftware.kryo.util._
+import com.esotericsoftware.kryo.util.*
 import com.typesafe.config.{Config, ConfigFactory}
-import io.altoo.serialization.kryo.scala.serializer.scala._
-import io.altoo.serialization.kryo.scala.testkit.{AbstractPekkoTest, KryoSerializationTesting}
+import io.altoo.serialization.kryo.scala.serializer.*
+import io.altoo.serialization.kryo.scala.testkit.KryoSerializationTesting
 import org.objenesis.strategy.StdInstantiatorStrategy
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 import java.nio.ByteBuffer
 import scala.collection.immutable.HashMap
@@ -18,23 +18,7 @@ class KryoCryptoTestKey extends DefaultKeyProvider {
 object CryptoCustomKeySerializationTest {
   private val config = {
     s"""
-       |pekko {
-       |  actor {
-       |    serializers {
-       |      kryo = "io.altoo.serialization.kryo.scala.KryoSerializer"
-       |    }
-       |    serialization-bindings {
-       |      "scala.collection.immutable.HashMap" = kryo
-       |      "[Lscala.collection.immutable.HashMap;" = kryo
-       |      "scala.collection.mutable.LongMap" = kryo
-       |      "[Lscala.collection.mutable.LongMap;" = kryo
-       |      "${ScalaVersionRegistry.immutableHashMapImpl}" = kryo
-       |      "${ScalaVersionRegistry.immutableHashSetImpl}" = kryo
-       |    }
-       |  }
-       |}
-       |
-       |pekko-kryo-serialization {
+       |scala-kryo-serialization {
        |  post-serialization-transformations = aes
        |  encryption {
        |    aes {
@@ -48,19 +32,14 @@ object CryptoCustomKeySerializationTest {
   }
 }
 
-class CryptoCustomKeySerializationTest extends AbstractPekkoTest(ConfigFactory.parseString(CryptoCustomKeySerializationTest.config)) with KryoSerializationTesting {
-  private val encryptedSerialization = SerializationExtension(system)
+class CryptoCustomKeySerializationTest extends AnyFlatSpec with Matchers {
+  private val config = ConfigFactory.parseString(CryptoCustomKeySerializationTest.config)
+    .withFallback(ConfigFactory.defaultReference())
 
-  protected val kryo: ScalaKryo = new ScalaKryo(new DefaultClassResolver(), new MapReferenceResolver())
-  kryo.setRegistrationRequired(false)
-  private val kryoInit = new DefaultKryoInitializer()
-  kryoInit.preInit(kryo, system.asInstanceOf[ExtendedActorSystem])
-  kryoInit.initAkkaSerializer(kryo, system.asInstanceOf[ExtendedActorSystem])
-  kryoInit.initScalaSerializer(kryo, system.asInstanceOf[ExtendedActorSystem])
-  private val instStrategy = kryo.getInstantiatorStrategy.asInstanceOf[DefaultInstantiatorStrategy]
-  instStrategy.setFallbackInstantiatorStrategy(new StdInstantiatorStrategy())
-  kryo.setInstantiatorStrategy(instStrategy)
+  private val encryptedSerializer = new ScalaKryoSerializer(config, getClass.getClassLoader)
+  private val unencryptedSerializer = new ScalaKryoSerializer(ConfigFactory.defaultReference(), getClass.getClassLoader)
 
+  private val crypto = new KryoCryptographer("TheTestSecretKey".getBytes("UTF-8"), "AES/GCM/NoPadding", 12)
 
   behavior of "Custom key encrypted serialization"
 
@@ -72,16 +51,18 @@ class CryptoCustomKeySerializationTest extends AbstractPekkoTest(ConfigFactory.p
         "baz" -> 124L)
     }.toArray
 
-    val serialized = encryptedSerialization.findSerializerFor(atm).toBinary(atm)
-    val decrypted = new KryoCryptographer("TheTestSecretKey".getBytes("UTF-8"), "AES/GCM/NoPadding", 12).fromBinary(serialized)
+    val serialized = encryptedSerializer.serialize(atm).get
 
-    val deserialized = deserialize[Array[HashMap[String, Any]]](decrypted)
-    atm shouldBe deserialized
+    val decrypted = crypto.fromBinary(serialized)
+    val deserialized = unencryptedSerializer.deserialize[Array[HashMap[String, Any]]](decrypted)
+    deserialized.get should contain theSameElementsInOrderAs atm
 
-    val bb = ByteBuffer.allocate(serialized.length)
-    encryptedSerialization.findSerializerFor(atm).asInstanceOf[ByteBufferSerializer].toBinary(atm, bb)
-    val bufferDeserialized = deserialize[Array[HashMap[String, Any]]](decrypted)
-    atm shouldBe bufferDeserialized
+    val bb = ByteBuffer.allocate(serialized.length * 8)
+    encryptedSerializer.serialize(atm, bb) shouldBe a[util.Success[?]]
+    bb.flip()
+    val unencrypted = crypto.fromBinary(bb)
+    val bufferDeserialized = unencryptedSerializer.deserialize[Array[HashMap[String, Any]]](unencrypted)
+    bufferDeserialized.get should contain theSameElementsInOrderAs atm
   }
 
   it should "decrypt with custom aes key" in {
@@ -92,13 +73,13 @@ class CryptoCustomKeySerializationTest extends AbstractPekkoTest(ConfigFactory.p
         "baz" -> 124L)
     }.toArray
 
-    val serialized = serialize[Array[HashMap[String, Any]]](atm)
-    val encrypted = new KryoCryptographer("TheTestSecretKey".getBytes("UTF-8"), "AES/GCM/NoPadding", 12).toBinary(serialized)
+    val serialized = unencryptedSerializer.serialize(atm).get
+    val encrypted = crypto.toBinary(serialized)
 
-    val deserialized = encryptedSerialization.findSerializerFor(atm).fromBinary(encrypted)
-    atm shouldBe deserialized
+    val deserialized = encryptedSerializer.deserialize[Array[HashMap[String, Any]]](encrypted)
+    deserialized.get should contain theSameElementsInOrderAs atm
 
-    val bufferDeserialized = encryptedSerialization.findSerializerFor(atm).asInstanceOf[ByteBufferSerializer].fromBinary(ByteBuffer.wrap(encrypted), atm.getClass.getName)
-    atm shouldBe bufferDeserialized
+    val bufferDeserialized = encryptedSerializer.deserialize[Array[HashMap[String, Any]]](ByteBuffer.wrap(encrypted))
+    bufferDeserialized.get should contain theSameElementsInOrderAs atm
   }
 }

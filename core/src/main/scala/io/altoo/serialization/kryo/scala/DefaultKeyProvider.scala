@@ -1,6 +1,7 @@
 package io.altoo.serialization.kryo.scala
 
 import com.typesafe.config.Config
+
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 

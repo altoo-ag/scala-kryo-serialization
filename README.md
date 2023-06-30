@@ -1,19 +1,16 @@
-pekko-kryo-serialization - kryo-based serializers for Scala and Pekko
+scala-kryo-serialization - kryo-based serializers for Scala
 =====================================================================
 
-Pekko Kryo Serialization is a fork of [Akka Kryo Serialization](https://github.com/altoo-ag/pekko-kryo-serialization) providing the same functionality to pekko.
+Scala Kryo Serialization provides a convenient way of using Kryo with Scala and is the base for [Pekko Kryo Serialization](https://github.com/altoo-ag/pekko-kryo-serialization) providing the same functionality to pekko.
 
 =====================================================================
-[![Full test prior to release](https://github.com/altoo-ag/pekko-kryo-serialization/actions/workflows/fullTest.yml/badge.svg)](https://github.com/altoo-ag/pekko-kryo-serialization/actions/workflows/fullTest.yml)
-[![Latest version](https://index.scala-lang.org/altoo-ag/pekko-kryo-serialization/pekko-kryo-serialization/latest.svg)](https://index.scala-lang.org/altoo-ag/pekko-kryo-serialization/pekko-kryo-serialization)
+[![Full test prior to release](https://github.com/altoo-ag/scala-kryo-serialization/actions/workflows/fullTest.yml/badge.svg)](https://github.com/altoo-ag/scala-kryo-serialization/actions/workflows/fullTest.yml)
+[![Latest version](https://index.scala-lang.org/altoo-ag/scala-kryo-serialization/scala-kryo-serialization/latest.svg)](https://index.scala-lang.org/altoo-ag/scala-kryo-serialization/scala-kryo-serialization)
 
-This library provides custom [Kryo](https://github.com/EsotericSoftware/kryo)-based serializers for Scala and Pekko. It can be
-used for more efficient [pekko](https://github.com/apache/incubator-pekko) actor remoting.
+This library provides custom [Kryo](https://github.com/EsotericSoftware/kryo)-based serializers for Scala. See [Pekko Kryo Serialization](https://github.com/altoo-ag/pekko-kryo-serialization) for serialization in Pekko.
 
 It can also be used for a general purpose and very efficient Kryo-based serialization
 of such Scala types like Option, Tuple, Enumeration and most of Scala's collection types.
-
-For upgrading from previous versions see [migration-guide](migration-guide.md). 
 
 
 Features
@@ -23,11 +20,10 @@ Features
 * Does not require any additional build steps like compiling proto files, when using protobuf serialization
 * Almost any Scala and Java class can be serialized using it without any additional configuration or code changes
 * Efficient serialization of such Scala types like Option, Tuple, Enumeration, most of Scala's collection types
-* Greatly improves performance of Akka's remoting
 * Supports transparent AES encryption and different modes of compression
 * Apache 2.0 license
 
-Note that this serializer is mainly intended to be used for pekko-remoting and not for (long term) persisted data. 
+Note that this serializer is mainly intended to be used for remoting and not for (long term) persisted data.
 The underlying kryo serializer does not guarantee compatibility between major versions.
 
 
@@ -37,15 +33,15 @@ How to use this library in your project
 To use this serializer, you need to do two things:
 
 * Include a dependency on this library into your project:
-    `libraryDependencies += "io.altoo" %% "pekko-kryo-serialization" % "? not yet released"`
+  `libraryDependencies += "io.altoo" %% "scala-kryo-serialization" % "? not yet released"`
 
-* Register and configure the serializer in your Akka configuration file, e.g. `application.conf`.
+* Register and configure the serializer in your Typesafe Config configuration file, e.g. `application.conf`.
 
 We provide several versions of the library:
 
-Version | Akka & Kryo Compatibility | Available Scala Versions | Tested with                                                                 |
---------|---------------------------|--------------------------|-----------------------------------------------------------------------------|
-v1.0.x  | Pekko-1.0 and Kryo-5.4    | 2.12,2.13,3.1            | JDK: OpenJdk11,OpenJdk17           Scala: 2.12.17,2.13.10,3.1.3 Pekko: ??? |
+Version | Kryo Compatibility | Available Scala Versions | Tested with                                                     |
+--------|--------------------|--------------------------|-----------------------------------------------------------------|
+v1.0.x  | Kryo-5.4           | 2.12,2.13,3.1            | JDK: OpenJdk11,OpenJdk17           Scala: 2.12.18,2.13.11,3.3.0 |
 
 
 Note that we use semantic versioning - see [semver.org](https://semver.org/).
@@ -53,14 +49,14 @@ Note that we use semantic versioning - see [semver.org](https://semver.org/).
 
 #### sbt projects
 
-To use the latest stable release of pekko-kryo-serialization in sbt projects you just need to add
+To use the latest stable release of scala-kryo-serialization in sbt projects you just need to add
 this dependency:
 
-`libraryDependencies += "io.altoo" %% "pekko-kryo-serialization" % "1.0.0"`
+`libraryDependencies += "io.altoo" %% "scala-kryo-serialization" % "1.0.0"`
 
 #### maven projects
 
-To use the official release of pekko-kryo-serialization in Maven projects, please use the following snippet in your pom.xml
+To use the official release of scala-kryo-serialization in Maven projects, please use the following snippet in your pom.xml
 
 ```xml
     <repository>
@@ -74,40 +70,24 @@ To use the official release of pekko-kryo-serialization in Maven projects, pleas
 
     <dependency>
         <groupId>io.altoo</groupId>
-        <artifactId>pekko-kryo-serialization_2.13</artifactId>
-        <version>1.0.0-RC1</version>
+        <artifactId>scala-kryo-serialization_2.13</artifactId>
+        <version>1.0.0</version>
     </dependency>
 ```
 
 For snapshots see [Snapshots.md](Snapshots.md)
 
 
-Configuration of pekko-kryo-serialization
+Configuration of scala-kryo-serialization
 ----------------------------------------------
 
 The following options are available for configuring this serializer:
 
-* You can add a new `pekko-kryo-serialization` section to the configuration to customize the serializer.
-    Consult the supplied [reference.conf](https://github.com/altoo-ag/pekko-kryo-serialization/blob/master/pekko-kryo-serialization/src/main/resources/reference.conf) for a detailed explanation of all the options available.
+* You can add a new `scala-kryo-serialization` section to the configuration to customize the serializer.
+  Consult the supplied [reference.conf](https://github.com/altoo-ag/scala-kryo-serialization/blob/master/core/src/main/resources/reference.conf) for a detailed explanation of all the options available.
 
-* You should declare in the `pekko.actor.serializers` section a new kind of serializer:
-    
-    ```
-    serializers {
-        java = "org.apache.pekko.serialization.JavaSerializer"
-        # Define kryo serializer
-        kryo = "io.altoo.serialization.kryo.scala.KryoSerializer"
-    }
-    ```
-
-* As usual, you should declare in the Pekko `serialization-bindings` section which
-classes should use kryo serialization. One thing to keep in mind is that classes that
-you register in this section are supposed to be *TOP-LEVEL* classes that you wish to
-serialize. I.e. this is a class of object that you send over the wire. It should not
-be a class that is used internally by a top-level class. The reason for it: Akka sees
-only an object of a top-level class to be sent. It picks a matching serializer for
-this top-level class, e.g. a default Java serializer, and then it serializes the
-whole object graph with this object as a root using this Java serializer.
+* Then you can create an instance of `ScalaKryoSerializer` and use it to serialize data.
+  The serializer implements pooling to perform serialization across multiple threads.
 
 
 How do you create mappings or classes sections with proper content?
@@ -150,59 +130,59 @@ the assigned class IDs are the same for senders and for receivers!
 How to customize kryo initialization
 ------------------------------------
 
-To further customize kryo you can extend the `io.altoo.serialization.kryo.scala.DefaultKryoInitializer` and 
-configure the FQCN under `pekko-kryo-serialization.kryo-initializer`.
+To further customize kryo you can extend the `io.altoo.serialization.kryo.scala.DefaultKryoInitializer` and
+configure the FQCN under `scala-kryo-serialization.kryo-initializer`.
 
 #### Configuring default field serializers
-In `preInit` a different default serializer can be configured 
-as it will be picked up by serailizers added afterwards.
-By default the `com.esotericsoftware.kryo.serializers.FieldSerializer` will be used.
+In `preInit` a different default serializer can be configured
+as it will be picked up by serializers added afterward.
+By default, the `com.esotericsoftware.kryo.serializers.FieldSerializer` will be used.
 
 The available options are:
 * `com.esotericsoftware.kryo.serializers.FieldSerializer`<br/>
-    Serializes objects using direct field assignment. FieldSerializer is generic
-    and can serialize most classes without any configuration. It is efficient
-    and writes only the field data, without any extra information. It does not
-    support adding, removing, or changing the type of fields without invalidating
-    previously serialized bytes. This can be acceptable in many situations,
-    such as when sending data over a network, but may not be a good choice for
-    long term data storage because the Java classes cannot evolve.
+  Serializes objects using direct field assignment. FieldSerializer is generic
+  and can serialize most classes without any configuration. It is efficient
+  and writes only the field data, without any extra information. It does not
+  support adding, removing, or changing the type of fields without invalidating
+  previously serialized bytes. This can be acceptable in many situations,
+  such as when sending data over a network, but may not be a good choice for
+  long term data storage because the Java classes cannot evolve.
 
 * `com.esotericsoftware.kryo.serializers.CompatibleFieldSerializer`<br/>
-    Serializes objects using direct field assignment, providing both forward and
-    backward compatibility. This means fields can be added or removed without
-    invalidating previously serialized bytes. Changing the type of a field
-    is not supported. The forward and backward compatibility comes at a cost: the
-    first time the class is encountered in the serialized bytes, a simple
-    schema is written containing the field name strings.
+  Serializes objects using direct field assignment, providing both forward and
+  backward compatibility. This means fields can be added or removed without
+  invalidating previously serialized bytes. Changing the type of a field
+  is not supported. The forward and backward compatibility comes at a cost: the
+  first time the class is encountered in the serialized bytes, a simple
+  schema is written containing the field name strings.
 
 * `com.esotericsoftware.kryo.serializers.VersionFieldSerializer`<br/>
-    Serializes objects using direct field assignment, with versioning backward
-    compatibility. Allows fields to have a @Since(int) annotation to indicate
-    the version they were added. For a particular field, the value in @Since
-    should never change once created. This is less flexible than FieldSerializer,
-    which can handle most classes without needing annotations, but it provides
-    backward compatibility. This means that new fields can be added, but
-    removing, renaming or changing the type of any field will invalidate
-    previous serialized bytes. VersionFieldSerializer has very little overhead
-    (a single additional varint) compared to FieldSerializer. Forward
-    compatibility is not supported.
+  Serializes objects using direct field assignment, with versioning backward
+  compatibility. Allows fields to have a @Since(int) annotation to indicate
+  the version they were added. For a particular field, the value in @Since
+  should never change once created. This is less flexible than FieldSerializer,
+  which can handle most classes without needing annotations, but it provides
+  backward compatibility. This means that new fields can be added, but
+  removing, renaming or changing the type of any field will invalidate
+  previous serialized bytes. VersionFieldSerializer has very little overhead
+  (a single additional varint) compared to FieldSerializer. Forward
+  compatibility is not supported.
 
 * `com.esotericsoftware.kryo.serializers.TaggedFieldSerializer`<br/>
-    Serializes objects using direct field assignment for fields that have
-    a @Tag(int) annotation. This provides backward compatibility so new
-    fields can be added. TaggedFieldSerializer has two advantages over
-    VersionFieldSerializer:
+  Serializes objects using direct field assignment for fields that have
+  a @Tag(int) annotation. This provides backward compatibility so new
+  fields can be added. TaggedFieldSerializer has two advantages over
+  VersionFieldSerializer:
     1) fields can be renamed
     2) fields marked with the @Deprecated annotation will be ignored when
-    reading old bytes and won't be written to new bytes.
-    
-    Deprecation effectively removes the field from serialization, though
-    the field and @Tag annotation must remain in the class. The downside is that
-    it has a small amount of additional overhead compared to
-    VersionFieldSerializer (additional per field variant). Forward compatibility
-    is not supported.
-    
+       reading old bytes and won't be written to new bytes.
+
+  Deprecation effectively removes the field from serialization, though
+  the field and @Tag annotation must remain in the class. The downside is that
+  it has a small amount of additional overhead compared to
+  VersionFieldSerializer (additional per field variant). Forward compatibility
+  is not supported.
+
 ### Example for configuring a different field serializer
 
 Create a custom initializer
@@ -217,7 +197,7 @@ class XyzKryoInitializer extends DefaultKryoInitializer {
 
 And register the custom initializer in your `application.conf` by overriding
 
-    pekko-kryo-serialization.kryo-initializer = "com.example.XyzKryoInitializer"
+    scala-kryo-serialization.kryo-initializer = "com.example.XyzKryoInitializer"
 
 To configure the field serializer a serializer factory can be used as described here: https://github.com/EsotericSoftware/kryo#serializer-factories
 
@@ -225,14 +205,14 @@ How to configure and customize encryption
 -----------------------------------------
 
 Using the `DefaultKeyProvider` an encryption key can statically be set by defining `encryption.aes.password` and `encryption.aes.salt`.
-Refere to the [reference.conf](https://github.com/altoo-ag/pekko-kryo-serialization/blob/master/pekko-kryo-serialization/src/main/resources/reference.conf) for an example configuration.
+Refere to the [reference.conf](https://github.com/altoo-ag/scala-kryo-serialization/blob/master/scala-kryo-serialization/src/main/resources/reference.conf) for an example configuration.
 
 Sometimes you need to pass a custom aes key, depending on the context you are in,
 instead of having a static key. For example, you might have the key in a data
 store, or provided by some other application. In such instances, you might want
 to provide the key dynamically to kryo serializer.
 
-You can override the 
+You can override the
 ```hocon
   encryption.aes.key-provider = "CustomKeyProviderFQCN"
 ```
@@ -247,26 +227,23 @@ class CustomKeyProvider extends DefaultKeyProvider {
 }
 ```
 
-The encryption transformer (selected for `aes` in post serialization transformations) only 
-supports GCM modes (currently recommended default mode is `AES/GCM/NoPadding`). 
+The encryption transformer (selected for `aes` in post serialization transformations) only
+supports GCM modes (currently recommended default mode is `AES/GCM/NoPadding`).
 
-Important: The old encryption transformer only supported CBC modes without manual authentication which is 
-deemed problematic. It is currently available for backwards compatibility by specifying `aesLegacy` in 
+Important: The old encryption transformer only supported CBC modes without manual authentication which is
+deemed problematic. It is currently available for backwards compatibility by specifying `aesLegacy` in
 post serialization transformations instead of `aes`. Its usage is deprecated and will be removed in future versions.
 
 
 Resolving Subclasses
 --------------------
 
-If you are using `id-strategy="explicit"`, you may find that some of the standard Scala and
-Akka types are a bit hard to register properly. This is because these types are exposed in
-the API as simple traits or abstract classes, but they are actually implemented as many
+If you are using `id-strategy="explicit"`, you may find that some of the standard Scala types are a bit hard to register properly.
+This is because these types are exposed in the API as simple traits or abstract classes, but they are actually implemented as many
 specialized subclasses that are used as necessary. Examples include:
 
 * scala.collection.immutable.Map
 * scala.collection.immutable.Set
-* pekko.actor.ActorRef
-* pekko.actor.ActorPath
 
 The problem is that Kryo thinks in terms of the *exact* class being serialized, but you are
 rarely working with the actual implementation class -- the application code only cares about
@@ -310,7 +287,7 @@ To support this the `KryoSerializer` can be extended to use a different configur
 
 Define a custom configuration:
 ```hocon
-pekko-kryo-serialization-xyz = ${pekko-kryo-serialization} {
+scala-kryo-serialization-xyz = ${scala-kryo-serialization} {
   # configuration overrides like...
   # id-strategy = "explicit"
 }
@@ -320,18 +297,9 @@ Create new serializer subclass overriding the config key to the matching config 
 ```scala
 package xyz
 
-class XyzKryoSerializer(system: ExtendedActorSystem) extends KryoSerializer(system) {
-  override def configKey: String = "pekko-kryo-serialization-xyz"
+class XyzKryoSerializer(config: Config, classLoader: ClassLoader) extends ScalaKryoSerializer(config, classLoader) {
+  override def configKey: String = "scala-kryo-serialization-xyz"
 }
-```
-
-And finally declare the custom serializer in the `akka.actor.serializers` section:
-```hocon
-    serializers {
-        kryo = "io.altoo.serialization.kryo.scala.KryoSerializer"
-        # define additional kryo serializer
-        kryo-xyz = "xyz.XyzKryoSerializer"
-    }
 ```
 
 
@@ -340,9 +308,6 @@ Enum Serialization
 
 Serialization of Java and Scala 3 enums is done by name (and not by index) to avoid having reordering of enum values breaking serialization.
 
-```scala
-protected override def defaultEnumerationSerializer: Class[_ <: Serializer[Enumeration#Value]] = classOf[EnumerationSerializer]
-```
 
 Using Kryo on JDK 17
 --------------------
@@ -365,7 +330,7 @@ If you wish to build the library on your own, you need to check out the project 
     sbt compile publish-local
 
 If you wish to use it within an OSGi environment, you can add OSGi headers to the build by executing:
-    
+
     sbt osgi-bundle publish-local
 
 Note that the OSGi build uses the sbt-osgi plugin, which may not be available from Maven Central or the

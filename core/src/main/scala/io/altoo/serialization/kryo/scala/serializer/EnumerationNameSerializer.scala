@@ -6,7 +6,7 @@ import com.esotericsoftware.kryo.{Kryo, Serializer}
 import java.lang.reflect.Field
 
 /**
- * Serializes enumeration by name compared to [[EnumerationSerializer]] which does by ordinal.
+ * Serializes enumeration by name.
  */
 class EnumerationNameSerializer extends Serializer[Enumeration#Value] {
 
@@ -18,7 +18,7 @@ class EnumerationNameSerializer extends Serializer[Enumeration#Value] {
 
   def write(kryo: Kryo, output: Output, obj: Enumeration#Value): Unit = {
     val parentEnum = parent(obj.getClass.getSuperclass)
-      .getOrElse(throw new NoSuchElementException(s"Enumeration not found for $obj"))
+        .getOrElse(throw new NoSuchElementException(s"Enumeration not found for $obj"))
     val enumClass = parentEnum.get(obj).getClass
     kryo.writeClass(output, enumClass)
     output.writeString(obj.toString)

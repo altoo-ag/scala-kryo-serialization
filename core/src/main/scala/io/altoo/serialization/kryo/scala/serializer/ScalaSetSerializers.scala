@@ -18,11 +18,10 @@
 
 package io.altoo.serialization.kryo.scala.serializer
 
-import java.lang.reflect.Constructor
-
 import com.esotericsoftware.kryo.io.{Input, Output}
 import com.esotericsoftware.kryo.{Kryo, Serializer}
 
+import java.lang.reflect.Constructor
 import scala.collection.immutable.{Set => imSet, SortedSet => imSSet}
 import scala.collection.mutable.{Set => mSet, SortedSet => mSSet}
 

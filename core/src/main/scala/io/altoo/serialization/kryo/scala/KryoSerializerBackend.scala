@@ -1,34 +1,29 @@
 package io.altoo.serialization.kryo.scala
 
-import org.apache.pekko.actor.ExtendedActorSystem
-import org.apache.pekko.annotation.InternalApi
-import org.apache.pekko.event.LoggingAdapter
-import org.apache.pekko.serialization.{ByteBufferSerializer, Serializer}
 import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryo.io.{ByteBufferInput, ByteBufferOutput, Input, Output}
 import com.esotericsoftware.kryo.unsafe.{UnsafeInput, UnsafeOutput}
+import org.slf4j.Logger
 
 import java.nio.ByteBuffer
 import scala.util.Success
 
-@InternalApi
-private[kryo] class KryoSerializerBackend(val kryo: Kryo, val bufferSize: Int, val maxBufferSize: Int, val includeManifest: Boolean, val useUnsafe: Boolean)(system: ExtendedActorSystem, log: LoggingAdapter) extends Serializer with ByteBufferSerializer {
-  // A unique identifier for this Serializer
-  def identifier = 12454323
+private[kryo] class KryoSerializerBackend(val kryo: Kryo, val bufferSize: Int, val maxBufferSize: Int, val useManifest: Boolean, val useUnsafe: Boolean)(log: Logger,
+                                                                                                                                                         classLoader: ClassLoader) {
 
   // "toBinary" serializes the given object to an Array of Bytes
   // Implements Serializer
-  override def toBinary(obj: AnyRef): Array[Byte] = {
+  def toBinary(obj: AnyRef): Array[Byte] = {
     val buffer = output
     try {
-      if (includeManifest)
+      if (useManifest)
         kryo.writeObject(buffer, obj)
       else
         kryo.writeClassAndObject(buffer, obj)
       buffer.toBytes
     } catch {
       case e: StackOverflowError if !kryo.getReferences => // when configured with "nograph" serialization can fail with stack overflow
-        log.error(e, "Could not serialize class with potentially circular references: {}", obj)
+        log.error(s"Could not serialize class with potentially circular references: $classLoader", e)
         throw new RuntimeException("Could not serialize class with potential circular references: " + obj)
     } finally {
       buffer.reset()
@@ -36,17 +31,17 @@ private[kryo] class KryoSerializerBackend(val kryo: Kryo, val bufferSize: Int, v
   }
 
   // Implements ByteBufferSerializer
-  override def toBinary(obj: AnyRef, buf: ByteBuffer): Unit = {
+  def toBinary(obj: AnyRef, buf: ByteBuffer): Unit = {
     val buffer = getOutput(buf)
     try {
-      if (includeManifest)
+      if (useManifest)
         kryo.writeObject(buffer, obj)
       else
         kryo.writeClassAndObject(buffer, obj)
       buffer.toBytes
     } catch {
       case e: StackOverflowError if !kryo.getReferences => // when configured with "nograph" serialization can fail with stack overflow
-        log.error(e, "Could not serialize class with potentially circular references: {}", obj)
+        log.error(s"Could not serialize class with potentially circular references: $obj", e)
         throw new RuntimeException("Could not serialize class with potential circular references: " + obj)
     }
   }
@@ -55,13 +50,13 @@ private[kryo] class KryoSerializerBackend(val kryo: Kryo, val bufferSize: Int, v
   // using the type hint (if any, see "includeManifest" above)
   // into the optionally provided classLoader.
   // Implements Serializer
-  override def fromBinary(bytes: Array[Byte], clazz: Option[Class[_]]): AnyRef = {
+  def fromBinary(bytes: Array[Byte], clazz: Option[Class[?]]): AnyRef = {
     val buffer = getInput(bytes)
     try {
-      if (includeManifest)
+      if (useManifest)
         clazz match {
           case Some(c) => kryo.readObject(buffer, c).asInstanceOf[AnyRef]
-          case _ => throw new RuntimeException("Object of unknown class cannot be deserialized")
+          case _       => throw new RuntimeException("Object of unknown class cannot be deserialized")
         }
       else
         kryo.readClassAndObject(buffer)
@@ -71,15 +66,15 @@ private[kryo] class KryoSerializerBackend(val kryo: Kryo, val bufferSize: Int, v
   }
 
   // Implements ByteBufferSerializer
-  override def fromBinary(buf: ByteBuffer, manifest: String): AnyRef = {
+  def fromBinary(buf: ByteBuffer, manifest: Option[String]): AnyRef = {
     val buffer = getInput(buf)
-    val clazz = system.dynamicAccess.getClassFor[AnyRef](manifest)
-    if (includeManifest)
+    if (useManifest) {
+      val clazz = manifest.flatMap(ReflectionHelper.getClassFor(_, classLoader).toOption)
       clazz match {
-        case Success(c) => kryo.readObject(buffer, c).asInstanceOf[AnyRef]
-        case _ => throw new RuntimeException("Object of unknown class cannot be deserialized")
+        case Some(c) => kryo.readObject(buffer, c).asInstanceOf[AnyRef]
+        case _       => throw new RuntimeException("Object of unknown class cannot be deserialized")
       }
-    else
+    } else
       kryo.readClassAndObject(buffer)
   }
 

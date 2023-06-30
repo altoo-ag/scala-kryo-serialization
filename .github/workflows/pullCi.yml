@@ -16,5 +16,5 @@ jobs:
         with:
           java-version: '17'
           distribution: 'adopt'
-      - name: Run tests with Pekko 1.0.x and Scala 2.12,2.13,3.3
+      - name: Run tests with Scala 2.12,2.13,3.3
         run: sbt +test

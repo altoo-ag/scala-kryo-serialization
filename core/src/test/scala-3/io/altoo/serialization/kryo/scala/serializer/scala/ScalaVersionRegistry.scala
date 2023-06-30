@@ -1,4 +1,4 @@
-package io.altoo.serialization.kryo.scala.serializer.scala
+package io.altoo.serialization.kryo.scala.serializer
 
 import com.esotericsoftware.kryo.Kryo
 

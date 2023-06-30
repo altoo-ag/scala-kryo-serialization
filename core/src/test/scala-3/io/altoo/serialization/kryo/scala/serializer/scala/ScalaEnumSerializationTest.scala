@@ -1,10 +1,10 @@
-package io.altoo.serialization.kryo.scala.serializer.scala
+package io.altoo.serialization.kryo.scala.serializer
 
 import com.esotericsoftware.kryo.util.{DefaultClassResolver, ListReferenceResolver}
+import io.altoo.serialization.kryo.scala.ScalaVersionSerializers
 import io.altoo.serialization.kryo.scala.testkit.{AbstractKryoTest, KryoSerializationTesting}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import io.altoo.serialization.kryo.scala.ScalaVersionSerializers
 
 object ScalaEnumSerializationTest {
   enum Sample(val name: String, val value: Int) {
@@ -19,7 +19,7 @@ object ScalaEnumSerializationTest {
 }
 
 class ScalaEnumSerializationTest  extends AnyFlatSpec with Matchers with KryoSerializationTesting {
-  import ScalaEnumSerializationTest._
+  import ScalaEnumSerializationTest.*
 
   val kryo = new ScalaKryo(new DefaultClassResolver(), new ListReferenceResolver())
   kryo.setRegistrationRequired(false)

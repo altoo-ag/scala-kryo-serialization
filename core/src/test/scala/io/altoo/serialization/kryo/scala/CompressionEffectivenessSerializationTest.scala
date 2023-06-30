@@ -12,19 +12,17 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-*/
+ */
 
 package io.altoo.serialization.kryo.scala
 
-import org.apache.pekko.actor.ActorSystem
-import org.apache.pekko.serialization.{Serialization, _}
 import com.esotericsoftware.minlog.Log
 import com.typesafe.config.ConfigFactory
-import io.altoo.serialization.kryo.scala.serializer.scala.ScalaVersionRegistry
-import org.scalatest.{BeforeAndAfterAll, Inside}
+import io.altoo.serialization.kryo.scala.KryoSerializer
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.{BeforeAndAfterAll, Inside}
 
 import java.nio.ByteBuffer
 import scala.util.Try
@@ -33,40 +31,18 @@ object CompressionEffectivenessSerializationTest {
 
   private val config =
     s"""
-       |pekko {
-       |  loggers = ["org.apache.pekko.event.Logging$$DefaultLogger"]
-       |  loglevel = "WARNING"
-       |
-       |  actor {
-       |    serializers {
-       |      kryo = "io.altoo.serialization.kryo.scala.KryoSerializer"
-       |    }
-       |
-       |    serialization-bindings {
-       |      "scala.Product" = kryo
-       |      "scala.collection.Map" = kryo
-       |      "scala.collection.Set" = kryo
-       |      "${ScalaVersionRegistry.immutableHashMapImpl}" = kryo
-       |      "${ScalaVersionRegistry.immutableHashSetImpl}" = kryo
-       |      "scala.collection.immutable.TreeMap" = kryo
-       |      "[Ljava.lang.Object;" = kryo
-       |      "org.apache.pekko.actor.ActorRef" = kryo # test only - should not be done in production!
-       |    }
-       |  }
-       |}
-       |
-       |pekko-kryo-serialization {
+       |scala-kryo-serialization {
        |  trace = true
        |  id-strategy = "incremental"
        |  implicit-registration-logging = true
-       |  post-serialization-transformations = off
+       |  post-serialization-transformations = "off"
        |}
        |""".stripMargin
 
   private val compressionConfig =
     s"""
-       |pekko-kryo-serialization {
-       |  post-serialization-transformations = lz4
+       |scala-kryo-serialization {
+       |  post-serialization-transformations = "lz4"
        |}
        |""".stripMargin
 }
@@ -90,29 +66,20 @@ class CompressionEffectivenessSerializationTest extends AnyFlatSpec with Matcher
     "Rome", "Italy", "London", "England", "Paris", "France", "New York", "USA", "Tokio", "Japan", "Peking", "China", "Brussels", "Belgium")
 
   // test systems
-  private val system = ActorSystem("example",
-    ConfigFactory.parseString(CompressionEffectivenessSerializationTest.config))
+  private val serializer = new ScalaKryoSerializer(
+    ConfigFactory.parseString(CompressionEffectivenessSerializationTest.config)
+      .withFallback(ConfigFactory.defaultReference()), getClass.getClassLoader)
 
-  private val systemWithCompression = ActorSystem("exampleWithCompression",
+  private val serializerWithCompression = new ScalaKryoSerializer(
     ConfigFactory.parseString(CompressionEffectivenessSerializationTest.compressionConfig)
-        .withFallback(ConfigFactory.parseString(CompressionEffectivenessSerializationTest.config))
-  )
-
-  // Get the Serialization Extension
-  private val serialization = SerializationExtension(system)
-  private val serializationWithCompression = SerializationExtension(systemWithCompression)
-
-  override protected def afterAll(): Unit = {
-    system.terminate()
-    systemWithCompression.terminate()
-  }
-
+      .withFallback(ConfigFactory.parseString(CompressionEffectivenessSerializationTest.config))
+      .withFallback(ConfigFactory.defaultReference()), getClass.getClassLoader)
 
   behavior of "KryoSerializer compression"
 
   it should "produce smaller serialized List representation when compression is enabled" in {
-    val uncompressedSize = serializeDeserialize(serialization, testList)
-    val compressedSize = serializeDeserialize(serializationWithCompression, testList)
+    val uncompressedSize = serializeDeserialize(serializer, testList)
+    val compressedSize = serializeDeserialize(serializerWithCompression, testList)
     (compressedSize.doubleValue() / uncompressedSize) should be < 0.4
     Console.println("Compressed Size = " + compressedSize)
     Console.println("Non-compressed Size = " + uncompressedSize)
@@ -120,9 +87,9 @@ class CompressionEffectivenessSerializationTest extends AnyFlatSpec with Matcher
 
   it should "produce smaller serialized huge List representation when compression is enabled" in {
     var testList = List.empty[String]
-    0 until hugeCollectionSize foreach { i => testList = ("k" + i) :: testList }
-    val uncompressedSize = serializeDeserialize(serialization, testList)
-    val compressedSize = serializeDeserialize(serializationWithCompression, testList)
+    (0 until hugeCollectionSize).foreach { i => testList = ("k" + i) :: testList }
+    val uncompressedSize = serializeDeserialize(serializer, testList)
+    val compressedSize = serializeDeserialize(serializerWithCompression, testList)
     (compressedSize.doubleValue() / uncompressedSize) should be < 0.7
     Console.println("Compressed Size = " + compressedSize)
     Console.println("Non-compressed Size = " + uncompressedSize)
@@ -130,17 +97,17 @@ class CompressionEffectivenessSerializationTest extends AnyFlatSpec with Matcher
 
   it should "produce smaller serialized huge Map representation when compression is enabled" in {
     var testMap: Map[String, String] = Map.empty[String, String]
-    0 until hugeCollectionSize foreach { i => testMap += ("k" + i) -> ("v" + i) }
-    val uncompressedSize = serializeDeserialize(serialization, testMap)
-    val compressedSize = serializeDeserialize(serializationWithCompression, testMap)
+    (0 until hugeCollectionSize).foreach { i => testMap += ("k" + i) -> ("v" + i) }
+    val uncompressedSize = serializeDeserialize(serializer, testMap)
+    val compressedSize = serializeDeserialize(serializerWithCompression, testMap)
     (compressedSize.doubleValue() / uncompressedSize) should be < 0.8
     Console.println("Compressed Size = " + compressedSize)
     Console.println("Non-compressed Size = " + uncompressedSize)
   }
 
   it should "produce smaller serialized Seq representation when compression is enabled" in {
-    val uncompressedSize = serializeDeserialize(serialization, testSeq)
-    val compressedSize = serializeDeserialize(serializationWithCompression, testSeq)
+    val uncompressedSize = serializeDeserialize(serializer, testSeq)
+    val compressedSize = serializeDeserialize(serializerWithCompression, testSeq)
     (compressedSize.doubleValue() / uncompressedSize) should be < 0.8
     Console.println("Compressed Size = " + compressedSize)
     Console.println("Non-compressed Size = " + uncompressedSize)
@@ -148,9 +115,9 @@ class CompressionEffectivenessSerializationTest extends AnyFlatSpec with Matcher
 
   it should "produce smaller serialized huge Seq representation when compression is enabled" in {
     var testSeq = Seq[String]()
-    0 until hugeCollectionSize foreach { i => testSeq = testSeq :+ ("k" + i) }
-    val uncompressedSize = serializeDeserialize(serialization, testSeq)
-    val compressedSize = serializeDeserialize(serializationWithCompression, testSeq)
+    (0 until hugeCollectionSize).foreach { i => testSeq = testSeq :+ ("k" + i) }
+    val uncompressedSize = serializeDeserialize(serializer, testSeq)
+    val compressedSize = serializeDeserialize(serializerWithCompression, testSeq)
     (compressedSize.doubleValue() / uncompressedSize) should be < 0.8
     Console.println("Compressed Size = " + compressedSize)
     Console.println("Non-compressed Size = " + uncompressedSize)
@@ -158,44 +125,31 @@ class CompressionEffectivenessSerializationTest extends AnyFlatSpec with Matcher
 
   it should "produce smaller serialized huge Set representation when compression is enabled" in {
     var testSet = Set.empty[String]
-    0 until hugeCollectionSize foreach { i => testSet += ("k" + i) }
-    val uncompressedSize = serializeDeserialize(serialization, testSet)
-    val compressedSize = serializeDeserialize(serializationWithCompression, testSet)
+    (0 until hugeCollectionSize).foreach { i => testSet += ("k" + i) }
+    val uncompressedSize = serializeDeserialize(serializer, testSet)
+    val compressedSize = serializeDeserialize(serializerWithCompression, testSet)
     (compressedSize.doubleValue() / uncompressedSize) should be < 0.7
     Console.println("Compressed Size = " + compressedSize)
     Console.println("Non-compressed Size = " + uncompressedSize)
   }
 
-  private def serializeDeserialize(serialization: Serialization, obj: AnyRef): Int = {
-    val serializer = serialization.findSerializerFor(obj)
-    Console.println("Object of class " + obj.getClass.getName + " got serializer of class " + serializer.getClass.getName)
-    serializer.getClass.equals(classOf[KryoSerializer]) shouldBe true
-    // Check serialization/deserialization
-    val serialized = serialization.serialize(obj)
-    serialized.isSuccess shouldBe true
+  private def serializeDeserialize(serializer: ScalaKryoSerializer, obj: AnyRef): Int = {
+    // Check serializer/deserializer
+    val serialized = serializer.serialize(obj).get
+    val deserialized = serializer.deserialize[AnyRef](serialized).get
 
-    val deserialized = serialization.deserialize(serialized.get, obj.getClass)
-    deserialized.isSuccess shouldBe true
+    deserialized.equals(obj) shouldBe true
 
-    deserialized.get.equals(obj) shouldBe true
-
-    // Check buffer serialization/deserialization
-    serializer shouldBe a[ByteBufferSerializer]
-
-    val bufferSerializer = serializer.asInstanceOf[ByteBufferSerializer]
-
-    val bb = ByteBuffer.allocate(2 * serialized.get.length)
-    val bufferSerialized = Try(bufferSerializer.toBinary(obj, bb))
-    bufferSerialized shouldBe a[util.Success[_]]
-    bb.position() shouldBe serialized.get.length
+    // Check buffer serializer/deserializer
+    val bb = ByteBuffer.allocate(2 * serialized.length)
+    serializer.serialize(obj, bb) shouldBe a[util.Success[?]]
+    bb.position() shouldBe serialized.length
 
     bb.flip()
 
-    val bufferDeserialized = Try(bufferSerializer.fromBinary(bb, obj.getClass.getName))
-    inside(bufferDeserialized) {
-      case util.Success(v) => v shouldBe obj
-    }
+    val bufferDeserialized = serializer.deserialize[AnyRef](bb).get
+    bufferDeserialized.equals(obj) shouldBe true
 
-    serialized.get.length
+    serialized.length
   }
 }

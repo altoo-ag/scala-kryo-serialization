@@ -1,9 +1,9 @@
 package io.altoo.serialization.kryo.scala.serializer
 
-import java.util.Collections
-
 import com.esotericsoftware.kryo.Registration
 import com.esotericsoftware.kryo.util.DefaultClassResolver
+
+import java.util.Collections
 
 class SubclassResolver extends DefaultClassResolver {
 
@@ -27,7 +27,7 @@ class SubclassResolver extends DefaultClassResolver {
    */
   def findRegistered(clazz: Class[_]): Option[Registration] = {
     if (clazz == null || unregisteredTypes.contains(clazz))
-      // Hit the top, so give up
+    // Hit the top, so give up
       None
     else {
       val reg = classToRegistration.get(clazz)
