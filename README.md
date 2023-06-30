@@ -326,12 +326,7 @@ javaOptions ++= Seq("--add-opens", "java.base/java.nio=ALL-UNNAMED", "--add-open
 How do I build this library on my own?
 --------------------------------------
 If you wish to build the library on your own, you need to check out the project from Github and do
+```
+sbt compile publishM2
+```
 
-    sbt compile publish-local
-
-If you wish to use it within an OSGi environment, you can add OSGi headers to the build by executing:
-
-    sbt osgi-bundle publish-local
-
-Note that the OSGi build uses the sbt-osgi plugin, which may not be available from Maven Central or the
-Typesafe repo, so it may require a local build as well. sbt-osgi can be found at [sbt/sbt-osgi](https://github.com/sbt/sbt-osgi).
