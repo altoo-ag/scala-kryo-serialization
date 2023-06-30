@@ -89,7 +89,7 @@ lazy val scalacBasicOptions = Seq(
           "-Xlog-reflective-calls",
           "-Ywarn-unused:-nowarn",
           "-opt:l:inline",
-          "-opt-inline-from:io.altoo.pekko.serialization.kryo.*")
+          "-opt-inline-from:io.altoo.serialization.kryo.scala.*")
       case "3" =>
         Seq(
           "-encoding", "utf8",

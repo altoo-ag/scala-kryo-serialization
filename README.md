@@ -96,7 +96,7 @@ The following options are available for configuring this serializer:
     serializers {
         java = "org.apache.pekko.serialization.JavaSerializer"
         # Define kryo serializer
-        kryo = "io.altoo.pekko.serialization.kryo.KryoSerializer"
+        kryo = "io.altoo.serialization.kryo.scala.KryoSerializer"
     }
     ```
 
@@ -150,7 +150,7 @@ the assigned class IDs are the same for senders and for receivers!
 How to customize kryo initialization
 ------------------------------------
 
-To further customize kryo you can extend the `io.altoo.pekko.serialization.kryo.DefaultKryoInitializer` and 
+To further customize kryo you can extend the `io.altoo.serialization.kryo.scala.DefaultKryoInitializer` and 
 configure the FQCN under `pekko-kryo-serialization.kryo-initializer`.
 
 #### Configuring default field serializers
@@ -328,7 +328,7 @@ class XyzKryoSerializer(system: ExtendedActorSystem) extends KryoSerializer(syst
 And finally declare the custom serializer in the `akka.actor.serializers` section:
 ```hocon
     serializers {
-        kryo = "io.altoo.pekko.serialization.kryo.KryoSerializer"
+        kryo = "io.altoo.serialization.kryo.scala.KryoSerializer"
         # define additional kryo serializer
         kryo-xyz = "xyz.XyzKryoSerializer"
     }
