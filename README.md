@@ -75,7 +75,7 @@ To use the official release of pekko-kryo-serialization in Maven projects, pleas
     <dependency>
         <groupId>io.altoo</groupId>
         <artifactId>pekko-kryo-serialization_2.13</artifactId>
-        <version>2.5.0</version>
+        <version>1.0.0-RC1</version>
     </dependency>
 ```
 
