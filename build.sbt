@@ -1,107 +1,80 @@
 import sbt._
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 
-
 // Basics
 
 // note: keep in sync to pekko https://github.com/apache/incubator-pekko/blob/main/project/Dependencies.scala
 val mainScalaVersion = "3.3.0"
-val secondayScalaVersions = Seq("2.12.18", "2.13.11")
+val secondaryScalaVersions = Seq("2.12.18", "2.13.11")
 
 val kryoVersion = "5.4.0"
-val defaultPekkoVersion = "1.0.0-RC3"
-val pekkoVersion =
-  System.getProperty("pekko.build.version", defaultPekkoVersion) match {
-    case "default" => defaultPekkoVersion
-    case x => x
-  }
-enablePlugins(SbtOsgi, ReleasePlugin)
+enablePlugins(ReleasePlugin)
 addCommandAlias("validatePullRequest", ";+test")
 
-// Projects
 lazy val root: Project = project.in(file("."))
     .settings(Test / parallelExecution := false)
     .settings(commonSettings)
-    .settings(name := "pekko-kryo-serialization")
+    .settings(name := "scala-kryo-serialization")
     .settings(releaseProcess := releaseSettings)
     .settings(publish / skip := true)
-    .settings(OsgiKeys.privatePackage := Nil)
-    .settings(OsgiKeys.exportPackage := Seq("io.altoo.*"))
-    .aggregate(core, typed)
+    .aggregate(core)
 
-lazy val core: Project = Project("pekko-kryo-serialization", file("pekko-kryo-serialization"))
+lazy val core: Project = Project("core", file("core"))
     .settings(moduleSettings)
     .settings(description := "pekko-serialization implementation using kryo - core implementation")
+    .settings(name := "scala-kryo-serialization")
     .settings(libraryDependencies ++= coreDeps ++ testingDeps)
     .settings(Compile / unmanagedSourceDirectories += {
       scalaBinaryVersion.value match {
         case "2.12" => baseDirectory.value / "src" / "main" / "scala-2.12"
         case "2.13" => baseDirectory.value / "src" / "main" / "scala-2.13"
-        case _ => baseDirectory.value / "src" / "main" / "scala-3"
+        case _      => baseDirectory.value / "src" / "main" / "scala-3"
       }
     })
     .settings(Test / unmanagedSourceDirectories += {
       scalaBinaryVersion.value match {
         case "2.12" => baseDirectory.value / "src" / "test" / "scala-2.12"
         case "2.13" => baseDirectory.value / "src" / "test" / "scala-2.13"
-        case _ => baseDirectory.value / "src" / "test" / "scala-3"
+        case _      => baseDirectory.value / "src" / "test" / "scala-3"
       }
     })
-
-lazy val typed: Project = Project("pekko-kryo-serialization-typed", file("pekko-kryo-serialization-typed"))
-    .settings(moduleSettings)
-    .settings(description := "pekko-serialization implementation using kryo - extension including serialization for pekko-typed")
-    .settings(libraryDependencies ++= typedDeps ++ testingDeps)
-    .dependsOn(core)
-
 
 // Dependencies
 lazy val coreDeps = Seq(
   "com.esotericsoftware" % "kryo" % kryoVersion,
-  "org.apache.pekko" %% "pekko-actor" % pekkoVersion,
-  "org.agrona" % "agrona" % "1.15.1", // should match pekko-remote/aeron inherited version
+  "com.typesafe" % "config" % "1.4.2",
   "org.lz4" % "lz4-java" % "1.8.0",
-  "commons-io" % "commons-io" % "2.11.0" % Test,
-  "org.scala-lang.modules" %% "scala-collection-compat" % "2.9.0"
-)
-lazy val typedDeps = Seq(
-  "org.apache.pekko" %% "pekko-actor-typed" % pekkoVersion,
-  "org.apache.pekko" %% "pekko-actor-testkit-typed" % pekkoVersion % Test
-)
+  "org.agrona" % "agrona" % "1.15.1", // should match pekko-remote/aeron inherited version
+  "org.scala-lang.modules" %% "scala-collection-compat" % "2.9.0",
+  "org.slf4j" % "slf4j-api" % "2.0.7",
+  "org.slf4j" % "log4j-over-slf4j" % "2.0.7")
 
 lazy val testingDeps = Seq(
-  "org.scalatest" %% "scalatest" % "3.2.14" % Test,
-  "ch.qos.logback" % "logback-classic" % "1.2.11" % Test,
-  "org.apache.pekko" %% "pekko-testkit" % pekkoVersion % Test,
-  "org.apache.pekko" %% "pekko-persistence" % pekkoVersion % Test
-)
-
+  "org.scalatest" %% "scalatest" % "3.2.16" % Test,
+  "ch.qos.logback" % "logback-classic" % "1.4.8" % Test)
 
 // Settings
-lazy val commonSettings: Seq[Setting[_]] = Seq(
-  organization := "io.altoo",
-  resolvers += Resolver.ApacheMavenSnapshotsRepo,
-  resolvers += "apache-staging" at "https://repository.apache.org/content/repositories/staging"
-)
+lazy val commonSettings: Seq[Setting[?]] = Seq(
+  organization := "io.altoo")
 
-lazy val moduleSettings: Seq[Setting[_]] = commonSettings ++ noReleaseInSubmoduleSettings ++ scalacBasicOptions ++ scalacStrictOptions ++ scalacLintOptions ++ Seq(
+lazy val moduleSettings: Seq[Setting[?]] = commonSettings ++ noReleaseInSubmoduleSettings ++ scalacBasicOptions ++ scalacStrictOptions ++ scalacLintOptions ++ Seq(
   scalaVersion := mainScalaVersion,
   versionScheme := Some("early-semver"),
-  crossScalaVersions := (scalaVersion.value +: secondayScalaVersions),
+  crossScalaVersions := (scalaVersion.value +: secondaryScalaVersions),
   fork := true,
   testForkedParallel := false,
   classLoaderLayeringStrategy := ClassLoaderLayeringStrategy.ScalaLibrary,
-  run / javaOptions += "-XX:+UseAES -XX:+UseAESIntrinsics", //Enabling hardware AES support if available
+  run / javaOptions += "-XX:+UseAES -XX:+UseAESIntrinsics", // Enabling hardware AES support if available
   // required to run serialization with JDK 17
-  Test / javaOptions ++= Seq("--add-opens", "java.base/java.util=ALL-UNNAMED", "--add-opens", "java.base/java.util.concurrent=ALL-UNNAMED", "--add-opens", "java.base/java.lang=ALL-UNNAMED", "--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED", "--add-opens", "java.base/java.math=ALL-UNNAMED"),
+  Test / javaOptions ++= Seq("--add-opens", "java.base/java.util=ALL-UNNAMED", "--add-opens", "java.base/java.util.concurrent=ALL-UNNAMED", "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+    "--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED", "--add-opens", "java.base/java.math=ALL-UNNAMED"),
   // required to run unsafe with JDK 17
   Test / javaOptions ++= Seq("--add-opens", "java.base/java.nio=ALL-UNNAMED", "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED"),
   pomExtra := pomExtras,
   publishTo := sonatypePublishToBundle.value,
   publishMavenStyle := true,
   Test / publishArtifact := false,
-  pomIncludeRepository := { _ => false }
-)
+  pomIncludeRepository := { _ => false })
 
 lazy val scalacBasicOptions = Seq(
   scalacOptions ++= {
@@ -116,20 +89,16 @@ lazy val scalacBasicOptions = Seq(
           "-Xlog-reflective-calls",
           "-Ywarn-unused:-nowarn",
           "-opt:l:inline",
-          "-opt-inline-from:io.altoo.pekko.serialization.kryo.*"
-        )
+          "-opt-inline-from:io.altoo.pekko.serialization.kryo.*")
       case "3" =>
         Seq(
           "-encoding", "utf8",
           "-feature",
           "-unchecked",
           "-deprecation",
-          "-language:existentials"
-        )
+          "-language:existentials")
     }
-  }
-)
-
+  })
 
 // strict options
 lazy val scalacStrictOptions = Seq(
@@ -145,8 +114,7 @@ lazy val scalacStrictOptions = Seq(
           "-Ywarn-inaccessible",
           "-Ywarn-nullary-override",
           "-Ywarn-nullary-unit",
-          "-Ywarn-unused:-explicits,-implicits,_"
-        )
+          "-Ywarn-unused:-explicits,-implicits,_")
       case "2.13" =>
         Seq(
           "-Werror",
@@ -156,17 +124,14 @@ lazy val scalacStrictOptions = Seq(
           "-Wunused:patvars",
           "-Wunused:privates",
           "-Wunused:locals",
-          //"-Wunused:params", enable once 2.12 support is dropped
-          "-Wunused:nowarn",
-        )
+          // "-Wunused:params", enable once 2.12 support is dropped
+          "-Wunused:nowarn")
       case "3" =>
         Seq(
-          //"-Xfatal-warnings", enable once dotty supports @nowarn
-          "-Ycheck-all-patmat"
-        )
+          // "-Xfatal-warnings", enable once dotty supports @nowarn
+          "-Ycheck-all-patmat")
     }
-  }
-)
+  })
 
 // lint options
 lazy val scalacLintOptions = Seq(
@@ -178,8 +143,7 @@ lazy val scalacLintOptions = Seq(
           "-Xlint:type-parameter-shadow",
           "-Xlint:adapted-args",
           "-Xlint:unsound-match",
-          "-Xlint:option-implicit"
-        )
+          "-Xlint:option-implicit")
       case "2.13" =>
         Seq(
           "-Xlint:inaccessible",
@@ -196,18 +160,14 @@ lazy val scalacLintOptions = Seq(
           "-Xlint:nonlocal-return",
           "-Xlint:valpattern",
           "-Xlint:eta-zero",
-          "-Xlint:deprecation"
-        )
+          "-Xlint:deprecation")
       case "3" =>
         Seq()
     }
-  }
-)
+  })
 
-lazy val noReleaseInSubmoduleSettings: Seq[Setting[_]] = Seq(
-  releaseProcess := Seq[ReleaseStep](ReleaseStep(_ => sys.error("cannot release a submodule!")))
-)
-
+lazy val noReleaseInSubmoduleSettings: Seq[Setting[?]] = Seq(
+  releaseProcess := Seq[ReleaseStep](ReleaseStep(_ => sys.error("cannot release a submodule!"))))
 
 // Configure cross builds.
 lazy val releaseSettings = Seq[ReleaseStep](
@@ -218,16 +178,15 @@ lazy val releaseSettings = Seq[ReleaseStep](
   setReleaseVersion,
   commitReleaseVersion,
   tagRelease,
-  //do these manually on checked out tag... verify on https://oss.sonatype.org/#stagingRepositories
+  // do these manually on checked out tag... verify on https://oss.sonatype.org/#stagingRepositories
   //  releaseStepCommandAndRemaining("+publishSigned"),
   //  releaseStepCommand("sonatypeBundleRelease"),
   setNextVersion,
   commitNextVersion,
-  pushChanges
-)
+  pushChanges)
 releaseCrossBuild := true
 
-lazy val pomExtras = <url>https://github.com/altoo-ag/pekko-kryo-serialization</url>
+lazy val pomExtras = <url>https://github.com/altoo-ag/scala-kryo-serialization</url>
     <licenses>
       <license>
         <name>The Apache Software License, Version 2.0</name>
@@ -236,8 +195,8 @@ lazy val pomExtras = <url>https://github.com/altoo-ag/pekko-kryo-serialization</
       </license>
     </licenses>
     <scm>
-      <url>git@github.com:altoo-ag/pekko-kryo-serialization.git</url>
-      <connection>scm:git:git@github.com:altoo-ag/pekko-kryo-serialization.git</connection>
+      <url>git@github.com:altoo-ag/scala-kryo-serialization.git</url>
+      <connection>scm:git:git@github.com:altoo-ag/scala-kryo-serialization.git</connection>
     </scm>
     <developers>
       <developer>
