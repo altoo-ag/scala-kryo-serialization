@@ -10,7 +10,7 @@ import java.lang.reflect.Field
  */
 class EnumerationNameSerializer extends Serializer[Enumeration#Value] {
 
-  def read(kryo: Kryo, input: Input, typ: Class[_ <: Enumeration#Value]): Enumeration#Value = {
+  def read(kryo: Kryo, input: Input, typ: Class[? <: Enumeration#Value]): Enumeration#Value = {
     val clazz = kryo.readClass(input).getType
     val name = input.readString()
     clazz.getDeclaredField("MODULE$").get(null).asInstanceOf[Enumeration].withName(name)
@@ -18,13 +18,13 @@ class EnumerationNameSerializer extends Serializer[Enumeration#Value] {
 
   def write(kryo: Kryo, output: Output, obj: Enumeration#Value): Unit = {
     val parentEnum = parent(obj.getClass.getSuperclass)
-        .getOrElse(throw new NoSuchElementException(s"Enumeration not found for $obj"))
+      .getOrElse(throw new NoSuchElementException(s"Enumeration not found for $obj"))
     val enumClass = parentEnum.get(obj).getClass
     kryo.writeClass(output, enumClass)
     output.writeString(obj.toString)
   }
 
-  private def parent(typ: Class[_]): Option[Field] =
+  private def parent(typ: Class[?]): Option[Field] =
     if (typ == null) None
     else typ.getDeclaredFields.find(_.getName == "$outer").orElse(parent(typ.getSuperclass))
 }

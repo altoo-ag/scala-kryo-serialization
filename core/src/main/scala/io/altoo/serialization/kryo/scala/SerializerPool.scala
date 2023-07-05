@@ -1,6 +1,5 @@
 package io.altoo.serialization.kryo.scala
 
-
 /**
  * Returns a SerializerPool, useful to reduce GC overhead.
  *
@@ -14,7 +13,7 @@ private[kryo] class SerializerPool(queueBuilder: DefaultQueueBuilder, newInstanc
   def fetch(): KryoSerializerBackend = {
     pool.poll() match {
       case null => newInstance()
-      case o => o
+      case o    => o
     }
   }
 
@@ -26,4 +25,3 @@ private[kryo] class SerializerPool(queueBuilder: DefaultQueueBuilder, newInstanc
     pool.add(o)
   }
 }
-

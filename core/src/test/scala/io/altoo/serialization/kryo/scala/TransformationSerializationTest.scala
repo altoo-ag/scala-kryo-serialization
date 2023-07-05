@@ -1,16 +1,14 @@
-package io.altoo.serializer.kryo.scala
+package io.altoo.serialization.kryo.scala
 
 import com.typesafe.config.ConfigFactory
-import io.altoo.serialization.kryo.scala.{KryoSerializer, ScalaKryoSerializer}
 import org.scalatest.Inside
-import org.scalatest.flatspec.{AnyFlatSpec, AnyFlatSpecLike}
+import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 import java.nio.ByteBuffer
 import scala.collection.{immutable, mutable}
 import scala.collection.immutable.{HashMap, TreeMap}
 import scala.collection.mutable.AnyRefMap
-import scala.util.Try
 
 object TransformationserializerTest {
   private val defaultConfig =

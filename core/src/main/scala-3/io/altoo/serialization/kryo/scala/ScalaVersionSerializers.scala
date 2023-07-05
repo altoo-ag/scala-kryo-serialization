@@ -9,7 +9,7 @@ private[kryo] object ScalaVersionSerializers {
   }
 
   def iterable(kryo: Kryo): Unit = {
-    kryo.addDefaultSerializer(classOf[scala.collection.Iterable[_]], classOf[ScalaCollectionSerializer])
+    kryo.addDefaultSerializer(classOf[scala.collection.Iterable[?]], classOf[ScalaCollectionSerializer])
   }
 
   def enums(kryo: Kryo): Unit = {

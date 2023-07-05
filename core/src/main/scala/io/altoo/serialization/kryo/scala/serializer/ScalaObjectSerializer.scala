@@ -22,31 +22,30 @@ import com.esotericsoftware.kryo.io.{Input, Output}
 import com.esotericsoftware.kryo.{Kryo, Serializer}
 
 import _root_.java.lang.reflect.Field
-import scala.collection.mutable.{Map => MMap}
+import scala.collection.mutable.Map as MMap
 import scala.util.control.Exception.allCatch
 
 // Stolen with pride from Chill ;-)
 class ScalaObjectSerializer[T] extends Serializer[T] {
-  private val cachedObj = MMap[Class[_], Option[T]]()
+  private val cachedObj = MMap[Class[?], Option[T]]()
 
   // Does nothing
   override def write(kser: Kryo, out: Output, obj: T): Unit = ()
 
-  protected def createSingleton(cls: Class[_]): Option[T] = {
+  protected def createSingleton(cls: Class[?]): Option[T] = {
     moduleField(cls).map { _.get(null).asInstanceOf[T] }
   }
 
-  protected def cachedRead(cls: Class[_]): Option[T] = {
+  protected def cachedRead(cls: Class[?]): Option[T] = {
     cachedObj.synchronized { cachedObj.getOrElseUpdate(cls, createSingleton(cls)) }
   }
 
-  override def read(kser: Kryo, in: Input, cls: Class[_ <: T]): T = cachedRead(cls).get
+  override def read(kser: Kryo, in: Input, cls: Class[? <: T]): T = cachedRead(cls).get
 
-  def accepts(cls: Class[_]): Boolean = cachedRead(cls).isDefined
+  def accepts(cls: Class[?]): Boolean = cachedRead(cls).isDefined
 
-  protected def moduleField(klass: Class[_]): Option[Field] =
+  protected def moduleField(klass: Class[?]): Option[Field] =
     Some(klass)
-        .filter { _.getName.last == '$' }
-        .flatMap { k => allCatch.opt(k.getDeclaredField("MODULE$")) }
+      .filter { _.getName.last == '$' }
+      .flatMap { k => allCatch.opt(k.getDeclaredField("MODULE$")) }
 }
-

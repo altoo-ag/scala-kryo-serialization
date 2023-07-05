@@ -88,6 +88,7 @@ lazy val scalacBasicOptions = Seq(
           "-language:existentials",
           "-Xlog-reflective-calls",
           "-Ywarn-unused:-nowarn",
+          "-Xsource:3",
           "-opt:l:inline",
           "-opt-inline-from:io.altoo.pekko.serialization.kryo.*")
       case "3" =>

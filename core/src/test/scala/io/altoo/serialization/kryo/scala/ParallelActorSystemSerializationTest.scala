@@ -7,7 +7,6 @@ import org.scalatest.matchers.should.Matchers
 
 import java.nio.ByteBuffer
 import scala.concurrent.{Await, Future}
-import scala.util.{Success, Try}
 
 object ParallelActorSystemSerializationTest {
   private val config =

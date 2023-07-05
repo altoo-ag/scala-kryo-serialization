@@ -19,15 +19,15 @@ class SubclassResolver extends DefaultClassResolver {
   /**
    * Keep track of the Types we've tried to look up and failed, to reduce wasted effort.
    */
-  private val unregisteredTypes = Collections.newSetFromMap[Class[_]](new java.util.WeakHashMap())
+  private val unregisteredTypes = Collections.newSetFromMap[Class[?]](new java.util.WeakHashMap())
 
   /**
    * Given Class clazz, this recursively walks up the reflection tree and collects all of its
    * ancestors, so we can check whether any of them are registered.
    */
-  def findRegistered(clazz: Class[_]): Option[Registration] = {
+  def findRegistered(clazz: Class[?]): Option[Registration] = {
     if (clazz == null || unregisteredTypes.contains(clazz))
-    // Hit the top, so give up
+      // Hit the top, so give up
       None
     else {
       val reg = classToRegistration.get(clazz)
@@ -47,7 +47,7 @@ class SubclassResolver extends DefaultClassResolver {
     }
   }
 
-  override def getRegistration(tpe: Class[_]): Registration = {
+  override def getRegistration(tpe: Class[?]): Registration = {
     val found = super.getRegistration(tpe)
     if (enabled && found == null) {
       findRegistered(tpe) match {

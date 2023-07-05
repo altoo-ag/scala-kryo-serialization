@@ -6,10 +6,9 @@ import com.esotericsoftware.kryo.unsafe.{UnsafeInput, UnsafeOutput}
 import org.slf4j.Logger
 
 import java.nio.ByteBuffer
-import scala.util.Success
 
 private[kryo] class KryoSerializerBackend(val kryo: Kryo, val bufferSize: Int, val maxBufferSize: Int, val useManifest: Boolean, val useUnsafe: Boolean)(log: Logger,
-                                                                                                                                                         classLoader: ClassLoader) {
+    classLoader: ClassLoader) {
 
   // "toBinary" serializes the given object to an Array of Bytes
   // Implements Serializer

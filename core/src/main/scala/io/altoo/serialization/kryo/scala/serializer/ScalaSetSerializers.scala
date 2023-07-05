@@ -22,16 +22,16 @@ import com.esotericsoftware.kryo.io.{Input, Output}
 import com.esotericsoftware.kryo.{Kryo, Serializer}
 
 import java.lang.reflect.Constructor
-import scala.collection.immutable.{Set => imSet, SortedSet => imSSet}
-import scala.collection.mutable.{Set => mSet, SortedSet => mSSet}
+import scala.collection.immutable.{Set as imSet, SortedSet as imSSet}
+import scala.collection.mutable.{Set as mSet, SortedSet as mSSet}
 
-class ScalaImmutableSortedSetSerializer() extends Serializer[imSSet[_]] {
+class ScalaImmutableSortedSetSerializer() extends Serializer[imSSet[?]] {
 
   setImmutable(true)
 
-  private var class2constuctor = Map[Class[_], Constructor[_]]()
+  private var class2constuctor = Map[Class[?], Constructor[?]]()
 
-  override def read(kryo: Kryo, input: Input, typ: Class[_ <: imSSet[_]]): imSSet[_] = {
+  override def read(kryo: Kryo, input: Input, typ: Class[? <: imSSet[?]]): imSSet[?] = {
     val len = input.readInt(true)
 
     var coll: imSSet[Any] = {
@@ -40,10 +40,10 @@ class ScalaImmutableSortedSetSerializer() extends Serializer[imSSet[_]] {
       try {
         val constructor =
           class2constuctor.getOrElse(typ, {
-            val constr = typ.getDeclaredConstructor(classOf[scala.math.Ordering[_]])
-            class2constuctor += typ -> constr
-            constr
-          })
+              val constr = typ.getDeclaredConstructor(classOf[scala.math.Ordering[?]])
+              class2constuctor += typ -> constr
+              constr
+            })
         constructor.newInstance(setOrdering).asInstanceOf[imSSet[Any]].empty
       } catch {
         case _: Throwable => kryo.newInstance(typ).asInstanceOf[imSSet[Any]].empty
@@ -58,7 +58,7 @@ class ScalaImmutableSortedSetSerializer() extends Serializer[imSSet[_]] {
     coll
   }
 
-  override def write(kryo: Kryo, output: Output, collection: imSSet[_]): Unit = {
+  override def write(kryo: Kryo, output: Output, collection: imSSet[?]): Unit = {
     val len = collection.size
     output.writeInt(len, true)
 
@@ -71,11 +71,11 @@ class ScalaImmutableSortedSetSerializer() extends Serializer[imSSet[_]] {
   }
 }
 
-class ScalaImmutableSetSerializer() extends Serializer[imSet[_]] {
+class ScalaImmutableSetSerializer() extends Serializer[imSet[?]] {
 
   setImmutable(true)
 
-  override def read(kryo: Kryo, input: Input, typ: Class[_ <: imSet[_]]): imSet[_] = {
+  override def read(kryo: Kryo, input: Input, typ: Class[? <: imSet[?]]): imSet[?] = {
     val len = input.readInt(true)
     var coll: imSet[Any] = kryo.newInstance(typ).asInstanceOf[imSet[Any]].empty
     var i = 0
@@ -86,7 +86,7 @@ class ScalaImmutableSetSerializer() extends Serializer[imSet[_]] {
     coll
   }
 
-  override def write(kryo: Kryo, output: Output, collection: imSet[_]): Unit = {
+  override def write(kryo: Kryo, output: Output, collection: imSet[?]): Unit = {
     output.writeInt(collection.size, true)
     val it = collection.iterator
     while (it.hasNext) {
@@ -95,11 +95,11 @@ class ScalaImmutableSetSerializer() extends Serializer[imSet[_]] {
   }
 }
 
-class ScalaImmutableAbstractSetSerializer() extends Serializer[imSet[_]] {
+class ScalaImmutableAbstractSetSerializer() extends Serializer[imSet[?]] {
 
   setImmutable(true)
 
-  override def read(kryo: Kryo, input: Input, typ: Class[_ <: imSet[_]]): imSet[_] = {
+  override def read(kryo: Kryo, input: Input, typ: Class[? <: imSet[?]]): imSet[?] = {
     val len = input.readInt(true)
     var coll: imSet[Any] = Set.empty
     var i = 0
@@ -110,7 +110,7 @@ class ScalaImmutableAbstractSetSerializer() extends Serializer[imSet[_]] {
     coll
   }
 
-  override def write(kryo: Kryo, output: Output, collection: imSet[_]): Unit = {
+  override def write(kryo: Kryo, output: Output, collection: imSet[?]): Unit = {
     output.writeInt(collection.size, true)
     val it = collection.iterator
     while (it.hasNext) {
@@ -119,10 +119,10 @@ class ScalaImmutableAbstractSetSerializer() extends Serializer[imSet[_]] {
   }
 }
 
-class ScalaMutableSortedSetSerializer() extends Serializer[mSSet[_]] {
-  private var class2constuctor = Map[Class[_], Constructor[_]]()
+class ScalaMutableSortedSetSerializer() extends Serializer[mSSet[?]] {
+  private var class2constuctor = Map[Class[?], Constructor[?]]()
 
-  override def read(kryo: Kryo, input: Input, typ: Class[_ <: mSSet[_]]): mSSet[_] = {
+  override def read(kryo: Kryo, input: Input, typ: Class[? <: mSSet[?]]): mSSet[?] = {
     val len = input.readInt(true)
 
     val coll: mSSet[Any] = {
@@ -131,10 +131,10 @@ class ScalaMutableSortedSetSerializer() extends Serializer[mSSet[_]] {
       try {
         val constructor =
           class2constuctor.getOrElse(typ, {
-            val constr = typ.getDeclaredConstructor(classOf[scala.math.Ordering[_]])
-            class2constuctor += typ -> constr
-            constr
-          })
+              val constr = typ.getDeclaredConstructor(classOf[scala.math.Ordering[?]])
+              class2constuctor += typ -> constr
+              constr
+            })
         constructor.newInstance(setOrdering).asInstanceOf[mSSet[Any]].empty
       } catch {
         case _: Throwable => kryo.newInstance(typ).asInstanceOf[mSSet[Any]].empty
@@ -149,7 +149,7 @@ class ScalaMutableSortedSetSerializer() extends Serializer[mSSet[_]] {
     coll
   }
 
-  override def write(kryo: Kryo, output: Output, collection: mSSet[_]): Unit = {
+  override def write(kryo: Kryo, output: Output, collection: mSSet[?]): Unit = {
     val len = collection.size
     output.writeInt(len, true)
 
@@ -162,9 +162,9 @@ class ScalaMutableSortedSetSerializer() extends Serializer[mSSet[_]] {
   }
 }
 
-class ScalaMutableSetSerializer() extends Serializer[mSet[_]] {
+class ScalaMutableSetSerializer() extends Serializer[mSet[?]] {
 
-  override def read(kryo: Kryo, input: Input, typ: Class[_ <: mSet[_]]): mSet[_] = {
+  override def read(kryo: Kryo, input: Input, typ: Class[? <: mSet[?]]): mSet[?] = {
     val len = input.readInt(true)
     val coll: mSet[Any] = kryo.newInstance(typ).asInstanceOf[mSet[Any]].empty
     var i = 0
@@ -175,7 +175,7 @@ class ScalaMutableSetSerializer() extends Serializer[mSet[_]] {
     coll
   }
 
-  override def write(kryo: Kryo, output: Output, collection: mSet[_]): Unit = {
+  override def write(kryo: Kryo, output: Output, collection: mSet[?]): Unit = {
     output.writeInt(collection.size, true)
     val it = collection.iterator
     while (it.hasNext) {
