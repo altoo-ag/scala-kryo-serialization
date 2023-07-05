@@ -22,8 +22,8 @@ import com.esotericsoftware.kryo.io.{Input, Output}
 import com.esotericsoftware.kryo.{Kryo, Serializer}
 
 import java.lang.reflect.Constructor
-import scala.collection.immutable.{SortedMap, Map => IMap}
-import scala.collection.mutable.{Map => MMap}
+import scala.collection.immutable.{Map as IMap, SortedMap}
+import scala.collection.mutable.Map as MMap
 
 /**
  * Module with specialized serializers for Scala Maps.
@@ -34,9 +34,9 @@ import scala.collection.mutable.{Map => MMap}
  * @author luben
  */
 
-class ScalaMutableMapSerializer() extends Serializer[MMap[_, _]] {
+class ScalaMutableMapSerializer() extends Serializer[MMap[?, ?]] {
 
-  override def read(kryo: Kryo, input: Input, typ: Class[_ <: MMap[_, _]]): MMap[_, _] = {
+  override def read(kryo: Kryo, input: Input, typ: Class[? <: MMap[?, ?]]): MMap[?, ?] = {
     val len = input.readInt(true)
     val coll = kryo.newInstance(typ).empty.asInstanceOf[MMap[Any, Any]]
     if (len != 0) {
@@ -49,7 +49,7 @@ class ScalaMutableMapSerializer() extends Serializer[MMap[_, _]] {
     coll
   }
 
-  override def write(kryo: Kryo, output: Output, collection: MMap[_, _]): Unit = {
+  override def write(kryo: Kryo, output: Output, collection: MMap[?, ?]): Unit = {
     val len = collection.size
     output.writeInt(len, true)
     if (len != 0) {
@@ -63,11 +63,11 @@ class ScalaMutableMapSerializer() extends Serializer[MMap[_, _]] {
   }
 }
 
-class ScalaImmutableMapSerializer() extends Serializer[IMap[_, _]] {
+class ScalaImmutableMapSerializer() extends Serializer[IMap[?, ?]] {
 
   setImmutable(true)
 
-  override def read(kryo: Kryo, input: Input, typ: Class[_ <: IMap[_, _]]): IMap[_, _] = {
+  override def read(kryo: Kryo, input: Input, typ: Class[? <: IMap[?, ?]]): IMap[?, ?] = {
     val len = input.readInt(true)
     var coll: IMap[Any, Any] = kryo.newInstance(typ).asInstanceOf[IMap[Any, Any]].empty
 
@@ -81,7 +81,7 @@ class ScalaImmutableMapSerializer() extends Serializer[IMap[_, _]] {
     coll
   }
 
-  override def write(kryo: Kryo, output: Output, collection: IMap[_, _]): Unit = {
+  override def write(kryo: Kryo, output: Output, collection: IMap[?, ?]): Unit = {
     val len = collection.size
     output.writeInt(len, true)
     if (len != 0) {
@@ -95,11 +95,11 @@ class ScalaImmutableMapSerializer() extends Serializer[IMap[_, _]] {
   }
 }
 
-class ScalaImmutableAbstractMapSerializer() extends Serializer[IMap[_, _]] {
+class ScalaImmutableAbstractMapSerializer() extends Serializer[IMap[?, ?]] {
 
   setImmutable(true)
 
-  override def read(kryo: Kryo, input: Input, typ: Class[_ <: IMap[_, _]]): IMap[_, _] = {
+  override def read(kryo: Kryo, input: Input, typ: Class[? <: IMap[?, ?]]): IMap[?, ?] = {
     val len = input.readInt(true)
     var coll: IMap[Any, Any] = IMap.empty
 
@@ -113,7 +113,7 @@ class ScalaImmutableAbstractMapSerializer() extends Serializer[IMap[_, _]] {
     coll
   }
 
-  override def write(kryo: Kryo, output: Output, collection: IMap[_, _]): Unit = {
+  override def write(kryo: Kryo, output: Output, collection: IMap[?, ?]): Unit = {
     val len = collection.size
     output.writeInt(len, true)
     if (len != 0) {
@@ -127,22 +127,22 @@ class ScalaImmutableAbstractMapSerializer() extends Serializer[IMap[_, _]] {
   }
 }
 
-class ScalaSortedMapSerializer() extends Serializer[SortedMap[_, _]] {
-  private var class2constuctor = IMap[Class[_], Constructor[_]]()
+class ScalaSortedMapSerializer() extends Serializer[SortedMap[?, ?]] {
+  private var class2constuctor = IMap[Class[?], Constructor[?]]()
 
   // All sorted maps are immutable
   setImmutable(true)
 
-  override def read(kryo: Kryo, input: Input, typ: Class[_ <: SortedMap[_, _]]): SortedMap[_, _] = {
+  override def read(kryo: Kryo, input: Input, typ: Class[? <: SortedMap[?, ?]]): SortedMap[?, ?] = {
     val len = input.readInt(true)
     implicit val mapOrdering: Ordering[Any] = kryo.readClassAndObject(input).asInstanceOf[scala.math.Ordering[Any]]
     var coll: SortedMap[Any, Any] =
       try {
         val constructor = class2constuctor.getOrElse(typ, {
-          val constr = typ.getDeclaredConstructor(classOf[scala.math.Ordering[_]])
-          class2constuctor += typ -> constr
-          constr
-        })
+            val constr = typ.getDeclaredConstructor(classOf[scala.math.Ordering[?]])
+            class2constuctor += typ -> constr
+            constr
+          })
         constructor.newInstance(mapOrdering).asInstanceOf[SortedMap[Any, Any]].empty
       } catch {
         case _: Throwable => kryo.newInstance(typ).asInstanceOf[SortedMap[Any, Any]].empty
@@ -156,7 +156,7 @@ class ScalaSortedMapSerializer() extends Serializer[SortedMap[_, _]] {
     coll
   }
 
-  override def write(kryo: Kryo, output: Output, collection: SortedMap[_, _]): Unit = {
+  override def write(kryo: Kryo, output: Output, collection: SortedMap[?, ?]): Unit = {
     val len = collection.size
     output.writeInt(len, true)
 
@@ -170,4 +170,3 @@ class ScalaSortedMapSerializer() extends Serializer[SortedMap[_, _]] {
     }
   }
 }
-

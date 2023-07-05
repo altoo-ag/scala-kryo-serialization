@@ -25,9 +25,8 @@ class ScalaUnitSerializer extends Serializer[Unit] {
   def write(kryo: Kryo, output: Output, obj: Unit): Unit = {
     // Write nothing, similarly to ScalaObjectSerializer
   }
-  def read(kryo: Kryo, input: Input, typ: Class[_ <: Unit]): Unit = {
+  def read(kryo: Kryo, input: Input, typ: Class[? <: Unit]): Unit = {
     // Return the one true Unit
     ()
   }
 }
-

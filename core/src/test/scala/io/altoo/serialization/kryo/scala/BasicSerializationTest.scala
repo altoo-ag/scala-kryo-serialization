@@ -5,7 +5,6 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 import java.nio.ByteBuffer
-import scala.util.Try
 
 object BasicSerializationTest {
 

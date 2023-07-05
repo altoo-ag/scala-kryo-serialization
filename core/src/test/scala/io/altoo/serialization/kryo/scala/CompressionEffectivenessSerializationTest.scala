@@ -18,14 +18,12 @@ package io.altoo.serialization.kryo.scala
 
 import com.esotericsoftware.minlog.Log
 import com.typesafe.config.ConfigFactory
-import io.altoo.serialization.kryo.scala.KryoSerializer
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.{BeforeAndAfterAll, Inside}
 
 import java.nio.ByteBuffer
-import scala.util.Try
 
 object CompressionEffectivenessSerializationTest {
 

@@ -3,7 +3,7 @@ package io.altoo.serialization.kryo.scala.performance
 import com.typesafe.config.ConfigFactory
 import io.altoo.serialization.kryo.scala.ScalaKryoSerializer
 import org.scalatest.*
-import org.scalatest.flatspec.{AnyFlatSpec, AnyFlatSpecLike}
+import org.scalatest.flatspec.AnyFlatSpec
 
 object Time extends Enumeration {
   type Time = Value

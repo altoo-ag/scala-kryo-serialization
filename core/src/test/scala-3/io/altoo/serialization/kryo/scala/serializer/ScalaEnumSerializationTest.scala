@@ -2,6 +2,7 @@ package io.altoo.serialization.kryo.scala.serializer
 
 import com.esotericsoftware.kryo.util.{DefaultClassResolver, ListReferenceResolver}
 import io.altoo.serialization.kryo.scala.ScalaVersionSerializers
+import io.altoo.serialization.kryo.scala.serializer.{ScalaEnumNameSerializer, ScalaKryo}
 import io.altoo.serialization.kryo.scala.testkit.{AbstractKryoTest, KryoSerializationTesting}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers

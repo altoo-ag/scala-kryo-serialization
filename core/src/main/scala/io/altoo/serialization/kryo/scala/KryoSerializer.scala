@@ -122,13 +122,13 @@ private[kryo] abstract class KryoSerializer(config: Config, classLoader: ClassLo
     case "lz4"     => Some(new LZ4KryoCompressor)
     case "deflate" => Some(new ZipKryoCompressor)
     case "aes" => settings.encryptionSettings match {
-      case Some(es) if es.aesMode.contains("GCM") =>
-        Some(new KryoCryptographer(aesKeyProviderClass.get.getDeclaredConstructor().newInstance().aesKey(config.getConfig(configKey)), es.aesMode, es.aesIvLength))
-      case Some(es) =>
-        throw new Exception(s"Mode ${es.aesMode} is not supported for 'aes'")
-      case None =>
-        throw new Exception("Encryption transformation selected but encryption has not been configured")
-    }
+        case Some(es) if es.aesMode.contains("GCM") =>
+          Some(new KryoCryptographer(aesKeyProviderClass.get.getDeclaredConstructor().newInstance().aesKey(config.getConfig(configKey)), es.aesMode, es.aesIvLength))
+        case Some(es) =>
+          throw new Exception(s"Mode ${es.aesMode} is not supported for 'aes'")
+        case None =>
+          throw new Exception("Encryption transformation selected but encryption has not been configured")
+      }
     case x => throw new Exception(s"Could not recognise the transformer: [$x]")
   }
 

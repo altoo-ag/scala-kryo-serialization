@@ -1,11 +1,8 @@
 package io.altoo.serialization.kryo.scala
 
-import com.esotericsoftware.kryo.Kryo
 import com.typesafe.config.Config
-import io.altoo.serialization.kryo.scala.serializer.ScalaKryo
 
 import java.nio.ByteBuffer
-import scala.reflect.{ClassTag, classTag}
 import scala.util.Try
 
 /**

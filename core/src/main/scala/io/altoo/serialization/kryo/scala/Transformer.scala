@@ -15,7 +15,7 @@ private[kryo] class KryoTransformer(transformations: List[Transformer]) {
   private[this] val fromPipeLine = transformations.map(x => x.fromBinary(_: Array[Byte])).reverse.reduceLeftOption(_.andThen(_)).getOrElse(identity(_: Array[Byte]))
 
   private[this] val toBufferPipeline: (Array[Byte], ByteBuffer) => Unit = transformations match {
-    case Nil => (_, _) => throw new UnsupportedOperationException("Should be optimized away")
+    case Nil                => (_, _) => throw new UnsupportedOperationException("Should be optimized away")
     case transformer :: Nil => transformer.toBinary
     case transformations =>
       val pipeline = transformations.init.map(x => x.toBinary(_: Array[Byte])).reduceLeft(_.andThen(_))
@@ -24,7 +24,7 @@ private[kryo] class KryoTransformer(transformations: List[Transformer]) {
   }
 
   private[this] val fromBufferPipeline: ByteBuffer => Array[Byte] = transformations match {
-    case Nil => _ => throw new UnsupportedOperationException("Should be optimized away")
+    case Nil                => _ => throw new UnsupportedOperationException("Should be optimized away")
     case transformer :: Nil => transformer.fromBinary
     case transformations =>
       val pipeline = transformations.init.reverse.map(x => x.fromBinary(_: Array[Byte])).reduceLeft(_.andThen(_))
@@ -51,12 +51,10 @@ private[kryo] class KryoTransformer(transformations: List[Transformer]) {
   }
 }
 
-
 trait Transformer {
   def toBinary(inputBuff: Array[Byte]): Array[Byte]
 
-  def toBinary(inputBuff: Array[Byte], outputBuff: ByteBuffer): Unit
-  = outputBuff.put(toBinary(inputBuff))
+  def toBinary(inputBuff: Array[Byte], outputBuff: ByteBuffer): Unit = outputBuff.put(toBinary(inputBuff))
 
   def fromBinary(inputBuff: Array[Byte]): Array[Byte]
 
@@ -78,10 +76,10 @@ class LZ4KryoCompressor extends Transformer {
     val outputSize = lz4.compress(inputBuff, 0, inputSize, outputBuff, 4, maxOutputSize)
 
     // encode 32 bit length in the first bytes
-    outputBuff(0) = (inputSize & 0xff).toByte
-    outputBuff(1) = (inputSize >> 8 & 0xff).toByte
-    outputBuff(2) = (inputSize >> 16 & 0xff).toByte
-    outputBuff(3) = (inputSize >> 24 & 0xff).toByte
+    outputBuff(0) = (inputSize & 0xFF).toByte
+    outputBuff(1) = (inputSize >> 8 & 0xFF).toByte
+    outputBuff(2) = (inputSize >> 16 & 0xFF).toByte
+    outputBuff(3) = (inputSize >> 24 & 0xFF).toByte
     outputBuff.take(outputSize + 4)
   }
 
@@ -114,10 +112,10 @@ class ZipKryoCompressor extends Transformer {
     val deflater = new Deflater(Deflater.BEST_SPEED)
     val inputSize = inputBuff.length
     val outputBuff = new mutable.ArrayBuilder.ofByte
-    outputBuff += (inputSize & 0xff).toByte
-    outputBuff += (inputSize >> 8 & 0xff).toByte
-    outputBuff += (inputSize >> 16 & 0xff).toByte
-    outputBuff += (inputSize >> 24 & 0xff).toByte
+    outputBuff += (inputSize & 0xFF).toByte
+    outputBuff += (inputSize >> 8 & 0xFF).toByte
+    outputBuff += (inputSize >> 16 & 0xFF).toByte
+    outputBuff += (inputSize >> 24 & 0xFF).toByte
 
     deflater.setInput(inputBuff)
     deflater.finish()

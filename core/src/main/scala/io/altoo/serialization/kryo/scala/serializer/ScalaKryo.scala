@@ -17,7 +17,7 @@
  */
 package io.altoo.serialization.kryo.scala.serializer
 
-import com.esotericsoftware.kryo._
+import com.esotericsoftware.kryo.*
 import com.esotericsoftware.kryo.serializers.FieldSerializer
 
 class ScalaKryo(classResolver: ClassResolver, referenceResolver: ReferenceResolver)
@@ -25,27 +25,27 @@ class ScalaKryo(classResolver: ClassResolver, referenceResolver: ReferenceResolv
 
   lazy val objSer = new ScalaObjectSerializer[AnyRef]
 
-  override def getDefaultSerializer(typ: Class[_]): Serializer[_] = {
-    if(isSingleton(typ)) {
+  override def getDefaultSerializer(typ: Class[?]): Serializer[?] = {
+    if (isSingleton(typ)) {
       objSer
     } else {
       super.getDefaultSerializer(typ)
     }
   }
 
-  override def newDefaultSerializer(klass: Class[_]): Serializer[_] = {
+  override def newDefaultSerializer(klass: Class[?]): Serializer[?] = {
     if (isSingleton(klass)) {
       objSer
     } else {
       super.newDefaultSerializer(klass) match {
-        case fs: FieldSerializer[_] =>
-          //Scala has a lot of synthetic fields that must be serialized:
-          //We also enable it by default in java since not wanting these fields
-          //serialized looks like the exception rather than the rule.
+        case fs: FieldSerializer[?] =>
+          // Scala has a lot of synthetic fields that must be serialized:
+          // We also enable it by default in java since not wanting these fields
+          // serialized looks like the exception rather than the rule.
           fs.getFieldSerializerConfig.setIgnoreSyntheticFields(false)
           fs.updateFields()
           fs
-        case x: Serializer[_] => x
+        case x: Serializer[?] => x
       }
     }
   }
@@ -53,7 +53,6 @@ class ScalaKryo(classResolver: ClassResolver, referenceResolver: ReferenceResolv
   /**
    * return true if this class is a scala "object"
    */
-  def isSingleton(klass: Class[_]): Boolean =
+  def isSingleton(klass: Class[?]): Boolean =
     klass.getName.last == '$' && objSer.accepts(klass)
 }
-

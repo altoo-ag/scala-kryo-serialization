@@ -19,7 +19,7 @@ lazy val root: Project = project.in(file("."))
   .settings(publish / skip := true)
   .aggregate(core)
 
-lazy val core: Project = Project("core", file("core"))
+lazy val core: Project = project.in(file("core"))
   .settings(moduleSettings)
   .settings(description := "pekko-serialization implementation using kryo - core implementation")
   .settings(name := "scala-kryo-serialization")
@@ -88,6 +88,7 @@ lazy val scalacBasicOptions = Seq(
           "-language:existentials",
           "-Xlog-reflective-calls",
           "-Ywarn-unused:-nowarn",
+          "-Xsource:3",
           "-opt:l:inline",
           "-opt-inline-from:io.altoo.pekko.serialization.kryo.*")
       case "3" =>

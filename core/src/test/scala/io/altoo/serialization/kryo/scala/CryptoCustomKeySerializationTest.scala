@@ -1,10 +1,6 @@
 package io.altoo.serialization.kryo.scala
 
-import com.esotericsoftware.kryo.util.*
 import com.typesafe.config.{Config, ConfigFactory}
-import io.altoo.serialization.kryo.scala.serializer.*
-import io.altoo.serialization.kryo.scala.testkit.KryoSerializationTesting
-import org.objenesis.strategy.StdInstantiatorStrategy
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 

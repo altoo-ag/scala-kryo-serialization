@@ -11,6 +11,7 @@ import scala.reflect.ClassTag
  * you could use for example a bounded non-blocking queue.
  */
 class DefaultQueueBuilder {
+
   /**
    * Override to use a different queue.
    */

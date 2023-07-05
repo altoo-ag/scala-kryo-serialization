@@ -6,10 +6,9 @@ import com.esotericsoftware.kryo.unsafe.{UnsafeInput, UnsafeOutput}
 import org.slf4j.Logger
 
 import java.nio.ByteBuffer
-import scala.util.Success
 
 private[kryo] class KryoSerializerBackend(val kryo: Kryo, val bufferSize: Int, val maxBufferSize: Int, val useManifest: Boolean, val useUnsafe: Boolean)(log: Logger,
-                                                                                                                                                         classLoader: ClassLoader) {
+    classLoader: ClassLoader) {
 
   // "toBinary" serializes the given object to an Array of Bytes
   // Implements Serializer
@@ -71,7 +70,7 @@ private[kryo] class KryoSerializerBackend(val kryo: Kryo, val bufferSize: Int, v
     if (useManifest) {
       val clazz = manifest.flatMap(ReflectionHelper.getClassFor(_, classLoader).toOption)
       clazz match {
-        case Some(c) => kryo.readObject(buffer, c).asInstanceOf[AnyRef]
+        case Some(c) => kryo.readObject(buffer, c)
         case _       => throw new RuntimeException("Object of unknown class cannot be deserialized")
       }
     } else

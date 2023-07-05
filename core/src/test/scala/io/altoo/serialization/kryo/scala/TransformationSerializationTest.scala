@@ -1,16 +1,13 @@
-package io.altoo.serializer.kryo.scala
+package io.altoo.serialization.kryo.scala
 
 import com.typesafe.config.ConfigFactory
-import io.altoo.serialization.kryo.scala.{KryoSerializer, ScalaKryoSerializer}
 import org.scalatest.Inside
-import org.scalatest.flatspec.{AnyFlatSpec, AnyFlatSpecLike}
+import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 import java.nio.ByteBuffer
 import scala.collection.{immutable, mutable}
 import scala.collection.immutable.{HashMap, TreeMap}
-import scala.collection.mutable.AnyRefMap
-import scala.util.Try
 
 object TransformationserializerTest {
   private val defaultConfig =
@@ -101,14 +98,14 @@ abstract class TransformationserializerTest(name: String, testConfig: String) ex
 
   it should "serialize and deserialize mutable AnyRefMap[String,Any] successfully" in {
     val r = new scala.util.Random(0L)
-    val tm = AnyRefMap[String, Any](
+    val tm = mutable.AnyRefMap[String, Any](
       "foo" -> r.nextDouble(),
       "bar" -> "foo,bar,baz",
       "baz" -> 124L,
       "hash" -> HashMap[Int, Int](r.nextInt() -> r.nextInt(), 5 -> 500, 10 -> r.nextInt()))
 
     val serialized = serializer.serialize(tm).get
-    val deserialized = serializer.deserialize[AnyRefMap[String, Any]](serialized)
+    val deserialized = serializer.deserialize[mutable.AnyRefMap[String, Any]](serialized)
     deserialized shouldBe util.Success(tm)
 
     val bb = ByteBuffer.allocate(serialized.length * 2)
@@ -116,7 +113,7 @@ abstract class TransformationserializerTest(name: String, testConfig: String) ex
     serializer.serialize(tm, bb) shouldBe a[util.Success[?]]
     bb.flip()
 
-    val bufferDeserialized = serializer.deserialize[AnyRefMap[String, Any]](bb)
+    val bufferDeserialized = serializer.deserialize[mutable.AnyRefMap[String, Any]](bb)
     bufferDeserialized shouldBe util.Success(tm)
   }
 
