@@ -70,7 +70,7 @@ private[kryo] class KryoSerializerBackend(val kryo: Kryo, val bufferSize: Int, v
     if (useManifest) {
       val clazz = manifest.flatMap(ReflectionHelper.getClassFor(_, classLoader).toOption)
       clazz match {
-        case Some(c) => kryo.readObject(buffer, c).asInstanceOf[AnyRef]
+        case Some(c) => kryo.readObject(buffer, c)
         case _       => throw new RuntimeException("Object of unknown class cannot be deserialized")
       }
     } else

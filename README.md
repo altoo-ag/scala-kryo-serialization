@@ -39,9 +39,9 @@ To use this serializer, you need to do two things:
 
 We provide several versions of the library:
 
-Version | Kryo Compatibility | Available Scala Versions | Tested with                                                     |
---------|--------------------|--------------------------|-----------------------------------------------------------------|
-v1.0.x  | Kryo-5.4           | 2.12,2.13,3.1            | JDK: OpenJdk11,OpenJdk17           Scala: 2.12.18,2.13.11,3.3.0 |
+| Version | Kryo Compatibility | Available Scala Versions | Tested with                                                     |
+|---------|--------------------|--------------------------|-----------------------------------------------------------------|
+| v1.0.x  | Kryo-5.4           | 2.12,2.13,3.1            | JDK: OpenJdk11,OpenJdk17           Scala: 2.12.18,2.13.11,3.3.0 |
 
 
 Note that we use semantic versioning - see [semver.org](https://semver.org/).
@@ -65,7 +65,7 @@ To use the official release of scala-kryo-serialization in Maven projects, pleas
         </snapshots>
         <id>central</id>
         <name>Maven Central Repository</name>
-        <url>http://repo1.maven.org/maven2</url>
+        <url>https://repo1.maven.org/maven2</url>
     </repository>
 
     <dependency>
@@ -107,7 +107,7 @@ You may need to repeat the process several times until you see no further log
 messages about implicitly registered classes.
 
 Another useful trick is to provide your own custom initializer for Kryo (see
-below) and inside it you registerclasses of a few objects that are typically
+below) and inside it, you registerclasses of a few objects that are typically
 used by your application, for example:
 
 ```scala
@@ -275,8 +275,8 @@ like `immutable.ListMap` -- the resolver will choose the more-specific one when 
 
 `SubclassResolver` should be used with care -- even when it is turned on, you should define and
 register most of your classes explicitly, as usual. But it is a helpful way to tame the complexity
-of some class hierarchies, when that complexity can be treated as an implementation detail and all
-of the subclasses can be serialized and deserialized identically.
+of some class hierarchies, when that complexity can be treated as an implementation detail and all 
+the subclasses can be serialized and deserialized identically.
 
 
 Using serializers with different configurations
@@ -315,17 +315,17 @@ Using Kryo on JDK 17
 Kryo needs modules to be opened for reflection when serializing basic JDK classes.
 Those options have to be passed to the JVM, for example in sbt:
 ```sbt
-javaOptions ++= Seq("--add-opens", "java.base/java.util=ALL-UNNAMED", "--add-opens", "java.base/java.util.concurrent=ALL-UNNAMED", "--add-opens", "java.base/java.lang=ALL-UNNAMED", "--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED", "--add-opens", "java.base/java.math=ALL-UNNAMED"),
+javaOptions ++= Seq("--add-opens", "java.base/java.util=ALL-UNNAMED", "--add-opens", "java.base/java.util.concurrent=ALL-UNNAMED", "--add-opens", "java.base/java.lang=ALL-UNNAMED", "--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED", "--add-opens", "java.base/java.math=ALL-UNNAMED")
 ```
 
 To use unsafe transformations, the following access must be granted:
 ```sbt
-javaOptions ++= Seq("--add-opens", "java.base/java.nio=ALL-UNNAMED", "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED"),
+javaOptions ++= Seq("--add-opens", "java.base/java.nio=ALL-UNNAMED", "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED")
 ```
 
 How do I build this library on my own?
 --------------------------------------
-If you wish to build the library on your own, you need to check out the project from Github and do
+If you wish to build the library on your own, you need to check out the project from GitHub and do
 ```
 sbt compile publishM2
 ```
