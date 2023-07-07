@@ -1,14 +1,33 @@
 package io.altoo.serialization.kryo.scala
 
+import com.esotericsoftware.kryo.{ClassResolver, ReferenceResolver}
 import com.esotericsoftware.kryo.serializers.FieldSerializer
+import com.esotericsoftware.kryo.util.{DefaultClassResolver, ListReferenceResolver, MapReferenceResolver}
 import io.altoo.serialization.kryo.scala.serializer.*
 
 import scala.util.{Failure, Success}
 
 /**
  * Extensible strategy to configure and customize kryo instance.
+ * Create a subclass of [[DefaultKryoInitializer]] and configure the FQCN under key kryo-initializer.
  */
 class DefaultKryoInitializer {
+
+  /**
+   * Can be overridden to provide a custom reference resolver - override only if you know what you are doing!
+   */
+  def createReferenceResolver(settings: KryoSerializationSettings): ReferenceResolver = {
+    if (settings.kryoReferenceMap) new MapReferenceResolver() else new ListReferenceResolver()
+  }
+
+  /**
+   * Can be overridden to provide a custom class resolver - override only if you know what you are doing!
+   */
+  def createClassResolver(settings: KryoSerializationSettings): ClassResolver = {
+    if (settings.idStrategy == "incremental") new KryoClassResolver(settings.implicitRegistrationLogging)
+    else if (settings.resolveSubclasses) new SubclassResolver()
+    else new DefaultClassResolver()
+  }
 
   /**
    * Can be overridden to set a different field serializer before other serializer are initialized.

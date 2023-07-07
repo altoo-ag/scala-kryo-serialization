@@ -30,13 +30,21 @@ import java.nio.ByteBuffer
 import scala.jdk.CollectionConverters.*
 import scala.util.*
 
-private[kryo] class EncryptionSettings(val config: Config) {
+/**
+ * INTERNAL API - api may change at any point in time
+ * without any warning.
+ */
+class EncryptionSettings(val config: Config) {
   val keyProvider: String = config.getString("encryption.aes.key-provider")
   val aesMode: String = config.getString("encryption.aes.mode")
   val aesIvLength: Int = config.getInt("encryption.aes.iv-length")
 }
 
-private[kryo] class KryoSerializationSettings(val config: Config) {
+/**
+ * INTERNAL API - api may change at any point in time
+ * without any warning.
+ */
+class KryoSerializationSettings(val config: Config) {
   val serializerType: String = config.getString("type")
 
   val bufferSize: Int = config.getInt("buffer-size")
@@ -190,11 +198,10 @@ private[kryo] abstract class KryoSerializer(config: Config, classLoader: ClassLo
 
   // Initialization
   private def getKryo(strategy: String, serializerType: String): Kryo = {
-    val referenceResolver = if (settings.kryoReferenceMap) new MapReferenceResolver() else new ListReferenceResolver()
-    val classResolver =
-      if (settings.idStrategy == "incremental") new KryoClassResolver(settings.implicitRegistrationLogging)
-      else if (settings.resolveSubclasses) new SubclassResolver()
-      else new DefaultClassResolver()
+    val initializer = kryoInitializerClass.getDeclaredConstructor().newInstance()
+    prepareKryoInitializer(initializer)
+    val referenceResolver = initializer.createReferenceResolver(settings)
+    val classResolver = initializer.createClassResolver(settings)
     val kryo = new ScalaKryo(classResolver, referenceResolver)
     kryo.setClassLoader(classLoader)
     // support deserialization of classes without no-arg constructors
@@ -209,8 +216,6 @@ private[kryo] abstract class KryoSerializer(config: Config, classLoader: ClassLo
       case o         => throw new IllegalStateException("Unknown serializer type: " + o)
     }
 
-    val initializer = kryoInitializerClass.getDeclaredConstructor().newInstance()
-    prepareKryoInitializer(initializer)
     initializer.preInit(kryo)
     initializer.init(kryo)
 
