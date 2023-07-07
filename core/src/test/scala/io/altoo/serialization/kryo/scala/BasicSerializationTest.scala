@@ -27,7 +27,7 @@ class BasicSerializationTest extends AnyFlatSpec with Matchers {
 
   behavior of "KryoSerializer"
 
-  it should "be selected for lists" in {
+  it should "serialize and deserialize lists" in {
     // Check serialization/deserialization
     val serialized = serializer.serialize(testList).get
 
@@ -41,5 +41,13 @@ class BasicSerializationTest extends AnyFlatSpec with Matchers {
     bb.flip()
     val bufferDeserialized = serializer.deserialize[List[Int]](bb)
     bufferDeserialized shouldBe util.Success(testList)
+  }
+
+  it should "serialize and deserialize int" in {
+    // Check serialization/deserialization
+    val serialized = serializer.serialize(5).get
+
+    val deserialized = serializer.deserialize[Int](serialized)
+    deserialized shouldBe util.Success(5)
   }
 }

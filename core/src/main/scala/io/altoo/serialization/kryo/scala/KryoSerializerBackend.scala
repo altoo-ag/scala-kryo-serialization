@@ -12,7 +12,7 @@ private[kryo] class KryoSerializerBackend(val kryo: Kryo, val bufferSize: Int, v
 
   // "toBinary" serializes the given object to an Array of Bytes
   // Implements Serializer
-  def toBinary(obj: AnyRef): Array[Byte] = {
+  def toBinary(obj: Any): Array[Byte] = {
     val buffer = output
     try {
       if (useManifest)
@@ -30,7 +30,7 @@ private[kryo] class KryoSerializerBackend(val kryo: Kryo, val bufferSize: Int, v
   }
 
   // Implements ByteBufferSerializer
-  def toBinary(obj: AnyRef, buf: ByteBuffer): Unit = {
+  def toBinary(obj: Any, buf: ByteBuffer): Unit = {
     val buffer = getOutput(buf)
     try {
       if (useManifest)

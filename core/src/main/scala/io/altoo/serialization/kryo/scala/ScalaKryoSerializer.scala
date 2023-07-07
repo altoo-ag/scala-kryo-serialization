@@ -16,12 +16,11 @@ class ScalaKryoSerializer(config: Config, classLoader: ClassLoader) extends Kryo
   protected[kryo] def prepareKryoInitializer(initializer: DefaultKryoInitializer): Unit = ()
 
   // serialization api
-  def serialize(obj: AnyRef): Try[Array[Byte]] = Try(toBinary(obj))
+  def serialize(obj: Any): Try[Array[Byte]] = Try(toBinary(obj))
 
-  def serialize(obj: AnyRef, buf: ByteBuffer): Try[Unit] = Try(toBinary(obj, buf))
+  def serialize(obj: Any, buf: ByteBuffer): Try[Unit] = Try(toBinary(obj, buf))
 
   def deserialize[T](bytes: Array[Byte]): Try[T] = Try(fromBinary(bytes, None).asInstanceOf[T])
 
   def deserialize[T](buf: ByteBuffer): Try[T] = Try(fromBinary(buf, None).asInstanceOf[T])
-
 }
