@@ -9,6 +9,7 @@ import scala.util.{Failure, Success}
 
 /**
  * Extensible strategy to configure and customize kryo instance.
+ * Create a subclass of [[DefaultKryoInitializer]] and configure the FQCN under key kryo-initializer.
  */
 class DefaultKryoInitializer {
 
