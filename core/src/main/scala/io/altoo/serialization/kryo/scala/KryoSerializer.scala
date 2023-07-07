@@ -190,11 +190,10 @@ private[kryo] abstract class KryoSerializer(config: Config, classLoader: ClassLo
 
   // Initialization
   private def getKryo(strategy: String, serializerType: String): Kryo = {
-    val referenceResolver = if (settings.kryoReferenceMap) new MapReferenceResolver() else new ListReferenceResolver()
-    val classResolver =
-      if (settings.idStrategy == "incremental") new KryoClassResolver(settings.implicitRegistrationLogging)
-      else if (settings.resolveSubclasses) new SubclassResolver()
-      else new DefaultClassResolver()
+    val initializer = kryoInitializerClass.getDeclaredConstructor().newInstance()
+    prepareKryoInitializer(initializer)
+    val referenceResolver = initializer.createReferenceResolver(settings)
+    val classResolver = initializer.createClassResolver(settings)
     val kryo = new ScalaKryo(classResolver, referenceResolver)
     kryo.setClassLoader(classLoader)
     // support deserialization of classes without no-arg constructors
@@ -209,8 +208,6 @@ private[kryo] abstract class KryoSerializer(config: Config, classLoader: ClassLo
       case o         => throw new IllegalStateException("Unknown serializer type: " + o)
     }
 
-    val initializer = kryoInitializerClass.getDeclaredConstructor().newInstance()
-    prepareKryoInitializer(initializer)
     initializer.preInit(kryo)
     initializer.init(kryo)
 
