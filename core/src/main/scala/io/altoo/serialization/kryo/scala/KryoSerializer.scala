@@ -30,13 +30,21 @@ import java.nio.ByteBuffer
 import scala.jdk.CollectionConverters.*
 import scala.util.*
 
-private[kryo] class EncryptionSettings(val config: Config) {
+/**
+ * INTERNAL API - api may change at any point in time
+ * without any warning.
+ */
+class EncryptionSettings(val config: Config) {
   val keyProvider: String = config.getString("encryption.aes.key-provider")
   val aesMode: String = config.getString("encryption.aes.mode")
   val aesIvLength: Int = config.getInt("encryption.aes.iv-length")
 }
 
-private[kryo] class KryoSerializationSettings(val config: Config) {
+/**
+ * INTERNAL API - api may change at any point in time
+ * without any warning.
+ */
+class KryoSerializationSettings(val config: Config) {
   val serializerType: String = config.getString("type")
 
   val bufferSize: Int = config.getInt("buffer-size")
