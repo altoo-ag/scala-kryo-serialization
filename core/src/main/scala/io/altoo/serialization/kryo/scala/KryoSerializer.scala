@@ -158,7 +158,7 @@ private[kryo] abstract class KryoSerializer(config: Config, classLoader: ClassLo
     () => new KryoSerializerBackend(getKryo(settings.idStrategy, settings.serializerType), settings.bufferSize, settings.maxBufferSize, useManifest, settings.useUnsafe)(log, classLoader))
 
   // Delegate to a serializer backend
-  protected def toBinary(obj: Any): Array[Byte] = {
+  protected def toBinaryInternal(obj: Any): Array[Byte] = {
     val ser = serializerPool.fetch()
     try
       kryoTransformer.toBinary(ser.toBinary(obj))
@@ -166,7 +166,7 @@ private[kryo] abstract class KryoSerializer(config: Config, classLoader: ClassLo
       serializerPool.release(ser)
   }
 
-  protected def toBinary(obj: Any, buf: ByteBuffer): Unit = {
+  protected def toBinaryInternal(obj: Any, buf: ByteBuffer): Unit = {
     val ser = serializerPool.fetch()
     try {
       if (kryoTransformer.isIdentity)
@@ -177,7 +177,7 @@ private[kryo] abstract class KryoSerializer(config: Config, classLoader: ClassLo
       serializerPool.release(ser)
   }
 
-  protected def fromBinary(bytes: Array[Byte], clazz: Option[Class[?]]): AnyRef = {
+  protected def fromBinaryInternal(bytes: Array[Byte], clazz: Option[Class[?]]): AnyRef = {
     val ser = serializerPool.fetch()
     try
       ser.fromBinary(kryoTransformer.fromBinary(bytes), clazz)
@@ -185,7 +185,7 @@ private[kryo] abstract class KryoSerializer(config: Config, classLoader: ClassLo
       serializerPool.release(ser)
   }
 
-  protected def fromBinary(buf: ByteBuffer, manifest: Option[String]): AnyRef = {
+  protected def fromBinaryInternal(buf: ByteBuffer, manifest: Option[String]): AnyRef = {
     val ser = serializerPool.fetch()
     try {
       if (kryoTransformer.isIdentity)
