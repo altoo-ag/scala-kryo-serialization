@@ -5,9 +5,9 @@ import io.altoo.serialization.kryo.scala.testkit.KryoSerializationTesting
 import org.scalatest.flatspec.AnyFlatSpec
 
 class ScalaKryoTest extends AnyFlatSpec with KryoSerializationTesting {
-  val kryo = new ScalaKryo(new DefaultClassResolver(), new ListReferenceResolver())
-  kryo.setRegistrationRequired(false)
 
+  protected override val kryo: ScalaKryo = new ScalaKryo(new DefaultClassResolver(), new ListReferenceResolver())
+  kryo.setRegistrationRequired(false)
 
   behavior of "ScalaKryo"
 
