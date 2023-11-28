@@ -11,8 +11,16 @@ class ScalaEnumNameSerializer[T <: EnumValue] extends Serializer[T] {
   def read(kryo: Kryo, input: Input, typ: Class[? <: T]): T = {
     val clazz = kryo.readClass(input).getType
     val name = input.readString()
-    // using value instead of ordinal to make serialization more stable, e.g. allowing reordering without breaking compatibility
-    clazz.getDeclaredMethod("valueOf", classOf[String]).invoke(null, name).asInstanceOf[T]
+
+    try {
+      // using value instead of ordinal to make serialization more stable, e.g. allowing reordering without breaking compatibility
+      clazz.getDeclaredMethod("valueOf", classOf[String]).invoke(null, name).asInstanceOf[T]
+    } catch {
+      case _: java.lang.NoSuchMethodException =>
+        // work around Scala 3 ADT-like enums missing valueOf method
+        val objectClazz = Class.forName(clazz.getName + "$")
+        objectClazz.getDeclaredField(name).get(null).asInstanceOf[T]
+    }
   }
 
   def write(kryo: Kryo, output: Output, obj: T): Unit = {
