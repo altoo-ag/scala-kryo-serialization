@@ -39,9 +39,10 @@ To use this serializer, you need to do two things:
 
 We provide several versions of the library:
 
-| Version | Kryo Compatibility | Available Scala Versions | Tested with                                                     |
-|---------|--------------------|--------------------------|-----------------------------------------------------------------|
-| v1.0.x  | Kryo-5.4           | 2.12,2.13,3.1            | JDK: OpenJdk11,OpenJdk17           Scala: 2.12.18,2.13.11,3.3.0 |
+| Version | Kryo Compatibility | Available Scala Versions | Tested with                                                         |
+|---------|--------------------|--------------------------|---------------------------------------------------------------------|
+| v1.1.x  | Kryo-5.5           | 2.12,2.13,3              | JDK: OpenJdk11,OpenJdk17,OpenJdk21     Scala: 2.12.18,2.13.11,3.3.1 |
+| v1.0.x  | Kryo-5.4           | 2.12,2.13,3              | JDK: OpenJdk11,OpenJdk17               Scala: 2.12.18,2.13.11,3.3.1 |
 
 
 Note that we use semantic versioning - see [semver.org](https://semver.org/).
@@ -52,7 +53,7 @@ Note that we use semantic versioning - see [semver.org](https://semver.org/).
 To use the latest stable release of scala-kryo-serialization in sbt projects you just need to add
 this dependency:
 
-`libraryDependencies += "io.altoo" %% "scala-kryo-serialization" % "1.0.0"`
+`libraryDependencies += "io.altoo" %% "scala-kryo-serialization" % "1.1.0"`
 
 #### maven projects
 
@@ -71,7 +72,7 @@ To use the official release of scala-kryo-serialization in Maven projects, pleas
     <dependency>
         <groupId>io.altoo</groupId>
         <artifactId>scala-kryo-serialization_2.13</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
     </dependency>
 ```
 
@@ -309,8 +310,8 @@ Enum Serialization
 Serialization of Java and Scala 3 enums is done by name (and not by index) to avoid having reordering of enum values breaking serialization.
 
 
-Using Kryo on JDK 17
---------------------
+Using Kryo on JDK 17 and later
+------------------------------
 
 Kryo needs modules to be opened for reflection when serializing basic JDK classes.
 Those options have to be passed to the JVM, for example in sbt:

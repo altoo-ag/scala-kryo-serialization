@@ -7,7 +7,7 @@ import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 val mainScalaVersion = "3.3.1"
 val secondaryScalaVersions = Seq("2.12.18", "2.13.12")
 
-val kryoVersion = "5.4.0"
+val kryoVersion = "5.5.0"
 enablePlugins(ReleasePlugin)
 addCommandAlias("validatePullRequest", ";+test")
 
