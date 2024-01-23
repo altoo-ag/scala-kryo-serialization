@@ -1,6 +1,6 @@
 package io.altoo.serialization.kryo.scala
 
-import com.esotericsoftware.kryo.Kryo
+import com.esotericsoftware.kryo.kryo5.Kryo
 import io.altoo.serialization.kryo.scala.serializer.{ScalaCollectionSerializer, ScalaImmutableMapSerializer, ScalaImmutableSetSerializer}
 
 private[kryo] object ScalaVersionSerializers {

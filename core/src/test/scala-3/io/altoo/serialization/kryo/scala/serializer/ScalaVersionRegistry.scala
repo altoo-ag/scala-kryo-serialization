@@ -1,6 +1,6 @@
 package io.altoo.serialization.kryo.scala.serializer
 
-import com.esotericsoftware.kryo.Kryo
+import com.esotericsoftware.kryo.kryo5.Kryo
 
 object ScalaVersionRegistry {
   final val immutableHashMapImpl = "scala.collection.immutable.HashMap"

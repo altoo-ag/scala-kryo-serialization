@@ -18,8 +18,8 @@
 
 package io.altoo.serialization.kryo.scala.serializer
 
-import com.esotericsoftware.kryo.io.{Input, Output}
-import com.esotericsoftware.kryo.{Kryo, Serializer}
+import com.esotericsoftware.kryo.kryo5.io.{Input, Output}
+import com.esotericsoftware.kryo.kryo5.{Kryo, Serializer}
 
 /**
  * Generic serializer for traversable collections
@@ -48,4 +48,3 @@ class ScalaCollectionSerializer() extends Serializer[Iterable[_]] {
     collection.foreach { (e: Any) => kryo.writeClassAndObject(output, e) }
   }
 }
-

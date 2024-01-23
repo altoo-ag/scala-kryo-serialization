@@ -16,7 +16,7 @@ limitations under the License.
 
 package io.altoo.serialization.kryo.scala
 
-import com.esotericsoftware.minlog.Log
+import com.esotericsoftware.kryo.kryo5.minlog.Log
 import com.typesafe.config.ConfigFactory
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.flatspec.AnyFlatSpec

@@ -18,12 +18,12 @@
 
 package io.altoo.serialization.kryo.scala
 
-import com.esotericsoftware.kryo.Kryo
-import com.esotericsoftware.kryo.util.*
-import com.esotericsoftware.minlog.Log as MiniLog
+import com.esotericsoftware.kryo.kryo5.Kryo
+import com.esotericsoftware.kryo.kryo5.util.*
+import com.esotericsoftware.kryo.kryo5.minlog.Log as MiniLog
 import com.typesafe.config.Config
 import io.altoo.serialization.kryo.scala.serializer.*
-import org.objenesis.strategy.StdInstantiatorStrategy
+import com.esotericsoftware.kryo.kryo5.objenesis.strategy.StdInstantiatorStrategy
 import org.slf4j.LoggerFactory
 
 import java.nio.ByteBuffer

@@ -41,7 +41,7 @@ lazy val core: Project = project.in(file("core"))
 
 // Dependencies
 lazy val coreDeps = Seq(
-  "com.esotericsoftware" % "kryo" % kryoVersion,
+  "com.esotericsoftware.kryo" % "kryo5" % kryoVersion,
   "com.typesafe" % "config" % "1.4.2",
   "org.lz4" % "lz4-java" % "1.8.0",
   "org.agrona" % "agrona" % "1.15.1", // should match pekko-remote/aeron inherited version

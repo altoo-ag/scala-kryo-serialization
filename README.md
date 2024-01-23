@@ -137,10 +137,10 @@ configure the FQCN under `scala-kryo-serialization.kryo-initializer`.
 #### Configuring default field serializers
 In `preInit` a different default serializer can be configured
 as it will be picked up by serializers added afterward.
-By default, the `com.esotericsoftware.kryo.serializers.FieldSerializer` will be used.
+By default, the `com.esotericsoftware.kryo.kryo5.serializers.FieldSerializer` will be used.
 
 The available options are:
-* `com.esotericsoftware.kryo.serializers.FieldSerializer`<br/>
+* `com.esotericsoftware.kryo.kryo5.serializers.FieldSerializer`<br/>
   Serializes objects using direct field assignment. FieldSerializer is generic
   and can serialize most classes without any configuration. It is efficient
   and writes only the field data, without any extra information. It does not
@@ -149,7 +149,7 @@ The available options are:
   such as when sending data over a network, but may not be a good choice for
   long term data storage because the Java classes cannot evolve.
 
-* `com.esotericsoftware.kryo.serializers.CompatibleFieldSerializer`<br/>
+* `com.esotericsoftware.kryo.kryo5.serializers.CompatibleFieldSerializer`<br/>
   Serializes objects using direct field assignment, providing both forward and
   backward compatibility. This means fields can be added or removed without
   invalidating previously serialized bytes. Changing the type of a field
@@ -157,7 +157,7 @@ The available options are:
   first time the class is encountered in the serialized bytes, a simple
   schema is written containing the field name strings.
 
-* `com.esotericsoftware.kryo.serializers.VersionFieldSerializer`<br/>
+* `com.esotericsoftware.kryo.kryo5.serializers.VersionFieldSerializer`<br/>
   Serializes objects using direct field assignment, with versioning backward
   compatibility. Allows fields to have a @Since(int) annotation to indicate
   the version they were added. For a particular field, the value in @Since
@@ -169,7 +169,7 @@ The available options are:
   (a single additional varint) compared to FieldSerializer. Forward
   compatibility is not supported.
 
-* `com.esotericsoftware.kryo.serializers.TaggedFieldSerializer`<br/>
+* `com.esotericsoftware.kryo.kryo5.serializers.TaggedFieldSerializer`<br/>
   Serializes objects using direct field assignment for fields that have
   a @Tag(int) annotation. This provides backward compatibility so new
   fields can be added. TaggedFieldSerializer has two advantages over
@@ -191,7 +191,7 @@ Create a custom initializer
 ```scala
 class XyzKryoInitializer extends DefaultKryoInitializer {
   def preInit(kryo: ScalaKryo): Unit = {
-    kryo.setDefaultSerializer(classOf[com.esotericsoftware.kryo.serializers.TaggedFieldSerializer[_]])
+    kryo.setDefaultSerializer(classOf[com.esotericsoftware.kryo.kryo5.serializers.TaggedFieldSerializer[_]])
   }
 }
 ```
@@ -330,4 +330,3 @@ If you wish to build the library on your own, you need to check out the project 
 ```
 sbt compile publishM2
 ```
-
