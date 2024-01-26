@@ -1,8 +1,8 @@
 package io.altoo.serialization.kryo.scala.serializer
 
-import com.esotericsoftware.kryo.io.{Input, Output}
-import com.esotericsoftware.kryo.serializers.MapSerializer
-import com.esotericsoftware.kryo.{Kryo, Serializer}
+import com.esotericsoftware.kryo.kryo5.io.{Input, Output}
+import com.esotericsoftware.kryo.kryo5.serializers.MapSerializer
+import com.esotericsoftware.kryo.kryo5.{Kryo, Serializer}
 import io.altoo.serialization.kryo.scala.testkit.AbstractKryoTest
 
 import java.util

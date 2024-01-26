@@ -1,8 +1,8 @@
 
 package io.altoo.serialization.kryo.scala.serializer
 
-import com.esotericsoftware.kryo.Kryo
-import com.esotericsoftware.kryo.io.{Input, Output}
+import com.esotericsoftware.kryo.kryo5.Kryo
+import com.esotericsoftware.kryo.kryo5.io.{Input, Output}
 import org.scalatest.flatspec.AnyFlatSpec
 
 import scala.language.implicitConversions

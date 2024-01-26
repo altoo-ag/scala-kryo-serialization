@@ -18,8 +18,8 @@
 
 package io.altoo.serialization.kryo.scala.serializer
 
-import com.esotericsoftware.kryo.Registration
-import com.esotericsoftware.kryo.util.DefaultClassResolver
+import com.esotericsoftware.kryo.kryo5.Registration
+import com.esotericsoftware.kryo.kryo5.util.DefaultClassResolver
 
 class KryoClassResolver(val logImplicits: Boolean) extends DefaultClassResolver {
   override def registerImplicit(typ: Class[?]): Registration = {
