@@ -7,7 +7,7 @@ import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 val mainScalaVersion = "3.3.1"
 val secondaryScalaVersions = Seq("2.12.18", "2.13.12")
 
-val kryoVersion = "5.5.0"
+val kryoVersion = "5.6.0"
 enablePlugins(ReleasePlugin)
 addCommandAlias("validatePullRequest", ";+test")
 
@@ -41,7 +41,7 @@ lazy val core: Project = project.in(file("core"))
 
 // Dependencies
 lazy val coreDeps = Seq(
-  "com.esotericsoftware" % "kryo" % kryoVersion,
+  "com.esotericsoftware" % "kryo5" % kryoVersion,
   "com.typesafe" % "config" % "1.4.2",
   "org.lz4" % "lz4-java" % "1.8.0",
   "org.agrona" % "agrona" % "1.15.1", // should match pekko-remote/aeron inherited version

@@ -1,8 +1,8 @@
 package io.altoo.serialization.kryo.scala
 
-import com.esotericsoftware.kryo.Kryo
-import com.esotericsoftware.kryo.io.{ByteBufferInput, ByteBufferOutput, Input, Output}
-import com.esotericsoftware.kryo.unsafe.{UnsafeInput, UnsafeOutput}
+import com.esotericsoftware.kryo.kryo5.Kryo
+import com.esotericsoftware.kryo.kryo5.io.{ByteBufferInput, ByteBufferOutput, Input, Output}
+import com.esotericsoftware.kryo.kryo5.unsafe.{UnsafeInput, UnsafeOutput}
 import org.slf4j.Logger
 
 import java.nio.ByteBuffer

@@ -1,8 +1,8 @@
 package io.altoo.serialization.kryo.scala
 
-import com.esotericsoftware.kryo.{ClassResolver, ReferenceResolver}
-import com.esotericsoftware.kryo.serializers.FieldSerializer
-import com.esotericsoftware.kryo.util.{DefaultClassResolver, ListReferenceResolver, MapReferenceResolver}
+import com.esotericsoftware.kryo.kryo5.{ClassResolver, ReferenceResolver}
+import com.esotericsoftware.kryo.kryo5.serializers.FieldSerializer
+import com.esotericsoftware.kryo.kryo5.util.{DefaultClassResolver, ListReferenceResolver, MapReferenceResolver}
 import io.altoo.serialization.kryo.scala.serializer.*
 
 import scala.util.{Failure, Success}
@@ -34,7 +34,7 @@ class DefaultKryoInitializer {
    * Note: register custom classes/serializer in `postInit`, otherwise default order might break.
    */
   def preInit(kryo: ScalaKryo): Unit = {
-    kryo.setDefaultSerializer(classOf[com.esotericsoftware.kryo.serializers.FieldSerializer[?]])
+    kryo.setDefaultSerializer(classOf[com.esotericsoftware.kryo.kryo5.serializers.FieldSerializer[?]])
   }
 
   /**

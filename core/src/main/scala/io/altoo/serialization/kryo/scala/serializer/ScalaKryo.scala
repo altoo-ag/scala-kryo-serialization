@@ -17,8 +17,8 @@
  */
 package io.altoo.serialization.kryo.scala.serializer
 
-import com.esotericsoftware.kryo.*
-import com.esotericsoftware.kryo.serializers.FieldSerializer
+import com.esotericsoftware.kryo.kryo5.*
+import com.esotericsoftware.kryo.kryo5.serializers.FieldSerializer
 
 class ScalaKryo(classResolver: ClassResolver, referenceResolver: ReferenceResolver)
     extends Kryo(classResolver, referenceResolver) {
