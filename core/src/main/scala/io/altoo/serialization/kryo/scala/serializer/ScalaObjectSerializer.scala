@@ -29,6 +29,12 @@ import scala.util.control.Exception.allCatch
 class ScalaObjectSerializer[T] extends Serializer[T] {
   private val cachedObj = MMap[Class[?], Option[T]]()
 
+  // NOTE: even if a standalone or companion Scala object contains mutable
+  // fields, the fact that there is only one of them in a process means that
+  // we don't want to make a copy, so this serializer's type is treated as
+  // always being immutable.
+  override def isImmutable: Boolean = true
+
   // Does nothing
   override def write(kser: Kryo, out: Output, obj: T): Unit = ()
 
