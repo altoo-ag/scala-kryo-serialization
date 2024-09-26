@@ -1,6 +1,7 @@
 name: Scala CI
 
 on:
+  workflow_dispatch:
   pull_request:
     branches: [ main ]
     paths-ignore:
@@ -8,13 +9,13 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set up JDK 17
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'adopt'
+          distribution: 'temurin'
       - name: Run tests with Scala 2.12,2.13,3.3
         run: sbt +test
