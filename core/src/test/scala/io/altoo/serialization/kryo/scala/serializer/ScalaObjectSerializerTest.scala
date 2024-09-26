@@ -2,9 +2,26 @@ package io.altoo.serialization.kryo.scala.serializer
 
 import io.altoo.serialization.kryo.scala.testkit.AbstractKryoTest
 
-object standalone
+import java.util.UUID
 
-object ScalaObjectSerializerTest
+trait Snowflake {
+  val state: UUID = UUID.randomUUID()
+
+  override def hashCode(): Int = state.hashCode()
+
+  override def equals(another: Any): Boolean = another match {
+    case anotherSnowflake: Snowflake =>
+      // NOTE: don't worry about respecting different flavours of
+      // subclass, as all snowflakes are constructed different from
+      // each other to start with. Only copies can be equal!
+      this.state == anotherSnowflake.state
+    case _ => false
+  }
+}
+
+object standalone extends Snowflake
+
+object ScalaObjectSerializerTest extends Snowflake
 
 class ScalaObjectSerializerTest extends AbstractKryoTest {
   private def configureKryo(): Unit = {
@@ -20,16 +37,16 @@ class ScalaObjectSerializerTest extends AbstractKryoTest {
   it should "round trip standalone and companion objects" in {
     configureKryo()
 
-    testSerializationOf(standalone)
+    (testSerializationOf(standalone) should be).theSameInstanceAs(standalone)
 
-    testSerializationOf(ScalaObjectSerializerTest)
+    (testSerializationOf(ScalaObjectSerializerTest) should be).theSameInstanceAs(ScalaObjectSerializerTest)
   }
 
   it should "support copying of standalone and companion objects" in {
     configureKryo()
 
-    testCopyingOf(standalone)
+    (testCopyingOf(standalone) should be).theSameInstanceAs(standalone)
 
-    testCopyingOf(ScalaObjectSerializerTest)
+    (testCopyingOf(ScalaObjectSerializerTest) should be).theSameInstanceAs(ScalaObjectSerializerTest)
   }
 }
