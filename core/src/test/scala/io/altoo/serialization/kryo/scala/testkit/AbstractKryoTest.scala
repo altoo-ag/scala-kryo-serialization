@@ -70,4 +70,12 @@ trait KryoSerializationTesting {
     input.close()
     obj1.asInstanceOf[T]
   }
+
+  protected final def testCopyingOf[T](obj: T): T = {
+    val copy = kryo.copy(obj)
+
+    assert(copy == obj)
+
+    obj
+  }
 }
