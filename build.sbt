@@ -4,10 +4,10 @@ import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 // Basics
 
 // note: keep in sync to pekko https://github.com/apache/incubator-pekko/blob/main/project/Dependencies.scala
-val mainScalaVersion = "3.3.1"
-val secondaryScalaVersions = Seq("2.12.18", "2.13.12")
+val mainScalaVersion = "3.3.4"
+val secondaryScalaVersions = Seq("2.12.20", "2.13.14")
 
-val kryoVersion = "5.6.0"
+val kryoVersion = "5.6.2"
 enablePlugins(ReleasePlugin)
 addCommandAlias("validatePullRequest", ";+test")
 
@@ -41,17 +41,17 @@ lazy val core: Project = project.in(file("core"))
 
 // Dependencies
 lazy val coreDeps = Seq(
-  "com.esotericsoftware" % "kryo5" % kryoVersion,
-  "com.typesafe" % "config" % "1.4.2",
+  "com.esotericsoftware.kryo" % "kryo5" % kryoVersion,
+  "com.typesafe" % "config" % "1.4.3",
   "org.lz4" % "lz4-java" % "1.8.0",
-  "org.agrona" % "agrona" % "1.15.1", // should match pekko-remote/aeron inherited version
-  "org.scala-lang.modules" %% "scala-collection-compat" % "2.9.0",
-  "org.slf4j" % "slf4j-api" % "2.0.7",
-  "org.slf4j" % "log4j-over-slf4j" % "2.0.7")
+  "org.agrona" % "agrona" % "1.22.0", // should match pekko-remote/aeron inherited version
+  "org.scala-lang.modules" %% "scala-collection-compat" % "2.12.0",
+  "org.slf4j" % "slf4j-api" % "2.0.16",
+  "org.slf4j" % "log4j-over-slf4j" % "2.0.16")
 
 lazy val testingDeps = Seq(
-  "org.scalatest" %% "scalatest" % "3.2.16" % Test,
-  "ch.qos.logback" % "logback-classic" % "1.4.8" % Test)
+  "org.scalatest" %% "scalatest" % "3.2.19" % Test,
+  "ch.qos.logback" % "logback-classic" % "1.5.10" % Test)
 
 // Settings
 lazy val commonSettings: Seq[Setting[?]] = Seq(
