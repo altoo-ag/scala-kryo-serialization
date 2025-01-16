@@ -5,7 +5,7 @@ import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 
 // note: keep in sync to pekko https://github.com/apache/incubator-pekko/blob/main/project/Dependencies.scala
 val mainScalaVersion = "3.3.4"
-val secondaryScalaVersions = Seq("2.12.20", "2.13.14")
+val secondaryScalaVersions = Seq("2.12.20", "2.13.16")
 
 val kryoVersion = "5.6.2"
 enablePlugins(ReleasePlugin)
@@ -51,7 +51,7 @@ lazy val coreDeps = Seq(
 
 lazy val testingDeps = Seq(
   "org.scalatest" %% "scalatest" % "3.2.19" % Test,
-  "ch.qos.logback" % "logback-classic" % "1.5.10" % Test)
+  "ch.qos.logback" % "logback-classic" % "1.5.16" % Test)
 
 // Settings
 lazy val commonSettings: Seq[Setting[?]] = Seq(
@@ -126,11 +126,12 @@ lazy val scalacStrictOptions = Seq(
           "-Wunused:privates",
           "-Wunused:locals",
           // "-Wunused:params", enable once 2.12 support is dropped
-          "-Wunused:nowarn")
+        )
       case "3" =>
         Seq(
           // "-Xfatal-warnings", enable once dotty supports @nowarn
-          "-Ycheck-all-patmat")
+          "-Ycheck-all-patmat"
+        )
     }
   })
 
