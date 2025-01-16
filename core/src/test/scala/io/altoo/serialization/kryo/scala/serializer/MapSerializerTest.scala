@@ -4,12 +4,14 @@ import com.esotericsoftware.kryo.kryo5.io.{Input, Output}
 import com.esotericsoftware.kryo.kryo5.serializers.MapSerializer
 import com.esotericsoftware.kryo.kryo5.{Kryo, Serializer}
 import io.altoo.serialization.kryo.scala.testkit.AbstractKryoTest
-
+import scala.annotation.nowarn
 import java.util
 import java.util.Random
 import java.util.concurrent.ConcurrentHashMap
 import scala.collection.immutable.{Map, Set, Vector}
 
+@nowarn("cat=deprecation")
+@nowarn("msg=object AnyRefMap in package mutable is deprecated (since 2.13.16): Use `scala.collection.mutable.HashMap` instead for better performance.")
 class MapSerializerTest extends AbstractKryoTest {
 
   private val hugeCollectionSize = 100

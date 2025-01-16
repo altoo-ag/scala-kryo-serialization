@@ -4,12 +4,12 @@ import com.typesafe.config.ConfigFactory
 import org.scalatest.Inside
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-
+import scala.annotation.nowarn
 import java.nio.ByteBuffer
 import scala.collection.{immutable, mutable}
 import scala.collection.immutable.{HashMap, TreeMap}
 
-object TransformationserializerTest {
+object TransformationSerializationTest {
   private val defaultConfig =
     """
       |scala-kryo-serializer {
@@ -32,22 +32,26 @@ object TransformationserializerTest {
       |""".stripMargin
 }
 
-class ZipTransformationserializerTest extends TransformationserializerTest("Zip", "scala-kryo-serializer.post-serializer-transformations = deflate")
-class Lz4TransformationserializerTest extends TransformationserializerTest("LZ4", "scala-kryo-serializer.post-serializer-transformations = lz4")
-class AESTransformationserializerTest extends TransformationserializerTest("AES", "scala-kryo-serializer.post-serializer-transformations = aes")
-class ZipAESTransformationserializerTest extends TransformationserializerTest("ZipAES", """scala-kryo-serializer.post-serializer-transformations = "deflate,aes"""")
-class LZ4AESTransformationserializerTest extends TransformationserializerTest("LZ4AES", """scala-kryo-serializer.post-serializer-transformations = "lz4,aes"""")
-class OffTransformationserializerTest extends TransformationserializerTest("Off", "")
-class UnsafeTransformationserializerTest extends TransformationserializerTest("Unsafe", "scala-kryo-serializer.use-unsafe = true")
-class UnsafeLZ4TransformationserializerTest extends TransformationserializerTest("UnsafeLZ4",
+class ZipTransformationserializerTest extends TransformationSerializationTest("Zip", "scala-kryo-serializer.post-serializer-transformations = deflate")
+class Lz4TransformationserializerTest extends TransformationSerializationTest("LZ4", "scala-kryo-serializer.post-serializer-transformations = lz4")
+class AESTransformationserializerTest extends TransformationSerializationTest("AES", "scala-kryo-serializer.post-serializer-transformations = aes")
+class ZipAESTransformationserializerTest extends TransformationSerializationTest("ZipAES", """scala-kryo-serializer.post-serializer-transformations = "deflate,aes"""")
+class LZ4AESTransformationserializerTest extends TransformationSerializationTest("LZ4AES", """scala-kryo-serializer.post-serializer-transformations = "lz4,aes"""")
+class OffTransformationserializerTest extends TransformationSerializationTest("Off", "")
+class UnsafeTransformationserializerTest extends TransformationSerializationTest("Unsafe", "scala-kryo-serializer.use-unsafe = true")
+class UnsafeLZ4TransformationserializerTest extends TransformationSerializationTest("UnsafeLZ4",
       """
     |scala-kryo-serializer.use-unsafe = true
     |scala-kryo-serializer.post-serializer-transformations = lz4
     """.stripMargin)
 
-abstract class TransformationserializerTest(name: String, testConfig: String) extends AnyFlatSpec with Matchers with Inside {
+//fails for scala 3
+@nowarn("cat=deprecation")
+@nowarn("msg=@nowarn annotation does not suppress any warnings")
+@nowarn("msg=object AnyRefMap in package mutable is deprecated (since 2.13.16): Use `scala.collection.mutable.HashMap` instead for better performance.")
+abstract class TransformationSerializationTest(name: String, testConfig: String) extends AnyFlatSpec with Matchers with Inside {
   private val config = ConfigFactory.parseString(testConfig)
-    .withFallback(ConfigFactory.parseString(TransformationserializerTest.defaultConfig))
+    .withFallback(ConfigFactory.parseString(TransformationSerializationTest.defaultConfig))
     .withFallback(ConfigFactory.defaultReference())
 
   private val serializer = new ScalaKryoSerializer(config, getClass.getClassLoader)
