@@ -6,20 +6,20 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 object LazyValSpec {
-case class Message(content: String) {
-  lazy val mkContent: String = {
-    Thread.sleep(200)
-    s"Test string of LazyValSpec is $content."
+  case class Message(content: String) {
+    lazy val mkContent: String = {
+      Thread.sleep(200)
+      s"Test string of LazyValSpec is $content."
+    }
   }
-}
 
   val ser = new ScalaKryoSerializer(ConfigFactory.defaultReference(), getClass.getClassLoader)
 
-def serialize(obj: Message): Array[Byte] =
-  ser.serialize(obj).get
+  def serialize(obj: Message): Array[Byte] =
+    ser.serialize(obj).get
 
-def deserialize(bytes: Array[Byte]): Message =
-  ser.deserialize[Message](bytes).get
+  def deserialize(bytes: Array[Byte]): Message =
+    ser.deserialize[Message](bytes).get
 }
 
 class LazyValSpec extends AnyFlatSpec with Matchers {
