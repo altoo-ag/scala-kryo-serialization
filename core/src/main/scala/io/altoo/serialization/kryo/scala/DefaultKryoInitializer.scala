@@ -57,8 +57,6 @@ class DefaultKryoInitializer {
       case Failure(e)     => throw e
     }
     kryo.register(classOf[scala.Enumeration#Value])
-    kryo.register(classOf[scala.runtime.LazyVals.Waiting], new LazyValSerializer)
-    kryo.register(classOf[scala.runtime.LazyVals.Evaluating.type], new LazyValSerializer)
 
     // identity preserving serializers for Unit and BoxedUnit
     kryo.addDefaultSerializer(classOf[scala.runtime.BoxedUnit], classOf[ScalaUnitSerializer])
@@ -83,5 +81,7 @@ class DefaultKryoInitializer {
     ScalaVersionSerializers.mapAndSet(kryo)
     ScalaVersionSerializers.iterable(kryo)
     ScalaVersionSerializers.enums(kryo)
+    // Scala 3 LazyVal Serializer
+    ScalaVersionSerializers.lazyVal(kryo)
   }
 }

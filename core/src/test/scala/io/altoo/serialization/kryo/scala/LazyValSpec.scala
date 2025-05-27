@@ -22,14 +22,13 @@ object LazyValSpec {
     ser.deserialize[Message](bytes).get
 }
 
-class LazyValSpec extends AnyFlatSpec with Matchers {
-  val testMessage: String = "Test if lazy val is safe with intermediate states"
+class AltooLazyValSpec extends AnyFlatSpec with Matchers {
 
   behavior of "Lazy val serialization"
 
   it should "be safe with Scala 3 `lazy val` intermediate states (`Evaluating` / `Waiting`)" in {
     val serializedWaitingStateMessage = locally {
-      val msg = LazyValSpec.Message(testMessage)
+      val msg = LazyValSpec.Message("Test if lazy val is safe with intermediate states")
 
       val evaluatingLazyVal = new Thread(() => {
         msg.mkContent // start evaluation before serialization
@@ -61,7 +60,6 @@ class LazyValSpec extends AnyFlatSpec with Matchers {
     }
 
     assert(isStarted)
-    assert(content.nonEmpty)
+    assert(!content.isBlank)
   }
 }
-

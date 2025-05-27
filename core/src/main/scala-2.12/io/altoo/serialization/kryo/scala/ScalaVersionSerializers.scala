@@ -14,4 +14,6 @@ private[kryo] object ScalaVersionSerializers {
   }
 
   def enums(kryo: Kryo): Unit = () // Scala 3 only
+
+  def lazyVal(kryo: Kryo): Unit = () // Scala 3 only
 }
