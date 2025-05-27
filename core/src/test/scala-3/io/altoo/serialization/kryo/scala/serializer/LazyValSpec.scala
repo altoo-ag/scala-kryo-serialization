@@ -1,4 +1,4 @@
-package io.altoo.serialization.kryo
+package io.altoo.serialization.kryo.scala.serializer
 
 import io.altoo.serialization.kryo.scala.ScalaKryoSerializer
 import com.typesafe.config.ConfigFactory
@@ -22,7 +22,8 @@ object LazyValSpec {
     ser.deserialize[Message](bytes).get
 }
 
-class AltooLazyValSpec extends AnyFlatSpec with Matchers {
+class LazyValSpec extends AnyFlatSpec with Matchers {
+  import LazyValSpec.*
 
   behavior of "Lazy val serialization"
 
@@ -53,13 +54,9 @@ class AltooLazyValSpec extends AnyFlatSpec with Matchers {
     })
 
     read.start()
-    Thread.sleep(1000)
+    read.join(1000)
 
-    if (content.isBlank) {
-      read.interrupt()
-    }
-
-    assert(isStarted)
-    assert(!content.isBlank)
+    assert(isStarted, "Lazy val was never accessed in the thread")
+    assert(!content.isBlank, s"Lazy val content was blank")
   }
 }
