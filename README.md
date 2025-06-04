@@ -310,6 +310,19 @@ Enum Serialization
 
 Serialization of Java and Scala 3 enums is done by name (and not by index) to avoid having reordering of enum values breaking serialization.
 
+Scala 3 `lazy val` Serialization Notice
+---------------------------------------
+
+When serializing objects that contain `lazy val`s in Scala 3, please be aware of the following behavior:
+
+- Scala 3 implements `lazy val` using an internal state machine (`Uninitialized`, `Evaluating`, `Waiting`, `Initialized`).
+- Kryo will only serialize the `lazy val` value if it has been fully initialized. Intermediate states (`Evaluating` or `Waiting`) will be treated as uninitialized (`null`) during serialization.
+- As a result, after deserialization, the `lazy val` will be recomputed if it was not fully initialized during serialization.
+
+**Implication:** If your object contains expensive or side-effecting `lazy val`s, they might be re-evaluated after deserialization unless they were fully initialized before serialization.
+
+If this behavior is undesirable, consider explicitly evaluating such values before serialization, or avoid relying on `lazy val` in serialized objects.
+
 
 Using Kryo on JDK 17 and later
 ------------------------------
