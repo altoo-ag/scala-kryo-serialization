@@ -81,5 +81,7 @@ class DefaultKryoInitializer {
     ScalaVersionSerializers.mapAndSet(kryo)
     ScalaVersionSerializers.iterable(kryo)
     ScalaVersionSerializers.enums(kryo)
+    // Scala 3 LazyVal Serializer
+    ScalaVersionSerializers.lazyVal(kryo)
   }
 }
