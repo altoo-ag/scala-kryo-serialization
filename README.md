@@ -41,6 +41,7 @@ We provide several versions of the library:
 
 | Version | Kryo Compatibility | Available Scala Versions | Tested with                                                         |
 |---------|--------------------|--------------------------|---------------------------------------------------------------------|
+| v1.3.x  | Kryo-5.6           | 2.12,2.13,3              | JDK: OpenJdk11,OpenJdk17,OpenJdk21     Scala: 2.12.20,2.13.16,3.3.5 |
 | v1.2.x  | Kryo-5.6           | 2.12,2.13,3              | JDK: OpenJdk11,OpenJdk17,OpenJdk21     Scala: 2.12.20,2.13.16,3.3.4 |
 | v1.1.x  | Kryo-5.5           | 2.12,2.13,3              | JDK: OpenJdk11,OpenJdk17,OpenJdk21     Scala: 2.12.18,2.13.11,3.3.1 |
 | v1.0.x  | Kryo-5.4           | 2.12,2.13,3              | JDK: OpenJdk11,OpenJdk17               Scala: 2.12.18,2.13.11,3.3.1 |
