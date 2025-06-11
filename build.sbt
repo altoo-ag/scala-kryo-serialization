@@ -55,7 +55,8 @@ lazy val testingDeps = Seq(
 
 // Settings
 lazy val commonSettings: Seq[Setting[?]] = Seq(
-  organization := "io.altoo")
+  organization := "io.altoo",
+)
 
 lazy val moduleSettings: Seq[Setting[?]] = commonSettings ++ noReleaseInSubmoduleSettings ++ scalacBasicOptions ++ scalacStrictOptions ++ scalacLintOptions ++ Seq(
   scalaVersion := mainScalaVersion,
