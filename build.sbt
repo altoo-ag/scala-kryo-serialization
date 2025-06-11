@@ -4,7 +4,7 @@ import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 // Basics
 
 // note: keep in sync to pekko https://github.com/apache/incubator-pekko/blob/main/project/Dependencies.scala
-val mainScalaVersion = "3.3.4"
+val mainScalaVersion = "3.3.5"
 val secondaryScalaVersions = Seq("2.12.20", "2.13.16")
 
 val kryoVersion = "5.6.2"
