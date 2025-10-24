@@ -46,12 +46,12 @@ trait KryoSerializationTesting {
     output.close()
 
     val input = new Input(new ByteArrayInputStream(serialized), 4096)
-    val obj1 = kryo.readClassAndObject(input)
+    val roundTripped = kryo.readClassAndObject(input)
     input.close()
 
-    assert(obj == obj1)
+    assert(obj == roundTripped)
 
-    obj1.asInstanceOf[T]
+    roundTripped.asInstanceOf[T]
   }
 
   protected final def serialize[T](obj: T): Array[Byte] = {
@@ -73,9 +73,7 @@ trait KryoSerializationTesting {
 
   protected final def testCopyingOf[T](obj: T): T = {
     val copy = kryo.copy(obj)
-
     assert(copy == obj)
-
-    obj
+    copy
   }
 }
