@@ -3,7 +3,7 @@ import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 
 // Basics
 
-// note: keep in sync to pekko https://github.com/apache/incubator-pekko/blob/main/project/Dependencies.scala
+// note: keep in sync to pekko https://github.com/apache/pekko/blob/main/project/Dependencies.scala
 val mainScalaVersion = "3.3.5"
 val secondaryScalaVersions = Seq("2.12.20", "2.13.16")
 
@@ -43,7 +43,7 @@ lazy val core: Project = project.in(file("core"))
 lazy val coreDeps = Seq(
   "com.esotericsoftware.kryo" % "kryo5" % kryoVersion,
   "com.typesafe" % "config" % "1.4.3",
-  "org.lz4" % "lz4-java" % "1.8.0",
+  "at.yawk.lz4" % "lz4-java" % "1.10.2",
   "org.agrona" % "agrona" % "1.22.0", // should match pekko-remote/aeron inherited version
   "org.scala-lang.modules" %% "scala-collection-compat" % "2.12.0",
   "org.slf4j" % "slf4j-api" % "2.0.16",
