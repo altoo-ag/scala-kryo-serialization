@@ -87,7 +87,7 @@ class LazyValSpec extends AnyFlatSpec with Matchers {
     val v2 = Victim()
     val wrapper = Wrapper(v1, v2)
 
-    // Start threads that will trigger lazy val evaluation
+    // t1 will be LazyVals$Evaluating$ and t2 LazyVals$Waiting
     val t1 = new Thread(() => {
       v1.x
       ()
@@ -111,13 +111,13 @@ class LazyValSpec extends AnyFlatSpec with Matchers {
     t1.join(5000)
     t2.join(5000)
 
-    // Deserialize and verify
+    // Deserialize and verify wrapper with previously-intermediate (Evaluating/Waiting) lazy vals
     val decoded = deserializeWrapper(bytes)
     decoded should not be null
     decoded.a should not be null
     decoded.b should not be null
 
-    // Verify lazy val can be accessed on deserialized objects
+    // Verify lazy val can be accessed on deserialized objects after Evaluating/Waiting states
     decoded.b.x shouldBe "ok"
   }
 }
