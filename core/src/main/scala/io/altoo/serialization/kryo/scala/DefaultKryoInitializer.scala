@@ -17,7 +17,19 @@ class DefaultKryoInitializer {
    * Can be overridden to provide a custom reference resolver - override only if you know what you are doing!
    */
   def createReferenceResolver(settings: KryoSerializationSettings): ReferenceResolver = {
-    if (settings.kryoReferenceMap) DefaultKryoInitializer.createMapReferenceResolver() else DefaultKryoInitializer.createListReferenceResolver()
+    def createMapReferenceResolver(): MapReferenceResolver = 
+      new MapReferenceResolver() {
+        override def useReferences(cls: Class[?]): Boolean = 
+          super.useReferences(cls) && !settings.noResolveReferenceClasses.contains(cls.getName)
+        }
+
+    def createListReferenceResolver(): ListReferenceResolver = 
+      new ListReferenceResolver() {
+        override def useReferences(cls: Class[?]): Boolean = 
+          super.useReferences(cls) && !settings.noResolveReferenceClasses.contains(cls.getName)
+      }
+
+    if (settings.kryoReferenceMap) createMapReferenceResolver() else createListReferenceResolver()
   }
 
   /**
@@ -83,27 +95,5 @@ class DefaultKryoInitializer {
     ScalaVersionSerializers.enums(kryo)
     // Scala 3 LazyVal Serializer
     ScalaVersionSerializers.lazyVal(kryo)
-  }
-}
-
-object DefaultKryoInitializer {
-  val bannedTypes = Set(
-    "scala.runtime.LazyVals$Waiting",
-    "scala.runtime.LazyVals$Evaluating$",
-  )
-
-
-  def createMapReferenceResolver(): MapReferenceResolver = {
-    new MapReferenceResolver() {
-      override def useReferences(cls: Class[?]): Boolean = 
-        super.useReferences(cls) && !bannedTypes.contains(cls.getName)
-    }
-  }
-
-  def createListReferenceResolver(): ListReferenceResolver = {
-    new ListReferenceResolver() {
-      override def useReferences(cls: Class[?]): Boolean = 
-        super.useReferences(cls) && !bannedTypes.contains(cls.getName)
-    }
   }
 }

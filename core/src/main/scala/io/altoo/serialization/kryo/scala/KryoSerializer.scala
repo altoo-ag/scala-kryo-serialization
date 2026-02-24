@@ -69,6 +69,7 @@ class KryoSerializationSettings(val config: Config) {
   val postSerTransformations: String = config.getString("post-serialization-transformations")
   val queueBuilder: String = config.getString("queue-builder")
   val resolveSubclasses: Boolean = config.getBoolean("resolve-subclasses")
+  val noResolveReferenceClasses: Set[String] = config.getStringList("no-resolve-reference-classes").asScala.toSet
 
   private def configToMap(cfg: Config): Map[String, String] =
     cfg.root.unwrapped.asScala.toMap.map { case (k, v) => (k, v.toString) }
