@@ -324,7 +324,7 @@ When serializing objects that contain `lazy val`s in Scala 3, please be aware of
 
 If this behavior is undesirable, consider explicitly evaluating such values before serialization, or avoid relying on `lazy val` in serialized objects.
 
-If you use a custom reference resolver, make sure to disable references for those 2 types: scala.runtime.LazyVals$Waiting and scala.runtime.LazyVals$Evaluating$
+If you use a custom reference resolver, make sure to disable references for those 2 types using the `no-resolve-reference-classes` config (see [reference.conf](core/src/main/resources/reference.conf)).
 
 
 Using Kryo on JDK 17 and later
