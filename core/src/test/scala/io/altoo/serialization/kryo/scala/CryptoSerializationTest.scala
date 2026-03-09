@@ -35,7 +35,7 @@ class CryptoSerializationTest extends AnyFlatSpec with Matchers with BeforeAndAf
 
   behavior of "Encrypted serialization"
 
-  it should "serialize and deserialize with encryption accross actor systems" in {
+  it should "serialize and deserialize with encryption across different systems" in {
     val atm = List {
       HashMap[String, Any](
         "foo" -> "foo",
