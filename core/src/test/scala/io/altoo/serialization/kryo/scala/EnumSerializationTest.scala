@@ -12,7 +12,7 @@ import scala.concurrent.{Await, Future}
 object EnumSerializationTest {
   private val config = {
     """
-      |pekko-kryo-serialization {
+      |scala-kryo-serialization {
       |  id-strategy = "default"
       |}
       |""".stripMargin
