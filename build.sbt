@@ -21,7 +21,7 @@ lazy val root: Project = project.in(file("."))
 
 lazy val core: Project = project.in(file("core"))
   .settings(moduleSettings)
-  .settings(description := "pekko-serialization implementation using kryo - core implementation")
+  .settings(description := "scala serialization implementation using kryo - core implementation")
   .settings(name := "scala-kryo-serialization")
   .settings(libraryDependencies ++= coreDeps ++ testingDeps)
   .settings(Compile / unmanagedSourceDirectories += {
@@ -91,7 +91,7 @@ lazy val scalacBasicOptions = Seq(
           "-Ywarn-unused:-nowarn",
           "-Xsource:3",
           "-opt:l:inline",
-          "-opt-inline-from:io.altoo.pekko.serialization.kryo.*")
+          "-opt-inline-from:io.altoo.serialization.kryo.scala.*")
       case "3" =>
         Seq(
           "-encoding", "utf8",
