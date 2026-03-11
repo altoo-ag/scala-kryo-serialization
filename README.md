@@ -1,13 +1,13 @@
 scala-kryo-serialization - kryo-based serializers for Scala
 =====================================================================
 
-Scala Kryo Serialization provides a convenient way of using Kryo with Scala and is the base for [Pekko Kryo Serialization](https://github.com/altoo-ag/pekko-kryo-serialization) providing the same functionality to pekko.
+Scala Kryo Serialization provides a convenient way of using Kryo with Scala and is the base for [Pekko Kryo Serialization](https://github.com/altoo-ag/pekko-kryo-serialization), providing similar functionality for Pekko.
 
 =====================================================================
 [![Full test prior to release](https://github.com/altoo-ag/scala-kryo-serialization/actions/workflows/fullTest.yml/badge.svg)](https://github.com/altoo-ag/scala-kryo-serialization/actions/workflows/fullTest.yml)
 [![Latest version](https://index.scala-lang.org/altoo-ag/scala-kryo-serialization/scala-kryo-serialization/latest.svg)](https://index.scala-lang.org/altoo-ag/scala-kryo-serialization/scala-kryo-serialization)
 
-This library provides custom [Kryo](https://github.com/EsotericSoftware/kryo)-based serializers for Scala. See [Pekko Kryo Serialization](https://github.com/altoo-ag/pekko-kryo-serialization) for serialization in Pekko.
+This library provides custom [Kryo](https://github.com/EsotericSoftware/kryo)-based serializers for Scala. See [Pekko Kryo Serialization](https://github.com/altoo-ag/pekko-kryo-serialization) for framework-specific integration with Pekko.
 
 It can also be used for a general purpose and very efficient Kryo-based serialization
 of such Scala types like Option, Tuple, Enumeration and most of Scala's collection types.

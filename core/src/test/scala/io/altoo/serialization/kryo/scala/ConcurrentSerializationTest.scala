@@ -8,7 +8,7 @@ import org.scalatest.matchers.should.Matchers
 import java.nio.ByteBuffer
 import scala.concurrent.{Await, Future}
 
-object ParallelActorSystemSerializationTest {
+object ConcurrentSerializationTest {
   private val config =
     s"""
        |scala-kryo-serialization {
@@ -21,23 +21,22 @@ object ParallelActorSystemSerializationTest {
        |""".stripMargin
 }
 
-final case class Sample(value: Option[String]) {
-  override def toString: String = s"Sample()"
-}
+final case class Sample(value: Option[String])
+
 object Sample {
   def apply(value: String) = new Sample(Some(value))
 }
 
-class ParallelActorSystemSerializationTest extends AnyFlatSpec with Matchers with Inside {
+class ConcurrentSerializationTest extends AnyFlatSpec with Matchers with Inside {
   import scala.concurrent.ExecutionContext.Implicits.global
 
-  private val config = ConfigFactory.parseString(ParallelActorSystemSerializationTest.config).withFallback(ConfigFactory.defaultReference())
+  private val config = ConfigFactory.parseString(ConcurrentSerializationTest.config).withFallback(ConfigFactory.defaultReference())
   private val serializer1 = new ScalaKryoSerializer(config, getClass.getClassLoader)
   private val serializer2 = new ScalaKryoSerializer(config, getClass.getClassLoader)
 
   // regression test against https://github.com/altoo-ag/pekko-kryo-serialization/issues/237
-  it should "be able to serialize/deserialize in highly concurrent load" in {
-    val testClass = Sample("auth-store-syncer")
+  it should "be able to serialize/deserialize under highly concurrent load" in {
+    val testClass = Sample("SomeString bla")
 
     val results: List[Future[Unit]] = (for (ser <- List(serializer1, serializer2))
       yield List(
