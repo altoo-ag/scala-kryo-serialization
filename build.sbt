@@ -4,8 +4,8 @@ import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 // Basics
 
 // note: keep in sync to pekko https://github.com/apache/pekko/blob/main/project/Dependencies.scala
-val mainScalaVersion = "3.3.5"
-val secondaryScalaVersions = Seq("2.12.20", "2.13.16")
+val mainScalaVersion = "3.3.7"
+val secondaryScalaVersions = Seq("2.12.21", "2.13.18")
 
 val kryoVersion = "5.6.2"
 enablePlugins(ReleasePlugin)
@@ -44,10 +44,10 @@ lazy val coreDeps = Seq(
   "com.esotericsoftware.kryo" % "kryo5" % kryoVersion,
   "com.typesafe" % "config" % "1.4.3",
   "at.yawk.lz4" % "lz4-java" % "1.10.2",
-  "org.agrona" % "agrona" % "1.22.0", // should match pekko-remote/aeron inherited version
-  "org.scala-lang.modules" %% "scala-collection-compat" % "2.12.0",
-  "org.slf4j" % "slf4j-api" % "2.0.16",
-  "org.slf4j" % "log4j-over-slf4j" % "2.0.16")
+  "org.agrona" % "agrona" % "1.22.0", // 1.23.x requires jdk17, should match pekko-remote/aeron inherited version
+  "org.scala-lang.modules" %% "scala-collection-compat" % "2.14.0",
+  "org.slf4j" % "slf4j-api" % "2.0.17",
+  "org.slf4j" % "log4j-over-slf4j" % "2.0.17")
 
 lazy val testingDeps = Seq(
   "org.scalatest" %% "scalatest" % "3.2.19" % Test,
