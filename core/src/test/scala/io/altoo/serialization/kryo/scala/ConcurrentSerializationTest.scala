@@ -45,7 +45,8 @@ class ConcurrentSerializationTest extends AnyFlatSpec with Matchers with Inside 
         Future(testSerialization(testClass, ser)),
         Future(testSerialization(testClass, ser)),
         Future(testSerialization(testClass, ser)),
-        Future(testSerialization(testClass, ser)))).flatten
+        Future(testSerialization(testClass, ser)),
+      )).flatten
 
     import scala.concurrent.duration.*
     Await.result(Future.sequence(results), 10.seconds)

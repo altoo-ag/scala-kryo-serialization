@@ -2,7 +2,6 @@ package io.altoo.serialization.kryo.scala.serializer
 
 import io.altoo.serialization.kryo.scala.testkit.AbstractKryoTest
 
-
 class ScalaUnitSerializerTest extends AbstractKryoTest {
 
   behavior of "ScalaUnitSerializer"

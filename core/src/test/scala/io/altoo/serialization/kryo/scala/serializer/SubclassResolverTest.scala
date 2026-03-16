@@ -2,21 +2,19 @@ package io.altoo.serialization.kryo.scala.serializer
 
 import io.altoo.serialization.kryo.scala.testkit.AbstractKryoTest
 
-
 class SubclassResolverTest extends AbstractKryoTest {
 
   override val useSubclassResolver: Boolean = true
-
 
   behavior of "SubclassResolver"
 
   it should "work with normal Map" in {
     kryo.setRegistrationRequired(true)
     kryo.addDefaultSerializer(classOf[scala.collection.Map[_, _]], classOf[ScalaImmutableAbstractMapSerializer])
-    kryo.register(classOf[scala.collection.immutable.Map[_,_]], 40)
+    kryo.register(classOf[scala.collection.immutable.Map[_, _]], 40)
     kryo.getClassResolver match {
-      case resolver:SubclassResolver => resolver.enable()
-      case _ => // nothing to do
+      case resolver: SubclassResolver => resolver.enable()
+      case _                          => // nothing to do
     }
     val map1 = Map("Rome" -> "Italy", "London" -> "England", "Paris" -> "France", "New York" -> "USA", "Tokio" -> "Japan", "Peking" -> "China", "Brussels" -> "Belgium")
     val map2 = map1 + ("Moscow" -> "Russia")
@@ -31,10 +29,10 @@ class SubclassResolverTest extends AbstractKryoTest {
   it should "work with empty HashMap" in {
     kryo.setRegistrationRequired(true)
     kryo.addDefaultSerializer(classOf[scala.collection.Map[_, _]], classOf[ScalaImmutableAbstractMapSerializer])
-    kryo.register(classOf[scala.collection.immutable.Map[_,_]], 40)
+    kryo.register(classOf[scala.collection.immutable.Map[_, _]], 40)
     kryo.getClassResolver match {
-      case resolver:SubclassResolver => resolver.enable()
-      case _ => // nothing to do
+      case resolver: SubclassResolver => resolver.enable()
+      case _                          => // nothing to do
     }
     val map1 = Map()
     testSerializationOf(map1)
@@ -46,19 +44,19 @@ class SubclassResolverTest extends AbstractKryoTest {
     kryo.setRegistrationRequired(true)
     // The usual generic case:
     kryo.addDefaultSerializer(classOf[scala.collection.immutable.Map[_, _]], classOf[ScalaImmutableAbstractMapSerializer])
-    kryo.register(classOf[scala.collection.immutable.Map[_,_]], 40)
+    kryo.register(classOf[scala.collection.immutable.Map[_, _]], 40)
     // The more-precise Map type that we want here:
-    kryo.register(classOf[scala.collection.immutable.ListMap[_,_]], new ScalaImmutableMapSerializer, 41)
+    kryo.register(classOf[scala.collection.immutable.ListMap[_, _]], new ScalaImmutableMapSerializer, 41)
     kryo.getClassResolver match {
-      case resolver:SubclassResolver => resolver.enable()
-      case _ => // nothing to do
+      case resolver: SubclassResolver => resolver.enable()
+      case _                          => // nothing to do
     }
     val map1 = Map("Rome" -> "Italy", "London" -> "England", "Paris" -> "France", "New York" -> "USA", "Tokio" -> "Japan", "Peking" -> "China", "Brussels" -> "Belgium")
     val map2 = ListMap("Rome" -> "Italy", "London" -> "England", "Paris" -> "France", "New York" -> "USA", "Tokio" -> "Japan", "Peking" -> "China", "Brussels" -> "Belgium")
     val map1Copy = testSerializationOf(map1)
     val map2Copy = testSerializationOf(map2)
     assert(map1Copy.isInstanceOf[HashMap[_, _]])
-    assert(map2Copy.isInstanceOf[ListMap[_,_]])
+    assert(map2Copy.isInstanceOf[ListMap[_, _]])
   }
 
   it should "work with normal Set" in {
@@ -66,8 +64,8 @@ class SubclassResolverTest extends AbstractKryoTest {
     kryo.addDefaultSerializer(classOf[scala.collection.Set[_]], classOf[ScalaImmutableAbstractSetSerializer])
     kryo.register(classOf[scala.collection.immutable.Set[_]], 40)
     kryo.getClassResolver match {
-      case resolver:SubclassResolver => resolver.enable()
-      case _ => // nothing to do
+      case resolver: SubclassResolver => resolver.enable()
+      case _                          => // nothing to do
     }
 
     val set1 = Set(83, 84, 959)

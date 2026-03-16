@@ -16,7 +16,6 @@ class MapSerializerTest extends AbstractKryoTest {
 
   private val hugeCollectionSize = 100
 
-
   behavior of "ScalaImmutableMapSerializer"
 
   it should "roundtrip immutable maps " in {
@@ -32,7 +31,6 @@ class MapSerializerTest extends AbstractKryoTest {
     testSerializationOf(map3)
     testSerializationOf(map4)
   }
-
 
   behavior of "ScalaImmutableSetSerializer"
 
@@ -50,7 +48,6 @@ class MapSerializerTest extends AbstractKryoTest {
     testSerializationOf(set3)
     testSerializationOf(set4)
   }
-
 
   behavior of "ScalaMutableMapSerializer"
 
@@ -78,7 +75,7 @@ class MapSerializerTest extends AbstractKryoTest {
 
     val map1 = scala.collection.mutable.AnyRefMap[String, String]()
 
-    0 until hugeCollectionSize foreach { i => map1 += ("k" + i) -> ("v" + i) }
+    (0 until hugeCollectionSize).foreach { i => map1 += ("k" + i) -> ("v" + i) }
     val map2 = map1 ++ Seq("Moscow" -> "Russia")
     val map3 = map2 ++ Seq("Berlin" -> "Germany")
     val map4 = map3 ++ Seq("Germany" -> "Berlin") ++ Seq("Russia" -> "Moscow")
@@ -97,7 +94,7 @@ class MapSerializerTest extends AbstractKryoTest {
 
     val map1 = scala.collection.mutable.LongMap[String]()
 
-    0 until hugeCollectionSize foreach { i => map1 += i.toLong -> ("v" + i) }
+    (0 until hugeCollectionSize).foreach { i => map1 += i.toLong -> ("v" + i) }
     val map2 = map1 ++ Seq(110L -> "Russia")
     val map3 = map2 ++ Seq(111L -> "Germany")
     val map4 = map3 ++ Seq(112L -> "Berlin") ++ Seq(113L -> "Moscow")
@@ -107,7 +104,6 @@ class MapSerializerTest extends AbstractKryoTest {
     testSerializationOf(map4)
     testSerializationOf(List(map3))
   }
-
 
   behavior of "Combined collection serializers"
 
@@ -119,7 +115,7 @@ class MapSerializerTest extends AbstractKryoTest {
 
     var map1 = scala.collection.immutable.LongMap[String]()
 
-    0 until hugeCollectionSize foreach { i => map1 += i.toLong -> ("v" + i) }
+    (0 until hugeCollectionSize).foreach { i => map1 += i.toLong -> ("v" + i) }
     val map2 = map1 + (110L -> "Russia")
     val map3 = map2 + (111L -> "Germany")
     val map4 = map3 + (112L -> "Berlin") + (113L -> "Moscow")
@@ -139,7 +135,7 @@ class MapSerializerTest extends AbstractKryoTest {
     val scl1 = ScalaClass1()
     var map1: Map[String, String] = Map.empty[String, String]
 
-    0 until hugeCollectionSize foreach { i => map1 += ("k" + i) -> ("v" + i) }
+    (0 until hugeCollectionSize).foreach { i => map1 += ("k" + i) -> ("v" + i) }
 
     scl1.map11 = map1
     scl1.vector11 = Vector("LL", "ee", "oo")
@@ -170,7 +166,7 @@ class MapSerializerTest extends AbstractKryoTest {
 
     var map1: Map[String, String] = Map.empty[String, String]
 
-    0 until hugeCollectionSize foreach { i => map1 += ("k" + i) -> ("v" + i) }
+    (0 until hugeCollectionSize).foreach { i => map1 += ("k" + i) -> ("v" + i) }
     val map2 = map1 + ("Moscow" -> "Russia")
     val map3 = map2 + ("Berlin" -> "Germany")
     val map4 = map3 + ("Germany" -> "Berlin") + ("Russia" -> "Moscow")
@@ -193,7 +189,7 @@ class MapSerializerTest extends AbstractKryoTest {
     kryo.addDefaultSerializer(classOf[scala.Enumeration#Value], classOf[EnumerationNameSerializer])
     var map1 = Set.empty[String]
 
-    0 until hugeCollectionSize foreach { i => map1 += ("k" + i) }
+    (0 until hugeCollectionSize).foreach { i => map1 += ("k" + i) }
 
     val map2 = map1 + "Moscow"
     val map3 = map2 + "Berlin"
@@ -213,7 +209,7 @@ class MapSerializerTest extends AbstractKryoTest {
 
     var map1 = List.empty[String]
 
-    0 until 1000 foreach { i => map1 = ("k" + i) :: map1 }
+    (0 until 1000).foreach { i => map1 = ("k" + i) :: map1 }
 
     val map2 = "Moscow" :: "Russia" :: map1
     val map3 = "Berlin" :: "Germany" :: map2
@@ -277,10 +273,9 @@ class MapSerializerTest extends AbstractKryoTest {
     testSerializationOf(map)
   }
 
-
   private def execute(map: java.util.Map[Any, Any], inserts: Int) = {
     val random = new Random()
-    0 until inserts foreach { _ => map.put(random.nextLong(), random.nextBoolean()) }
+    (0 until inserts).foreach { _ => map.put(random.nextLong(), random.nextBoolean()) }
 
     val kryo = new Kryo()
     kryo.register(classOf[util.HashMap[Any, Any]], new MapSerializer().asInstanceOf[Serializer[Map[Any, Any]]])
@@ -298,4 +293,5 @@ class MapSerializerTest extends AbstractKryoTest {
   }
 }
 
-case class ScalaClass1(var opt: Option[java.lang.Integer] = Some(3), var vector11: Vector[String] = Vector("LL", "ee", "oo"), var list11: List[String] = List("LL", "ee", "oo"),  var map11: Map[String, String] = Map("Leo" -> "John", "Luke" -> "Lea"))
+case class ScalaClass1(var opt: Option[java.lang.Integer] = Some(3), var vector11: Vector[String] = Vector("LL", "ee", "oo"), var list11: List[String] = List("LL", "ee", "oo"),
+    var map11: Map[String, String] = Map("Leo" -> "John", "Luke" -> "Lea"))
