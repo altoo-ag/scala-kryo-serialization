@@ -61,17 +61,20 @@ class CompressionEffectivenessSerializationTest extends AnyFlatSpec with Matcher
     "Rome", "Italy", "London", "England", "Paris", "France", "New York", "USA", "Tokio", "Japan", "Peking", "China", "Brussels", "Belgium",
     "Rome", "Italy", "London", "England", "Paris", "France", "New York", "USA", "Tokio", "Japan", "Peking", "China", "Brussels", "Belgium",
     "Rome", "Italy", "London", "England", "Paris", "France", "New York", "USA", "Tokio", "Japan", "Peking", "China", "Brussels", "Belgium",
-    "Rome", "Italy", "London", "England", "Paris", "France", "New York", "USA", "Tokio", "Japan", "Peking", "China", "Brussels", "Belgium")
+    "Rome", "Italy", "London", "England", "Paris", "France", "New York", "USA", "Tokio", "Japan", "Peking", "China", "Brussels", "Belgium",
+  )
 
   // test systems
   private val serializer = new ScalaKryoSerializer(
     ConfigFactory.parseString(CompressionEffectivenessSerializationTest.config)
-      .withFallback(ConfigFactory.defaultReference()), getClass.getClassLoader)
+      .withFallback(ConfigFactory.defaultReference()), getClass.getClassLoader,
+  )
 
   private val serializerWithCompression = new ScalaKryoSerializer(
     ConfigFactory.parseString(CompressionEffectivenessSerializationTest.compressionConfig)
       .withFallback(ConfigFactory.parseString(CompressionEffectivenessSerializationTest.config))
-      .withFallback(ConfigFactory.defaultReference()), getClass.getClassLoader)
+      .withFallback(ConfigFactory.defaultReference()), getClass.getClassLoader,
+  )
 
   behavior of "KryoSerializer compression"
 

@@ -1,8 +1,6 @@
-
 package io.altoo.serialization.kryo.scala.serializer
 
 import io.altoo.serialization.kryo.scala.testkit.AbstractKryoTest
-
 
 /** @author romix */
 class TupleSerializationTest extends AbstractKryoTest {

@@ -32,7 +32,8 @@ class EnumSerializationTest extends AnyFlatSpec with Matchers {
     val futures = (1 to 2).map(_ =>
       Future[List[Time]] {
         serializer.deserialize[List[Time]](bytes).get
-      })
+      },
+    )
 
     val result = Await.result(Future.sequence(futures), Duration.Inf)
 

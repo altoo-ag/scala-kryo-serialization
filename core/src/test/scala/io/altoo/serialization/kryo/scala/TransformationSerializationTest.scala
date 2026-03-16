@@ -64,7 +64,8 @@ abstract class TransformationSerializationTest(name: String, testConfig: String)
       "bar" -> "something as a text",
       "baz" -> null,
       "boom" -> true,
-      "hash" -> HashMap[Int, Int](1 -> 200, 2 -> 300, 500 -> 3))
+      "hash" -> HashMap[Int, Int](1 -> 200, 2 -> 300, 500 -> 3),
+    )
 
     val serialized = serializer.serialize(tm).get
     val deserialized = serializer.deserialize[TreeMap[String, Any]](serialized)
@@ -85,7 +86,8 @@ abstract class TransformationSerializationTest(name: String, testConfig: String)
       "bar" -> "something as a text",
       "baz" -> null,
       "boom" -> true,
-      "hash" -> HashMap[Int, Int](1 -> 200, 2 -> 300, 500 -> 3))
+      "hash" -> HashMap[Int, Int](1 -> 200, 2 -> 300, 500 -> 3),
+    )
 
     val serialized = serializer.serialize(tm).get
     val deserialized = serializer.deserialize[HashMap[String, Any]](serialized)
@@ -106,7 +108,8 @@ abstract class TransformationSerializationTest(name: String, testConfig: String)
       "foo" -> r.nextDouble(),
       "bar" -> "foo,bar,baz",
       "baz" -> 124L,
-      "hash" -> HashMap[Int, Int](r.nextInt() -> r.nextInt(), 5 -> 500, 10 -> r.nextInt()))
+      "hash" -> HashMap[Int, Int](r.nextInt() -> r.nextInt(), 5 -> 500, 10 -> r.nextInt()),
+    )
 
     val serialized = serializer.serialize(tm).get
     val deserialized = serializer.deserialize[mutable.AnyRefMap[String, Any]](serialized)
@@ -127,7 +130,8 @@ abstract class TransformationSerializationTest(name: String, testConfig: String)
       "bar" -> "something as a text",
       "baz" -> null,
       "boom" -> true,
-      "hash" -> HashMap[Int, Int](1 -> 200, 2 -> 300, 500 -> 3))
+      "hash" -> HashMap[Int, Int](1 -> 200, 2 -> 300, 500 -> 3),
+    )
 
     val serialized = serializer.serialize(tm).get
     val deserialized = serializer.deserialize[mutable.HashMap[String, Any]](serialized)

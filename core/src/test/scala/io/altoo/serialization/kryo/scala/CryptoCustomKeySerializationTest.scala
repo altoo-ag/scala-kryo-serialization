@@ -44,7 +44,8 @@ class CryptoCustomKeySerializationTest extends AnyFlatSpec with Matchers {
       HashMap[String, Any](
         "foo" -> "foo",
         "bar" -> "foo,bar,baz",
-        "baz" -> 124L)
+        "baz" -> 124L,
+      )
     }.toArray
 
     val serialized = encryptedSerializer.serialize(atm).get
@@ -66,7 +67,8 @@ class CryptoCustomKeySerializationTest extends AnyFlatSpec with Matchers {
       HashMap[String, Any](
         "foo" -> "foo",
         "bar" -> "foo,bar,baz",
-        "baz" -> 124L)
+        "baz" -> 124L,
+      )
     }.toArray
 
     val serialized = unencryptedSerializer.serialize(atm).get

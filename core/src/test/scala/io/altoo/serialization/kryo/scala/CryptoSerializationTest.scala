@@ -40,7 +40,8 @@ class CryptoSerializationTest extends AnyFlatSpec with Matchers with BeforeAndAf
       HashMap[String, Any](
         "foo" -> "foo",
         "bar" -> "foo,bar,baz",
-        "baz" -> 124L)
+        "baz" -> 124L,
+      )
     }.toArray
 
     val serialized = sourceSerializer.serialize(atm).get

@@ -15,7 +15,8 @@ class DefaultKeyProviderTest extends AnyFlatSpec with Matchers {
       s"""
          |encryption.aes.password = "$password"
          |encryption.aes.salt = "$salt"
-         |""".stripMargin)
+         |""".stripMargin,
+    )
 
   it should "derive the same key for the same password and salt" in {
     val conf = config("test-password", "test-salt")

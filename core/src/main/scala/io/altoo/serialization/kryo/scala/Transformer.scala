@@ -16,7 +16,7 @@ private[kryo] class KryoTransformer(transformations: List[Transformer]) {
   private[this] val toBufferPipeline: (Array[Byte], ByteBuffer) => Unit = transformations match {
     case Nil                => (_, _) => throw new UnsupportedOperationException("Should be optimized away")
     case transformer :: Nil => transformer.toBinary
-    case transformations =>
+    case transformations    =>
       val pipeline = transformations.init.map(x => x.toBinary(_: Array[Byte])).reduceLeft(_.andThen(_))
       val lastTransformation = transformations.last
       (in, out) => lastTransformation.toBinary(pipeline(in), out)
@@ -25,7 +25,7 @@ private[kryo] class KryoTransformer(transformations: List[Transformer]) {
   private[this] val fromBufferPipeline: ByteBuffer => Array[Byte] = transformations match {
     case Nil                => _ => throw new UnsupportedOperationException("Should be optimized away")
     case transformer :: Nil => transformer.fromBinary
-    case transformations =>
+    case transformations    =>
       val pipeline = transformations.init.reverse.map(x => x.fromBinary(_: Array[Byte])).reduceLeft(_.andThen(_))
       val lastTransformation = transformations.last
       in => pipeline(lastTransformation.fromBinary(in))

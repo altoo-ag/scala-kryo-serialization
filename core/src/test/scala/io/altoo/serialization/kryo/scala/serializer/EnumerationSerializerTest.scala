@@ -82,7 +82,7 @@ object Planet extends Enumeration {
   }
   implicit def valueToPlanetVal(x: Value): Val = x.asInstanceOf[Val]
 
-  final val G: Double = 6.67300E-11
+  final val G: Double = 6.67300e-11
   final val Mercury = PlanetVal(3.303e+23, 2.4397e6)
   final val Venus = PlanetVal(4.869e+24, 6.0518e6)
   final val Earth = PlanetVal(5.976e+24, 6.37814e6)

@@ -103,7 +103,7 @@ private[kryo] abstract class KryoSerializer(config: Config, classLoader: ClassLo
   private val kryoInitializerClass: Class[? <: DefaultKryoInitializer] =
     ReflectionHelper.getClassFor(settings.kryoInitializer, classLoader) match {
       case Success(clazz) if classOf[DefaultKryoInitializer].isAssignableFrom(clazz) => clazz.asSubclass(classOf[DefaultKryoInitializer])
-      case Success(clazz) =>
+      case Success(clazz)                                                            =>
         log.error("Configured class {} does not extend DefaultKryoInitializer", clazz)
         throw new IllegalStateException(s"Configured class $clazz does not extend DefaultKryoInitializer")
       case Failure(e) =>
@@ -115,13 +115,14 @@ private[kryo] abstract class KryoSerializer(config: Config, classLoader: ClassLo
     settings.encryptionSettings.map(c =>
       ReflectionHelper.getClassFor(c.keyProvider, classLoader) match {
         case Success(clazz) if classOf[DefaultKeyProvider].isAssignableFrom(clazz) => clazz.asSubclass(classOf[DefaultKeyProvider])
-        case Success(clazz) =>
+        case Success(clazz)                                                        =>
           log.error("Configured class {} does not extend DefaultKeyProvider", clazz)
           throw new IllegalStateException(s"Configured class $clazz does not extend DefaultKryoInitializer")
         case Failure(e) =>
           log.error("Class could not be loaded: {} ", c.keyProvider)
           throw e
-      })
+      },
+    )
 
   protected[kryo] def useManifest: Boolean
   protected[kryo] def prepareKryoInitializer(initializer: DefaultKryoInitializer): Unit
@@ -130,7 +131,7 @@ private[kryo] abstract class KryoSerializer(config: Config, classLoader: ClassLo
     case "off"     => None
     case "lz4"     => Some(new LZ4KryoCompressor)
     case "deflate" => Some(new ZipKryoCompressor)
-    case "aes" => settings.encryptionSettings match {
+    case "aes"     => settings.encryptionSettings match {
         case Some(es) if es.aesMode.contains("GCM") =>
           Some(new KryoCryptographer(aesKeyProviderClass.get.getDeclaredConstructor().newInstance().aesKey(config.getConfig(configKey)), es.aesMode, es.aesIvLength))
         case Some(es) =>
@@ -146,7 +147,7 @@ private[kryo] abstract class KryoSerializer(config: Config, classLoader: ClassLo
   private val queueBuilderClass: Class[? <: DefaultQueueBuilder] =
     ReflectionHelper.getClassFor(settings.queueBuilder, classLoader) match {
       case Success(clazz) if classOf[DefaultQueueBuilder].isAssignableFrom(clazz) => clazz.asSubclass(classOf[DefaultQueueBuilder])
-      case Success(clazz) =>
+      case Success(clazz)                                                         =>
         log.error("Configured class {} does not extend DefaultQueueBuilder", clazz)
         throw new IllegalStateException(s"Configured class $clazz does not extend DefaultQueueBuilder")
       case Failure(e) =>
@@ -229,7 +230,7 @@ private[kryo] abstract class KryoSerializer(config: Config, classLoader: ClassLo
         val id = idNum.toInt
         ReflectionHelper.getClassFor(fqcn, classLoader) match {
           case Success(clazz) => kryo.register(clazz, id)
-          case Failure(e) =>
+          case Failure(e)     =>
             log.error("Class could not be loaded and/or registered: {} ", fqcn)
             throw e
         }
@@ -238,7 +239,7 @@ private[kryo] abstract class KryoSerializer(config: Config, classLoader: ClassLo
       for (classname <- settings.classNames.asScala) {
         ReflectionHelper.getClassFor(classname, classLoader) match {
           case Success(clazz) => kryo.register(clazz)
-          case Failure(e) =>
+          case Failure(e)     =>
             log.warn("Class could not be loaded and/or registered: {} ", classname)
             throw e
         }
