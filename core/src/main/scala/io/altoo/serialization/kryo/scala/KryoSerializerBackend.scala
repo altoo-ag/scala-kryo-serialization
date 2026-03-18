@@ -21,13 +21,16 @@ private[kryo] class KryoSerializerBackend(val kryo: Kryo, val bufferSize: Int, v
   // "toBinary" serializes the given object to an Array of Bytes
   // Implements Serializer
   def toBinary(obj: Any): Array[Byte] = {
+    //use the buffer to serialize into (since we do not know the necessary size)
+    //and only in the end allocate a byte[] with the proper size
     val buffer = output
     try {
-      if (useManifest)
+      if (useManifest) {
         kryo.writeObject(buffer, obj)
-      else
+      } else {
         kryo.writeClassAndObject(buffer, obj)
-      buffer.toBytes
+      }
+      buffer.toBytes //creates new byte[]
     } catch {
       case e: StackOverflowError if !kryo.getReferences => // when configured with "nograph" serialization can fail with stack overflow
         log.error(s"Could not serialize class with potentially circular references: $classLoader", e)
