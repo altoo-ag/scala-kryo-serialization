@@ -44,11 +44,11 @@ private[kryo] class KryoSerializerBackend(val kryo: Kryo, val bufferSize: Int, v
   def toBinary(obj: Any, buf: ByteBuffer): Unit = {
     val buffer = getOutput(buf)
     try {
-      if (useManifest)
+      if (useManifest) {
         kryo.writeObject(buffer, obj)
-      else
+      } else {
         kryo.writeClassAndObject(buffer, obj)
-      buffer.toBytes
+      }
     } catch {
       case e: StackOverflowError if !kryo.getReferences => // when configured with "nograph" serialization can fail with stack overflow
         log.error(s"Could not serialize class with potentially circular references: $obj", e)
