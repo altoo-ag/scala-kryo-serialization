@@ -59,7 +59,7 @@ trait Transformer {
 
   def fromBinary(inputBuff: ByteBuffer): Array[Byte] = {
     val in = new Array[Byte](inputBuff.remaining())
-    inputBuff.put(in)
+    inputBuff.get(in)
     fromBinary(in)
   }
 }
