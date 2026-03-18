@@ -68,8 +68,9 @@ private[kryo] class KryoSerializerBackend(val kryo: Kryo, val bufferSize: Int, v
           case Some(c) => kryo.readObject(buffer, c).asInstanceOf[AnyRef]
           case _       => throw new RuntimeException("Object of unknown class cannot be deserialized")
         }
-      else
+      else {
         kryo.readClassAndObject(buffer)
+      }
     } finally {
       buffer.close()
     }
@@ -84,13 +85,13 @@ private[kryo] class KryoSerializerBackend(val kryo: Kryo, val bufferSize: Int, v
         case Some(c) => kryo.readObject(buffer, c)
         case _       => throw new RuntimeException("Object of unknown class cannot be deserialized")
       }
-    } else
+    } else {
       kryo.readClassAndObject(buffer)
+    }
   }
 
   // Used by ByteBufferSerializer implementation
-  private def getOutput(buffer: ByteBuffer): Output =
-    new ByteBufferOutput(buffer)
+  private def getOutput(buffer: ByteBuffer): Output = new ByteBufferOutput(buffer)
 
   // Used by Serializer implementation
   private def getInput(bytes: Array[Byte]): Input =
@@ -100,7 +101,5 @@ private[kryo] class KryoSerializerBackend(val kryo: Kryo, val bufferSize: Int, v
       new Input(bytes)
 
   // Used by ByteBufferSerializer implementation
-  private def getInput(buffer: ByteBuffer): Input =
-    new ByteBufferInput(buffer)
-
+  private def getInput(buffer: ByteBuffer): Input = new ByteBufferInput(buffer)
 }
