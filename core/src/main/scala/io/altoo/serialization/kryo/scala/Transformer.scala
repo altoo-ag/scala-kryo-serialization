@@ -79,7 +79,9 @@ class LZ4KryoCompressor extends Transformer {
     outputBuff(1) = (inputSize >> 8 & 0xFF).toByte
     outputBuff(2) = (inputSize >> 16 & 0xFF).toByte
     outputBuff(3) = (inputSize >> 24 & 0xFF).toByte
-    outputBuff.take(outputSize + 4)
+    val result = new Array[Byte](outputSize + 4)
+    System.arraycopy(outputBuff, 0, result, 0, outputSize + 4)
+    result
   }
 
   override def toBinary(inputBuff: Array[Byte], outputBuff: ByteBuffer): Unit = {
