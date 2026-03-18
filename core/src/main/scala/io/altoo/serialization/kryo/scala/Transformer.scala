@@ -214,11 +214,11 @@ class KryoCryptographer(key: Array[Byte], mode: String, ivLength: Int) extends T
     }
     val iv = new Array[Byte](ivLength)
     inputBuff.get(iv)
-    val ciphertext = new Array[Byte](inputBuff.remaining())
-    inputBuff.get(ciphertext)
     // set up decryption
     val parameterSpec = new GCMParameterSpec(AuthTagLength, iv)
     cipher.init(Cipher.DECRYPT_MODE, keySpec, parameterSpec)
-    cipher.doFinal(ciphertext) // plaintext
+    val plaintext = new Array[Byte](cipher.getOutputSize(inputBuff.remaining()))
+    val n = cipher.doFinal(inputBuff, ByteBuffer.wrap(plaintext))
+    if (n == plaintext.length) plaintext else plaintext.take(n)
   }
 }
