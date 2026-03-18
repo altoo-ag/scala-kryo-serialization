@@ -128,7 +128,7 @@ class ZipKryoCompressor extends Transformer {
 
     while (!deflater.finished) {
       val n = deflater.deflate(buff)
-      outputBuff ++= buff.take(n)
+      outputBuff ++= (if (n == 4096) buff else buff.take(n))
     }
     deflater.end()
     outputBuff.result()
