@@ -10,6 +10,14 @@ import java.nio.ByteBuffer
 private[kryo] class KryoSerializerBackend(val kryo: Kryo, val bufferSize: Int, val maxBufferSize: Int, val useManifest: Boolean, val useUnsafe: Boolean)(log: Logger,
     classLoader: ClassLoader) {
 
+  // this is only used when working with byte[] and not with ByteBuffers
+  private lazy val output =
+    if (useUnsafe) {
+      new UnsafeOutput(bufferSize, maxBufferSize)
+    } else {
+      new Output(bufferSize, maxBufferSize)
+    }
+
   // "toBinary" serializes the given object to an Array of Bytes
   // Implements Serializer
   def toBinary(obj: Any): Array[Byte] = {
@@ -76,13 +84,6 @@ private[kryo] class KryoSerializerBackend(val kryo: Kryo, val bufferSize: Int, v
     } else
       kryo.readClassAndObject(buffer)
   }
-
-  // Used by Serializer implementation
-  private val output =
-    if (useUnsafe)
-      new UnsafeOutput(bufferSize, maxBufferSize)
-    else
-      new Output(bufferSize, maxBufferSize)
 
   // Used by ByteBufferSerializer implementation
   private def getOutput(buffer: ByteBuffer): Output =
