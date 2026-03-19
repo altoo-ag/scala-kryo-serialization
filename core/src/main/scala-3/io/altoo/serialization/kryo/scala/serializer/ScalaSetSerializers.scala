@@ -50,8 +50,7 @@ class ScalaImmutableSortedSetSerializer extends Serializer[ISSet[?]](false, true
 
     if (len == 0) {
       emptySet
-    }
-    else {
+    } else {
       val builder = emptySet.sortedIterableFactory.newBuilder
       builder.sizeHint(len)
       var i = 0
@@ -83,8 +82,7 @@ class ScalaImmutableSetSerializer extends Serializer[ISet[?]](false, true) {
     val emptySet: ISet[Any] = kryo.newInstance(typ).asInstanceOf[ISet[Any]].empty
     if (len == 0) {
       emptySet
-    }
-    else {
+    } else {
       val builder: mutable.Builder[Any, ISet[Any]] = emptySet.iterableFactory.newBuilder
       builder.sizeHint(len)
       var i = 0
@@ -109,10 +107,9 @@ class ScalaImmutableAbstractSetSerializer extends Serializer[ISet[?]](false, tru
 
   override def read(kryo: Kryo, input: Input, typ: Class[? <: ISet[?]]): ISet[?] = {
     val len = input.readInt(true)
-    if(len == 0){
+    if (len == 0) {
       Set.empty
-    }
-    else {
+    } else {
       val builder: mutable.Builder[Any, ISet[Any]] = Set.empty.iterableFactory.newBuilder
       builder.sizeHint(len)
       var i = 0
@@ -156,8 +153,7 @@ class ScalaMutableSortedSetSerializer extends Serializer[MSSet[?]] {
 
     if (len == 0) {
       emptySet
-    }
-    else {
+    } else {
       val builder = emptySet.sortedIterableFactory.newBuilder
       builder.sizeHint(len)
       var i = 0
