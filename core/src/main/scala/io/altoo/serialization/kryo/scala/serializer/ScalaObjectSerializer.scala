@@ -26,14 +26,12 @@ import scala.collection.mutable.Map as MMap
 import scala.util.control.Exception.allCatch
 
 // Stolen with pride from Chill ;-)
-class ScalaObjectSerializer[T] extends Serializer[T] {
+// NOTE: even if a standalone or companion Scala object contains mutable
+// fields, the fact that there is only one of them in a process means that
+// we don't want to make a copy, so this serializer's type is treated as
+// always being immutable.
+class ScalaObjectSerializer[T] extends Serializer[T](accetpsNull = false, immutable = true) {
   private val cachedObj = MMap[Class[?], Option[T]]()
-
-  // NOTE: even if a standalone or companion Scala object contains mutable
-  // fields, the fact that there is only one of them in a process means that
-  // we don't want to make a copy, so this serializer's type is treated as
-  // always being immutable.
-  override def isImmutable: Boolean = true
 
   // Does nothing
   override def write(kser: Kryo, out: Output, obj: T): Unit = ()
@@ -43,7 +41,7 @@ class ScalaObjectSerializer[T] extends Serializer[T] {
   }
 
   protected def cachedRead(cls: Class[?]): Option[T] = {
-    cachedObj.synchronized { cachedObj.getOrElseUpdate(cls, createSingleton(cls)) }
+    cachedObj.getOrElseUpdate(cls, createSingleton(cls))
   }
 
   override def read(kser: Kryo, in: Input, cls: Class[? <: T]): T = cachedRead(cls).get
