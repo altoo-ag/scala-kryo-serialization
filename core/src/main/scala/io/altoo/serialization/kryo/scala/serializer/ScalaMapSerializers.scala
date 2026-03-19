@@ -62,10 +62,8 @@ class ScalaMutableMapSerializer extends Serializer[MMap[?, ?]] {
   }
 }
 
-class ScalaImmutableMapSerializer extends Serializer[IMap[?, ?]] {
+class ScalaImmutableMapSerializer extends Serializer[IMap[?, ?]](false, true) {
   private var emptyMapCache = IMap[Class[?], IMap[Any, Any]]()
-
-  setImmutable(true)
 
   private def emptyMapOf(typ: Class[? <: IMap[?, ?]], kryo: Kryo): IMap[Any, Any] = {
     emptyMapCache.getOrElse(typ, {
@@ -107,9 +105,7 @@ class ScalaImmutableMapSerializer extends Serializer[IMap[?, ?]] {
   }
 }
 
-class ScalaImmutableAbstractMapSerializer extends Serializer[IMap[?, ?]] {
-  setImmutable(true)
-
+class ScalaImmutableAbstractMapSerializer extends Serializer[IMap[?, ?]](false, true) {
   override def read(kryo: Kryo, input: Input, typ: Class[? <: IMap[?, ?]]): IMap[?, ?] = {
     val len = input.readInt(true)
 
@@ -141,11 +137,9 @@ class ScalaImmutableAbstractMapSerializer extends Serializer[IMap[?, ?]] {
   }
 }
 
-class ScalaSortedMapSerializer extends Serializer[SortedMap[?, ?]] {
+// All sorted maps are immutable
+class ScalaSortedMapSerializer extends Serializer[SortedMap[?, ?]](false, true) {
   private var constructorCache = IMap[Class[?], Constructor[?]]()
-
-  // All sorted maps are immutable
-  setImmutable(true)
 
   override def read(kryo: Kryo, input: Input, typ: Class[? <: SortedMap[?, ?]]): SortedMap[?, ?] = {
     val len = input.readInt(true)
