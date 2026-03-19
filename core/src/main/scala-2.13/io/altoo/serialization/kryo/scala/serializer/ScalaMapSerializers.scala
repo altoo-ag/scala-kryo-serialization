@@ -38,12 +38,10 @@ class ScalaMutableMapSerializer extends Serializer[MMap[?, ?]] {
     val len = input.readInt(true)
     val coll = kryo.newInstance(typ).empty.asInstanceOf[MMap[Any, Any]]
     coll.sizeHint(len)
-    if (len != 0) {
-      var i = 0
-      while (i < len) {
-        coll(kryo.readClassAndObject(input)) = kryo.readClassAndObject(input)
-        i += 1
-      }
+    var i = 0
+    while (i < len) {
+      coll(kryo.readClassAndObject(input)) = kryo.readClassAndObject(input)
+      i += 1
     }
     coll
   }
