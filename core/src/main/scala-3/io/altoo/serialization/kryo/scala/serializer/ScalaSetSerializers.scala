@@ -80,13 +80,20 @@ class ScalaImmutableSetSerializer extends Serializer[ISet[?]](false, true) {
 
   override def read(kryo: Kryo, input: Input, typ: Class[? <: ISet[?]]): ISet[?] = {
     val len = input.readInt(true)
-    var coll: ISet[Any] = kryo.newInstance(typ).asInstanceOf[ISet[Any]].empty
-    var i = 0
-    while (i < len) {
-      coll += kryo.readClassAndObject(input)
-      i += 1
+    val emptySet: ISet[Any] = kryo.newInstance(typ).asInstanceOf[ISet[Any]].empty
+    if (len == 0) {
+      emptySet
     }
-    coll
+    else {
+      val builder: mutable.Builder[Any, ISet[Any]] = emptySet.iterableFactory.newBuilder
+      builder.sizeHint(len)
+      var i = 0
+      while (i < len) {
+        builder.addOne(kryo.readClassAndObject(input))
+        i += 1
+      }
+      builder.result()
+    }
   }
 
   override def write(kryo: Kryo, output: Output, collection: ISet[?]): Unit = {
@@ -102,12 +109,11 @@ class ScalaImmutableAbstractSetSerializer extends Serializer[ISet[?]](false, tru
 
   override def read(kryo: Kryo, input: Input, typ: Class[? <: ISet[?]]): ISet[?] = {
     val len = input.readInt(true)
-    val emptySet: ISet[Any] = Set.empty
     if(len == 0){
-      emptySet
+      Set.empty
     }
     else {
-      val builder: mutable.Builder[Any, ISet[Any]] = emptySet.iterableFactory.newBuilder
+      val builder: mutable.Builder[Any, ISet[Any]] = Set.empty.iterableFactory.newBuilder
       builder.sizeHint(len)
       var i = 0
       while (i < len) {
@@ -180,13 +186,14 @@ class ScalaMutableSetSerializer extends Serializer[MSet[?]] {
 
   override def read(kryo: Kryo, input: Input, typ: Class[? <: MSet[?]]): MSet[?] = {
     val len = input.readInt(true)
-    val coll: MSet[Any] = kryo.newInstance(typ).asInstanceOf[MSet[Any]].empty
+    val set: MSet[Any] = kryo.newInstance(typ).asInstanceOf[MSet[Any]].empty
+    set.sizeHint(len)
     var i = 0
     while (i < len) {
-      coll += kryo.readClassAndObject(input)
+      set += kryo.readClassAndObject(input)
       i += 1
     }
-    coll
+    set
   }
 
   override def write(kryo: Kryo, output: Output, collection: MSet[?]): Unit = {
