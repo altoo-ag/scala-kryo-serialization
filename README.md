@@ -32,19 +32,21 @@ How to use this library in your project
 
 To use this serializer, you need to do two things:
 
-* Include a dependency on this library into your project
+* Include a dependency on this library in your project
 * Register and configure the serializer in your Typesafe Config configuration file, e.g. `application.conf`.
 
 We provide several versions of the library:
 
-| Version | Kryo Compatibility | Available Scala Versions | Tested with                                              |
-|---------|--------------------|--------------------------|----------------------------------------------------------|
-| v1.4.x  | Kryo-5.6           | 2.12,2.13,3              | JDK: OpenJdk11,17,21,25  Scala: 2.12.20,2.13.16,3.3.7    |
-| v1.3.x  | Kryo-5.6           | 2.12,2.13,3              | JDK: OpenJdk11,17,21,25  Scala: 2.12.20,2.13.16,3.3.7    |
-| v1.2.x  | Kryo-5.6           | 2.12,2.13,3              | JDK: OpenJdk11,17,21     Scala: 2.12.20,2.13.16,3.3.4    |
-| v1.1.x  | Kryo-5.5           | 2.12,2.13,3              | JDK: OpenJdk11,17,21     Scala: 2.12.18,2.13.11,3.3.1    |
-| v1.0.x  | Kryo-5.4           | 2.12,2.13,3              | JDK: OpenJdk11,17        Scala: 2.12.18,2.13.11,3.3.1    |
+| Version | Compatibility | Kryo used  | Available Scala Versions | Tested with                                           |
+|---------|---------------|------------|--------------------------|-------------------------------------------------------|
+| v1.5.x  | JDK >= 17     | Kryo-5.6.2 | 2.13,3                   | JDK: OpenJdk17,21,25     Scala: 2.13.16,3.3.7         |
+| v1.4.x  | JDK >= 11     | Kryo-5.6.2 | 2.12,2.13,3              | JDK: OpenJdk11,17,21,25  Scala: 2.12.20,2.13.16,3.3.7 |
+| v1.3.x  | JDK >= 11     | Kryo-5.6.2 | 2.12,2.13,3              | JDK: OpenJdk11,17,21,25  Scala: 2.12.20,2.13.16,3.3.7 |
+| v1.2.x  | JDK >= 11     | Kryo-5.6.2 | 2.12,2.13,3              | JDK: OpenJdk11,17,21     Scala: 2.12.20,2.13.16,3.3.4 |
+| v1.1.x  | JDK >= 11     | Kryo-5.5.x | 2.12,2.13,3              | JDK: OpenJdk11,17,21     Scala: 2.12.18,2.13.11,3.3.1 |
+| v1.0.x  | JDK >= 11     | Kryo-5.4.x | 2.12,2.13,3              | JDK: OpenJdk11,17        Scala: 2.12.18,2.13.11,3.3.1 |
 
+Kryo is forward compatible within major releases for details see https://github.com/EsotericSoftware/kryo#kryo-versioning-and-upgrading
 
 Note that we use semantic versioning - see [semver.org](https://semver.org/).
 
@@ -61,23 +63,12 @@ this dependency:
 To use the official release of scala-kryo-serialization in Maven projects, please use the following snippet in your pom.xml
 
 ```xml
-    <repository>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-        <id>central</id>
-        <name>Maven Central Repository</name>
-        <url>https://repo1.maven.org/maven2</url>
-    </repository>
-
     <dependency>
         <groupId>io.altoo</groupId>
         <artifactId>scala-kryo-serialization_2.13</artifactId>
         <version>1.4.0</version>
     </dependency>
 ```
-
-For snapshots see [Snapshots.md](Snapshots.md)
 
 
 Configuration of scala-kryo-serialization
