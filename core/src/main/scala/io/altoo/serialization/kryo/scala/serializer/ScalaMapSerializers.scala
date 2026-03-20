@@ -22,7 +22,7 @@ import com.esotericsoftware.kryo.kryo5.io.{Input, Output}
 import com.esotericsoftware.kryo.kryo5.{Kryo, Serializer}
 
 import java.lang.reflect.Constructor
-import scala.collection.immutable.{SortedMap, Map as IMap}
+import scala.collection.immutable.{Map as IMap, SortedMap}
 import scala.collection.mutable
 import scala.collection.mutable.Map as MMap
 
