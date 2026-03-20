@@ -26,5 +26,5 @@ jobs:
       - name: Cache Coursier cache
         uses: coursier/cache-action@v6
 
-      - name: Run tests with Scala 2.12,2.13,3.3
+      - name: Run tests with Scala 2.13,3.3
         run: sbt +test

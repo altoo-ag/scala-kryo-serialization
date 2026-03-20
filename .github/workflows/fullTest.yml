@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        java: [ 11, 17, 21, 25 ]
+        java: [ 17, 21, 25 ]
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -25,5 +25,5 @@ jobs:
       - name: Cache Coursier cache
         uses: coursier/cache-action@v6
 
-      - name: Run tests with Scala 2.12,2.13,3.3
+      - name: Run tests with Scala 2.13,3.3
         run: sbt +test +doc
