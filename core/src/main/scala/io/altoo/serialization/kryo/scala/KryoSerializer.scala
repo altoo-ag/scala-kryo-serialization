@@ -162,40 +162,46 @@ private[kryo] abstract class KryoSerializer(config: Config, classLoader: ClassLo
   // Delegate to a serializer backend
   protected def toBinaryInternal(obj: Any): Array[Byte] = {
     val ser = serializerPool.fetch()
-    try
+    try {
       kryoTransformer.toBinary(ser.toBinary(obj))
-    finally
+    } finally {
       serializerPool.release(ser)
+    }
   }
 
   protected def toBinaryInternal(obj: Any, buf: ByteBuffer): Unit = {
     val ser = serializerPool.fetch()
     try {
-      if (kryoTransformer.isIdentity)
+      if (kryoTransformer.isIdentity) {
         ser.toBinary(obj, buf)
-      else
+      } else {
         kryoTransformer.toBinary(ser.toBinary(obj), buf)
-    } finally
+      }
+    } finally {
       serializerPool.release(ser)
+    }
   }
 
   protected def fromBinaryInternal(bytes: Array[Byte], clazz: Option[Class[?]]): AnyRef = {
     val ser = serializerPool.fetch()
-    try
+    try {
       ser.fromBinary(kryoTransformer.fromBinary(bytes), clazz)
-    finally
+    } finally {
       serializerPool.release(ser)
+    }
   }
 
   protected def fromBinaryInternal(buf: ByteBuffer, manifest: Option[String]): AnyRef = {
     val ser = serializerPool.fetch()
     try {
-      if (kryoTransformer.isIdentity)
+      if (kryoTransformer.isIdentity) {
         ser.fromBinary(buf, manifest)
-      else
+      } else {
         ser.fromBinary(kryoTransformer.fromBinary(buf), manifest.flatMap(ReflectionHelper.getClassFor(_, classLoader).toOption))
-    } finally
+      }
+    } finally {
       serializerPool.release(ser)
+    }
   }
 
   // Initialization

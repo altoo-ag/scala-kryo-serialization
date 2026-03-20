@@ -59,7 +59,7 @@ trait Transformer {
 
   def fromBinary(inputBuff: ByteBuffer): Array[Byte] = {
     val in = new Array[Byte](inputBuff.remaining())
-    inputBuff.put(in)
+    inputBuff.get(in)
     fromBinary(in)
   }
 }
@@ -79,7 +79,9 @@ class LZ4KryoCompressor extends Transformer {
     outputBuff(1) = (inputSize >> 8 & 0xFF).toByte
     outputBuff(2) = (inputSize >> 16 & 0xFF).toByte
     outputBuff(3) = (inputSize >> 24 & 0xFF).toByte
-    outputBuff.take(outputSize + 4)
+    val result = new Array[Byte](outputSize + 4)
+    System.arraycopy(outputBuff, 0, result, 0, outputSize + 4)
+    result
   }
 
   override def toBinary(inputBuff: Array[Byte], outputBuff: ByteBuffer): Unit = {
@@ -126,7 +128,7 @@ class ZipKryoCompressor extends Transformer {
 
     while (!deflater.finished) {
       val n = deflater.deflate(buff)
-      outputBuff ++= buff.take(n)
+      outputBuff ++= (if (n == buff.length) buff else buff.take(n))
     }
     deflater.end()
     outputBuff.result()
@@ -212,11 +214,11 @@ class KryoCryptographer(key: Array[Byte], mode: String, ivLength: Int) extends T
     }
     val iv = new Array[Byte](ivLength)
     inputBuff.get(iv)
-    val ciphertext = new Array[Byte](inputBuff.remaining())
-    inputBuff.get(ciphertext)
     // set up decryption
     val parameterSpec = new GCMParameterSpec(AuthTagLength, iv)
     cipher.init(Cipher.DECRYPT_MODE, keySpec, parameterSpec)
-    cipher.doFinal(ciphertext) // plaintext
+    val plaintext = new Array[Byte](cipher.getOutputSize(inputBuff.remaining()))
+    val n = cipher.doFinal(inputBuff, ByteBuffer.wrap(plaintext))
+    if (n == plaintext.length) plaintext else plaintext.take(n)
   }
 }

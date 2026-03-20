@@ -10,16 +10,27 @@ import java.nio.ByteBuffer
 private[kryo] class KryoSerializerBackend(val kryo: Kryo, val bufferSize: Int, val maxBufferSize: Int, val useManifest: Boolean, val useUnsafe: Boolean)(log: Logger,
     classLoader: ClassLoader) {
 
+  // this is only used when working with byte[] and not with ByteBuffers
+  private lazy val output =
+    if (useUnsafe) {
+      new UnsafeOutput(bufferSize, maxBufferSize)
+    } else {
+      new Output(bufferSize, maxBufferSize)
+    }
+
   // "toBinary" serializes the given object to an Array of Bytes
   // Implements Serializer
   def toBinary(obj: Any): Array[Byte] = {
+    // use the buffer to serialize into (since we do not know the necessary size)
+    // and only in the end allocate a byte[] with the proper size
     val buffer = output
     try {
-      if (useManifest)
+      if (useManifest) {
         kryo.writeObject(buffer, obj)
-      else
+      } else {
         kryo.writeClassAndObject(buffer, obj)
-      buffer.toBytes
+      }
+      buffer.toBytes // creates new byte[]
     } catch {
       case e: StackOverflowError if !kryo.getReferences => // when configured with "nograph" serialization can fail with stack overflow
         log.error(s"Could not serialize class with potentially circular references: $classLoader", e)
@@ -33,11 +44,11 @@ private[kryo] class KryoSerializerBackend(val kryo: Kryo, val bufferSize: Int, v
   def toBinary(obj: Any, buf: ByteBuffer): Unit = {
     val buffer = getOutput(buf)
     try {
-      if (useManifest)
+      if (useManifest) {
         kryo.writeObject(buffer, obj)
-      else
+      } else {
         kryo.writeClassAndObject(buffer, obj)
-      buffer.toBytes
+      }
     } catch {
       case e: StackOverflowError if !kryo.getReferences => // when configured with "nograph" serialization can fail with stack overflow
         log.error(s"Could not serialize class with potentially circular references: $obj", e)
@@ -57,8 +68,9 @@ private[kryo] class KryoSerializerBackend(val kryo: Kryo, val bufferSize: Int, v
           case Some(c) => kryo.readObject(buffer, c).asInstanceOf[AnyRef]
           case _       => throw new RuntimeException("Object of unknown class cannot be deserialized")
         }
-      else
+      else {
         kryo.readClassAndObject(buffer)
+      }
     } finally {
       buffer.close()
     }
@@ -73,20 +85,13 @@ private[kryo] class KryoSerializerBackend(val kryo: Kryo, val bufferSize: Int, v
         case Some(c) => kryo.readObject(buffer, c)
         case _       => throw new RuntimeException("Object of unknown class cannot be deserialized")
       }
-    } else
+    } else {
       kryo.readClassAndObject(buffer)
+    }
   }
 
-  // Used by Serializer implementation
-  private val output =
-    if (useUnsafe)
-      new UnsafeOutput(bufferSize, maxBufferSize)
-    else
-      new Output(bufferSize, maxBufferSize)
-
   // Used by ByteBufferSerializer implementation
-  private def getOutput(buffer: ByteBuffer): Output =
-    new ByteBufferOutput(buffer)
+  private def getOutput(buffer: ByteBuffer): Output = new ByteBufferOutput(buffer)
 
   // Used by Serializer implementation
   private def getInput(bytes: Array[Byte]): Input =
@@ -96,7 +101,5 @@ private[kryo] class KryoSerializerBackend(val kryo: Kryo, val bufferSize: Int, v
       new Input(bytes)
 
   // Used by ByteBufferSerializer implementation
-  private def getInput(buffer: ByteBuffer): Input =
-    new ByteBufferInput(buffer)
-
+  private def getInput(buffer: ByteBuffer): Input = new ByteBufferInput(buffer)
 }
