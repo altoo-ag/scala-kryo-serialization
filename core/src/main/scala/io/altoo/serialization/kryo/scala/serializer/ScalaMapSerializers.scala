@@ -142,24 +142,21 @@ class ScalaSortedMapSerializer extends Serializer[SortedMap[?, ?]](false, true) 
   override def read(kryo: Kryo, input: Input, typ: Class[? <: SortedMap[?, ?]]): SortedMap[?, ?] = {
     val len = input.readInt(true)
     implicit val mapOrdering: Ordering[Any] = kryo.readClassAndObject(input).asInstanceOf[scala.math.Ordering[Any]]
-    val emptyMap: SortedMap[Any, Any] =
-      try {
-        val constructor = constructorCache.getOrElse(typ, {
-            val constr = typ.getDeclaredConstructor(classOf[scala.math.Ordering[?]])
-            constructorCache += typ -> constr
-            constr
-          })
-        constructor.newInstance(mapOrdering).asInstanceOf[SortedMap[Any, Any]].empty
-      } catch {
-        case _: Throwable => kryo.newInstance(typ).asInstanceOf[SortedMap[Any, Any]].empty
-      }
+    val emptyMap: SortedMap[Any, Any] = {
+      val constructor = constructorCache.getOrElse(typ, {
+          val constr = typ.getDeclaredConstructor(classOf[scala.math.Ordering[?]])
+          constructorCache += typ -> constr
+          constr
+        })
+      constructor.newInstance(mapOrdering).asInstanceOf[SortedMap[Any, Any]].empty
+    }
 
     if (len == 0) {
       emptyMap
     } else {
-      var i = 0
       val builder: mutable.Builder[(Any, Any), SortedMap[Any, Any]] = emptyMap.sortedMapFactory.newBuilder
       builder.sizeHint(len)
+      var i = 0
       while (i < len) {
         builder.addOne((kryo.readClassAndObject(input), kryo.readClassAndObject(input)))
         i += 1

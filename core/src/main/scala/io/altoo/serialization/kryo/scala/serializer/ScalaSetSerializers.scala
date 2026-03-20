@@ -32,20 +32,16 @@ class ScalaImmutableSortedSetSerializer extends Serializer[ISSet[?]](false, true
   override def read(kryo: Kryo, input: Input, typ: Class[? <: ISSet[?]]): ISSet[?] = {
     val len = input.readInt(true)
 
+    // Read ordering and set it for this collection
     implicit val setOrdering: Ordering[Any] = kryo.readClassAndObject(input).asInstanceOf[scala.math.Ordering[Any]]
     val emptySet: ISSet[Any] = {
-      // Read ordering and set it for this collection
-      try {
-        val constructor =
-          class2constuctor.getOrElse(typ, {
-              val constr = typ.getDeclaredConstructor(classOf[scala.math.Ordering[?]])
-              class2constuctor += typ -> constr
-              constr
-            })
-        constructor.newInstance(setOrdering).asInstanceOf[ISSet[Any]].empty
-      } catch {
-        case _: Throwable => kryo.newInstance(typ).asInstanceOf[ISSet[Any]].empty
-      }
+      val constructor =
+        class2constuctor.getOrElse(typ, {
+            val constr = typ.getDeclaredConstructor(classOf[scala.math.Ordering[?]])
+            class2constuctor += typ -> constr
+            constr
+          })
+      constructor.newInstance(setOrdering).asInstanceOf[ISSet[Any]].empty
     }
 
     if (len == 0) {
@@ -138,17 +134,13 @@ class ScalaMutableSortedSetSerializer extends Serializer[MSSet[?]] {
     // Read ordering and set it for this collection
     implicit val setOrdering: Ordering[Any] = kryo.readClassAndObject(input).asInstanceOf[scala.math.Ordering[Any]]
     val emptySet: MSSet[Any] = {
-      try {
-        val constructor =
-          class2constuctor.getOrElse(typ, {
-              val constr = typ.getDeclaredConstructor(classOf[scala.math.Ordering[?]])
-              class2constuctor += typ -> constr
-              constr
-            })
-        constructor.newInstance(setOrdering).asInstanceOf[MSSet[Any]].empty
-      } catch {
-        case _: Throwable => kryo.newInstance(typ).asInstanceOf[MSSet[Any]].empty
-      }
+      val constructor =
+        class2constuctor.getOrElse(typ, {
+            val constr = typ.getDeclaredConstructor(classOf[scala.math.Ordering[?]])
+            class2constuctor += typ -> constr
+            constr
+          })
+      constructor.newInstance(setOrdering).asInstanceOf[MSSet[Any]].empty
     }
 
     if (len == 0) {
