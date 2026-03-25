@@ -17,6 +17,7 @@ lazy val root: Project = project.in(file("."))
   .settings(name := "scala-kryo-serialization")
   .settings(releaseProcess := releaseSettings)
   .settings(publish / skip := true)
+  .settings(crossScalaVersions := Nil)
   .aggregate(core)
 
 lazy val core: Project = project.in(file("core"))
