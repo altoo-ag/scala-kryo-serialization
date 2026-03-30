@@ -1,7 +1,6 @@
 package io.altoo.serialization.kryo.scala
 
-import com.typesafe.config.Config
-import org.slf4j.LoggerFactory
+import org.slf4j.{Logger, LoggerFactory}
 
 import java.util
 import java.util.concurrent.ArrayBlockingQueue
@@ -17,7 +16,7 @@ import scala.reflect.ClassTag
 class DefaultQueueBuilder {
   // must have empty default constructor for backwards compatability
 
-  protected val log = LoggerFactory.getLogger(getClass)
+  protected val log: Logger = LoggerFactory.getLogger(getClass)
 
   @volatile
   private var _settings: KryoSerializationSettings = null
@@ -25,7 +24,7 @@ class DefaultQueueBuilder {
   /**
    * called before [[build]] to allow to configure the queue creation.
    */
-  //TODO replace deferred config with initializing constructor in next major
+  // TODO replace deferred config with initializing constructor in next major
   def configure(settings: KryoSerializationSettings): Unit = { _settings = settings }
 
   protected def calculateSize(): Int = {
@@ -39,7 +38,7 @@ class DefaultQueueBuilder {
    */
   def build[T: ClassTag]: util.Queue[T] = {
     val poolSize = calculateSize()
-    log.debug("initializing kryo serializer pool with size {}", poolSize)
+    log.debug("Initializing kryo serializer pool with size {}", poolSize)
     new ArrayBlockingQueue[T](poolSize)
   }
 }
