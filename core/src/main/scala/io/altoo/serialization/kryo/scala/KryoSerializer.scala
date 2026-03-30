@@ -30,51 +30,6 @@ import java.nio.ByteBuffer
 import scala.jdk.CollectionConverters.*
 import scala.util.*
 
-/**
- * INTERNAL API - api may change at any point in time
- * without any warning.
- */
-class EncryptionSettings(val config: Config) {
-  val keyProvider: String = config.getString("encryption.aes.key-provider")
-  val aesMode: String = config.getString("encryption.aes.mode")
-  val aesIvLength: Int = config.getInt("encryption.aes.iv-length")
-}
-
-/**
- * INTERNAL API - api may change at any point in time
- * without any warning.
- */
-class KryoSerializationSettings(val config: Config) {
-  val serializerType: String = config.getString("type")
-
-  val bufferSize: Int = config.getInt("buffer-size")
-  val maxBufferSize: Int = config.getInt("max-buffer-size")
-
-  // Each entry should be: FQCN -> integer id
-  val classNameMappings: Map[String, String] = configToMap(config.getConfig("mappings"))
-  val classNames: java.util.List[String] = config.getStringList("classes")
-
-  // Strategy: default, explicit, incremental, automatic
-  val idStrategy: String = config.getString("id-strategy")
-  val implicitRegistrationLogging: Boolean = config.getBoolean("implicit-registration-logging")
-
-  val kryoTrace: Boolean = config.getBoolean("kryo-trace")
-  val kryoReferenceMap: Boolean = config.getBoolean("kryo-reference-map")
-  val kryoInitializer: String = config.getString("kryo-initializer")
-
-  val useUnsafe: Boolean = config.getBoolean("use-unsafe")
-
-  val encryptionSettings: Option[EncryptionSettings] = if (config.hasPath("encryption")) Some(new EncryptionSettings(config)) else None
-
-  val postSerTransformations: String = config.getString("post-serialization-transformations")
-  val queueBuilder: String = config.getString("queue-builder")
-  val resolveSubclasses: Boolean = config.getBoolean("resolve-subclasses")
-  val noResolveReferenceClasses: Set[String] = config.getStringList("no-resolve-reference-classes").asScala.toSet
-
-  private def configToMap(cfg: Config): Map[String, String] =
-    cfg.root.unwrapped.asScala.toMap.map { case (k, v) => (k, v.toString) }
-}
-
 private[kryo] abstract class KryoSerializer(config: Config, classLoader: ClassLoader) {
   protected def configKey: String
 
@@ -93,7 +48,6 @@ private[kryo] abstract class KryoSerializer(config: Config, classLoader: ClassLo
     log.debug("Got serializer configuration class: {}", settings.kryoInitializer)
     log.debug("Got encryption settings: {}", settings.encryptionSettings)
     log.debug("Got transformations: {}", settings.postSerTransformations)
-    log.debug("Got queue builder: {}", settings.queueBuilder)
     log.debug("Got resolveSubclasses: {}", settings.resolveSubclasses)
   }
 
@@ -144,20 +98,16 @@ private[kryo] abstract class KryoSerializer(config: Config, classLoader: ClassLo
 
   private val kryoTransformer = new KryoTransformer(settings.postSerTransformations.split(",").toList.flatMap(transform(_).toList))
 
-  private val queueBuilderClass: Class[? <: DefaultQueueBuilder] =
-    ReflectionHelper.getClassFor(settings.queueBuilder, classLoader) match {
-      case Success(clazz) if classOf[DefaultQueueBuilder].isAssignableFrom(clazz) => clazz.asSubclass(classOf[DefaultQueueBuilder])
-      case Success(clazz)                                                         =>
-        log.error("Configured class {} does not extend DefaultQueueBuilder", clazz)
-        throw new IllegalStateException(s"Configured class $clazz does not extend DefaultQueueBuilder")
-      case Failure(e) =>
-        log.error("Class could not be loaded: {} ", settings.queueBuilder)
-        throw e
-    }
-
   // serializer pool to delegate actual serialization
-  private val serializerPool = new SerializerPool(config, queueBuilderClass.getDeclaredConstructor().newInstance(),
-    () => new KryoSerializerBackend(getKryo(settings.idStrategy, settings.serializerType), settings.bufferSize, settings.maxBufferSize, useManifest, settings.useUnsafe)(log, classLoader))
+  // open for test access
+  val serializerPool: AbstractSerializerPool = {
+    val newInstance: () => KryoSerializerBackend = () => new KryoSerializerBackend(getKryo(settings.idStrategy, settings.serializerType), settings.bufferSize, settings.maxBufferSize, useManifest, settings.useUnsafe)(log, classLoader)
+    settings.poolType match {
+      case "queue" => new SerializerPool(settings, classLoader, newInstance)
+      case "threadlocal" => new ThreadLocalSerializerPool(settings, classLoader, newInstance)
+      case o => throw new Exception(s"Only 'queue' or 'thread-local' supported as pool-type")
+    }
+  }
 
   // Delegate to a serializer backend
   protected def toBinaryInternal(obj: Any): Array[Byte] = {
