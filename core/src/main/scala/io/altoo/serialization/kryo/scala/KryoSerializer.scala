@@ -156,7 +156,7 @@ private[kryo] abstract class KryoSerializer(config: Config, classLoader: ClassLo
     }
 
   // serializer pool to delegate actual serialization
-  private val serializerPool = new SerializerPool(queueBuilderClass.getDeclaredConstructor().newInstance(),
+  private val serializerPool = new SerializerPool(config, queueBuilderClass.getDeclaredConstructor().newInstance(),
     () => new KryoSerializerBackend(getKryo(settings.idStrategy, settings.serializerType), settings.bufferSize, settings.maxBufferSize, useManifest, settings.useUnsafe)(log, classLoader))
 
   // Delegate to a serializer backend

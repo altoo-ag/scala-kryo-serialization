@@ -1,7 +1,9 @@
 package io.altoo.serialization.kryo.scala
 
+import com.typesafe.config.Config
+
 import java.util
-import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.ArrayBlockingQueue
 import scala.reflect.ClassTag
 
 /**
@@ -12,9 +14,26 @@ import scala.reflect.ClassTag
  * Previous versions used org.agrona.concurrent.ManyToManyConcurrentArrayQueue - but hard to measure performance gain over ConcurrentLinkedQueue is marginal and not worth the extra dependency.
  */
 class DefaultQueueBuilder {
+  // must have empty default constructor for backwards compatability
+
+  @volatile
+  private var _config: Config = null
+
+  /**
+   * called before [[build]] to allow to configure the queue creation.
+   */
+  def configure(config: Config): Unit = { _config = config }
+
+  protected def calculateSize(): Int = {
+    val key = "scala-kryo-serialization.queue-size-limit"
+    if (_config.hasPath(key)) _config.getInt(key)
+    else Runtime.getRuntime.availableProcessors * 4
+  }
 
   /**
    * Override to use a different queue.
    */
-  def build[T: ClassTag]: util.Queue[T] = new ConcurrentLinkedQueue[T]()
+  def build[T: ClassTag]: util.Queue[T] = {
+    new ArrayBlockingQueue[T](calculateSize())
+  }
 }
