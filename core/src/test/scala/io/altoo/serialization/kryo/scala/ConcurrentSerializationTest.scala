@@ -19,15 +19,15 @@ object ConcurrentSerializationTest {
        |  post-serialization-transformations = off
        |}
        |""".stripMargin
-}
-
-final case class Sample(value: Option[String])
-
-object Sample {
-  def apply(value: String) = new Sample(Some(value))
+  final case class Sample(value: Option[String])
+  
+  object Sample {
+    def apply(value: String) = new Sample(Some(value))
+  }
 }
 
 class ConcurrentSerializationTest extends AnyFlatSpec with Matchers with Inside {
+  import ConcurrentSerializationTest.*
   import scala.concurrent.ExecutionContext.Implicits.global
 
   private val config = ConfigFactory.parseString(ConcurrentSerializationTest.config).withFallback(ConfigFactory.defaultReference())

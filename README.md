@@ -72,7 +72,7 @@ To use the official release of scala-kryo-serialization in Maven projects, pleas
 
 
 Configuration of scala-kryo-serialization
-----------------------------------------------
+-----------------------------------------
 
 The following options are available for configuring this serializer:
 
@@ -82,6 +82,12 @@ The following options are available for configuring this serializer:
 * Then you can create an instance of `ScalaKryoSerializer` and use it to serialize data.
   The serializer implements pooling to perform serialization across multiple threads.
 
+Selecting the right pool
+------------------------
+Kryo instances are held in a pool for performance optimization.
+Configure `pool-type` to the best solution for your usecase:
+ * "treadlocal" uses a ThreadLocal to keep serializers. This is usually the best solution since synchronization not needed and the pool automatically scales/adapts when accessed by a thread pool.
+ * "queue" - <default>. Choose for high numbers of threads accessing and/or high numbers of different classes being serialized.
 
 How do you create mappings or classes sections with proper content?
 -------------------------------------------------------------------
@@ -335,6 +341,6 @@ How do I build this library on my own?
 --------------------------------------
 If you wish to build the library on your own, you need to check out the project from GitHub and do
 ```
-sbt compile publishM2
+sbt test publishM2
 ```
 

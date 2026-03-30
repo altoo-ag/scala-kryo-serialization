@@ -12,7 +12,7 @@ import scala.reflect.ClassTag
  * Notice that it must be a multiple producer and multiple consumer queue type,
  * you could use for example a bounded non-blocking queue.
  *
- * Previous versions used org.agrona.concurrent.ManyToManyConcurrentArrayQueue - but hard to measure performance gain over ConcurrentLinkedQueue is marginal and not worth the extra dependency.
+ * Previous versions used org.agrona.concurrent.ManyToManyConcurrentArrayQueue - but hard to measure performance gain over ArrayBlockingQueue ->not worth the extra dependency.
  */
 class DefaultQueueBuilder {
   // must have empty default constructor for backwards compatability
@@ -20,16 +20,17 @@ class DefaultQueueBuilder {
   protected val log = LoggerFactory.getLogger(getClass)
 
   @volatile
-  private var _config: Config = null
+  private var _settings: KryoSerializationSettings = null
 
   /**
    * called before [[build]] to allow to configure the queue creation.
    */
-  def configure(config: Config): Unit = { _config = config }
+  //TODO replace deferred config with initializing constructor in next major
+  def configure(settings: KryoSerializationSettings): Unit = { _settings = settings }
 
   protected def calculateSize(): Int = {
-    val key = "scala-kryo-serialization.queue-size-limit"
-    if (_config.hasPath(key)) _config.getInt(key)
+    val key = "queue-size-limit"
+    if (_settings.config.hasPath(key)) _settings.config.getInt(key)
     else Runtime.getRuntime.availableProcessors * 4
   }
 
@@ -38,7 +39,7 @@ class DefaultQueueBuilder {
    */
   def build[T: ClassTag]: util.Queue[T] = {
     val poolSize = calculateSize()
-    log.debug("initializing serializer pool with size {}", poolSize)
+    log.debug("initializing kryo serializer pool with size {}", poolSize)
     new ArrayBlockingQueue[T](poolSize)
   }
 }
