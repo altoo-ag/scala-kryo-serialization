@@ -20,7 +20,7 @@ object ConcurrentSerializationTest {
        |}
        |""".stripMargin
   final case class Sample(value: Option[String])
-  
+
   object Sample {
     def apply(value: String) = new Sample(Some(value))
   }

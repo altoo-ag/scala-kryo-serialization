@@ -11,7 +11,7 @@ import scala.util.{Failure, Success}
  * otherwise prefer the [[ThreadLocalSerializerPool]].
  */
 private[kryo] class SerializerPool(settings: KryoSerializationSettings, classLoader: ClassLoader, newInstance: () => KryoSerializerBackend)
-  extends AbstractSerializerPool(settings, classLoader, newInstance) {
+    extends AbstractSerializerPool(settings, classLoader, newInstance) {
   private val log = LoggerFactory.getLogger(getClass)
 
   private val pool: util.Queue[KryoSerializerBackend] = {
@@ -23,7 +23,7 @@ private[kryo] class SerializerPool(settings: KryoSerializationSettings, classLoa
   override def fetch(): KryoSerializerBackend = {
     pool.poll() match {
       case null =>
-        log.debug("create new serializer since no serializer in pool")
+        log.debug("Create new serializer since no serializer in pool")
         newInstance()
       case o => o
     }
@@ -32,7 +32,7 @@ private[kryo] class SerializerPool(settings: KryoSerializationSettings, classLoa
   override def release(o: KryoSerializerBackend): Unit = {
     val stored = pool.offer(o)
     if (!stored) {
-      log.debug("dispose serializer since pool full")
+      log.debug("Dispose serializer since pool full")
     }
   }
 
