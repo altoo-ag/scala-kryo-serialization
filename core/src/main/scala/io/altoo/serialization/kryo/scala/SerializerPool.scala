@@ -32,7 +32,7 @@ private[kryo] class SerializerPool(settings: KryoSerializationSettings, classLoa
   override def release(o: KryoSerializerBackend): Unit = {
     val stored = pool.offer(o)
     if (!stored) {
-      log.debug("Dispose serializer since pool full")
+      log.debug("Dispose serializer since pool is full")
     }
   }
 
