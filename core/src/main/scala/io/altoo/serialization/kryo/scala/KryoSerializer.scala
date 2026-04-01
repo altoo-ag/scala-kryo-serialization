@@ -107,6 +107,7 @@ private[kryo] abstract class KryoSerializer(config: Config, classLoader: ClassLo
     settings.poolType match {
       case "queue"       => new SerializerPool(settings, classLoader, newInstance)
       case "threadlocal" => new ThreadLocalSerializerPool(settings, classLoader, newInstance)
+      case "alwaysnew" => new AlwaysNewSerializerPool(settings, classLoader, newInstance)
       case o             => throw new Exception(s"Only 'queue' or 'thread-local' supported as pool-type. $o is unsupported.")
     }
   }

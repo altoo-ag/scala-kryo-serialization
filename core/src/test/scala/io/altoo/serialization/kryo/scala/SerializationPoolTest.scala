@@ -17,6 +17,7 @@ object SerializationPoolTest {
 
 class QueueSerializerPoolTest extends SerializationPoolTest("queue")
 class ThreadLocalSerializerPoolTest extends SerializationPoolTest("threadlocal")
+class AlwaysNewSerializerPoolTest extends SerializationPoolTest("alwaysnew")
 
 abstract class SerializationPoolTest(poolType: String) extends AnyFlatSpec with Matchers with Inside {
   import SerializationPoolTest.*
