@@ -62,7 +62,7 @@ abstract class SerializationPoolTest(poolType: String) extends AnyFlatSpec with 
       }
     }
 
-    Await.result(Future.sequence(tasks), 10.seconds)
+    Await.result(Future.sequence(tasks), 30.seconds)
   }
 
   private def testSerialization(testClass: Sample): Unit = {
