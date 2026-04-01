@@ -49,7 +49,7 @@ private[kryo] abstract class KryoSerializer(config: Config, classLoader: ClassLo
     log.debug("Got encryption settings: {}", settings.encryptionSettings)
     log.debug("Got transformations: {}", settings.postSerTransformations)
     log.debug("Got resolveSubclasses: {}", settings.resolveSubclasses)
-    log.debug("Got pool: {}", settings.poolType)
+    log.debug("Got serializer-cache: {}", settings.serializerCache)
   }
 
   if (settings.kryoTrace)
@@ -101,14 +101,14 @@ private[kryo] abstract class KryoSerializer(config: Config, classLoader: ClassLo
 
   // serializer pool to delegate actual serialization
   // open for test access
-  val serializerPool: AbstractSerializerPool = {
+  val serializerPool: AbstractSerializerCache = {
     val newInstance: () => KryoSerializerBackend =
       () => new KryoSerializerBackend(getKryo(settings.idStrategy, settings.serializerType), settings.bufferSize, settings.maxBufferSize, useManifest, settings.useUnsafe)(log, classLoader)
-    settings.poolType match {
-      case "queue"       => new SerializerPool(settings, classLoader, newInstance)
-      case "threadlocal" => new ThreadLocalSerializerPool(settings, classLoader, newInstance)
-      case "alwaysnew" => new AlwaysNewSerializerPool(settings, classLoader, newInstance)
-      case o             => throw new Exception(s"Only 'queue' or 'thread-local' supported as pool-type. $o is unsupported.")
+    settings.serializerCache match {
+      case "queue"       => new QueueBasedSerializerCache(settings, classLoader, newInstance)
+      case "threadlocal" => new ThreadLocalSerializerCache(settings, classLoader, newInstance)
+      case "nocache"     => new NoCacheSerializerCache(settings, classLoader, newInstance)
+      case o             => throw new Exception(s"$o is no supported serializer cache.")
     }
   }
 

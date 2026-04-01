@@ -3,10 +3,10 @@ package io.altoo.serialization.kryo.scala
 import org.slf4j.LoggerFactory
 
 /**
- * Thread local based serializer pool.
+ * Thread local based serializer cache.
  */
-private[kryo] class ThreadLocalSerializerPool(settings: KryoSerializationSettings, classLoader: ClassLoader, newInstance: () => KryoSerializerBackend)
-    extends AbstractSerializerPool(settings, classLoader, newInstance) {
+private[kryo] class ThreadLocalSerializerCache(settings: KryoSerializationSettings, classLoader: ClassLoader, newInstance: () => KryoSerializerBackend)
+    extends AbstractSerializerCache(settings, classLoader, newInstance) {
   private val log = LoggerFactory.getLogger(getClass)
 
   private val serializers = new ThreadLocal[KryoSerializerBackend]() {

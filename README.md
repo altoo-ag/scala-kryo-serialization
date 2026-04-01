@@ -82,11 +82,11 @@ The following options are available for configuring this serializer:
 * Then you can create an instance of `ScalaKryoSerializer` and use it to serialize data.
   The serializer implements pooling to perform serialization across multiple threads.
 
-Selecting the right pool
-------------------------
-Kryo instances are held in a pool for performance optimization.
-Configure `pool-type` to the best solution for your usecase:
- * "treadlocal" uses a ThreadLocal to keep serializers. This is usually the best solution since synchronization is not needed and the pool automatically scales/adapts when accessed by a thread pool. (since 1.5.1)
+Selecting the serializer cache
+------------------------------
+Kryo instances are held in a cache for performance optimization.
+Configure `serializer-cache` to the best solution for your usecase: (since 1.5.2)
+ * "treadlocal" uses a ThreadLocal to keep serializers. This is usually the best solution since synchronization is not needed and the pool automatically scales/adapts when accessed by a thread pool.
  * "queue" - <default>. Choose for high numbers of threads accessing the serializer and/or high numbers of different classes being serialized since this combination can lead to high memory usage. The queue can be limited in size see `queue-size-limit`.
 
 How do you create mappings or classes sections with proper content?
