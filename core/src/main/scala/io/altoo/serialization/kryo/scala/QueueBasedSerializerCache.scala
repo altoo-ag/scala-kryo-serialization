@@ -8,14 +8,14 @@ import scala.util.{Failure, Success}
 
 /**
  * Fixed pool of serializer instances.
- * Choose the [[SerializerPool]] when the number of threads accessing is high (to save memory) especially with high numbers of different classes to serialize
- * otherwise prefer the [[ThreadLocalSerializerPool]].
+ * Choose the [[QueueBasedSerializerCache]] when the number of threads accessing is high (to save memory) especially with high numbers of different classes to serialize
+ * otherwise prefer the [[ThreadLocalSerializerCache]].
  * Can temporarily create more serializers than the underlying queue can store so that this never blocks.
  */
-private[kryo] class SerializerPool(settings: KryoSerializationSettings, classLoader: ClassLoader, newInstance: () => KryoSerializerBackend)
-    extends AbstractSerializerPool(settings, classLoader, newInstance) {
+private[kryo] class QueueBasedSerializerCache(settings: KryoSerializationSettings, classLoader: ClassLoader, newInstance: () => KryoSerializerBackend)
+    extends AbstractSerializerCache(settings, classLoader, newInstance) {
   private val log = LoggerFactory.getLogger(getClass)
-  private val serializersAliveCount = new AtomicInteger(0)//counting here is much more efficient than traversing queue...
+  private val serializersAliveCount = new AtomicInteger(0) // counting here is much more efficient than traversing queue...
 
   private val pool: util.Queue[KryoSerializerBackend] = {
     val queueBuilder = queueBuilderClass.getDeclaredConstructor().newInstance()

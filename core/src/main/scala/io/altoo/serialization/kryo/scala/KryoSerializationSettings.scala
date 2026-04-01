@@ -26,7 +26,7 @@ class KryoSerializationSettings(val config: Config) {
   val kryoReferenceMap: Boolean = config.getBoolean("kryo-reference-map")
   val kryoInitializer: String = config.getString("kryo-initializer")
 
-  val poolType: String = config.getString("pool-type")
+  val serializerCache: String = config.getString("serializer-cache")
   val queueBuilder: String = config.getString("queue-builder")
 
   val useUnsafe: Boolean = config.getBoolean("use-unsafe")

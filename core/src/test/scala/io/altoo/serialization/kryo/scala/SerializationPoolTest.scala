@@ -15,9 +15,9 @@ object SerializationPoolTest {
   case class Address(street: String, plz: Integer)
 }
 
-class QueueSerializerPoolTest extends SerializationPoolTest("queue")
-class ThreadLocalSerializerPoolTest extends SerializationPoolTest("threadlocal")
-class AlwaysNewSerializerPoolTest extends SerializationPoolTest("alwaysnew")
+class QueueBasedSerializerCacheTest extends SerializationPoolTest("queue")
+class ThreadLocalSerializerCacheTest extends SerializationPoolTest("threadlocal")
+class NoCacheSerializerCacheTest extends SerializationPoolTest("nocache")
 
 abstract class SerializationPoolTest(poolType: String) extends AnyFlatSpec with Matchers with Inside {
   import SerializationPoolTest.*
