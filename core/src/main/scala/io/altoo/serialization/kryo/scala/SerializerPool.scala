@@ -3,16 +3,19 @@ package io.altoo.serialization.kryo.scala
 import org.slf4j.LoggerFactory
 
 import java.util
+import java.util.concurrent.atomic.AtomicInteger
 import scala.util.{Failure, Success}
 
 /**
  * Fixed pool of serializer instances.
  * Choose the [[SerializerPool]] when the number of threads accessing is high (to save memory) especially with high numbers of different classes to serialize
  * otherwise prefer the [[ThreadLocalSerializerPool]].
+ * Can temporarily create more serializers than the underlying queue can store so that this never blocks.
  */
 private[kryo] class SerializerPool(settings: KryoSerializationSettings, classLoader: ClassLoader, newInstance: () => KryoSerializerBackend)
     extends AbstractSerializerPool(settings, classLoader, newInstance) {
   private val log = LoggerFactory.getLogger(getClass)
+  private val serializersAliveCount = new AtomicInteger(0)//counting here is much more efficient than traversing queue...
 
   private val pool: util.Queue[KryoSerializerBackend] = {
     val queueBuilder = queueBuilderClass.getDeclaredConstructor().newInstance()
@@ -23,7 +26,10 @@ private[kryo] class SerializerPool(settings: KryoSerializationSettings, classLoa
   override def fetch(): KryoSerializerBackend = {
     pool.poll() match {
       case null =>
-        log.debug("Create new serializer since no serializer in pool")
+        if (log.isDebugEnabled()) {
+          val serializersAlive = serializersAliveCount.incrementAndGet()
+          log.debug("Create new serializer since no serializer in pool. Serializers alive:{}", serializersAlive)
+        }
         newInstance()
       case o => o
     }
@@ -31,8 +37,9 @@ private[kryo] class SerializerPool(settings: KryoSerializationSettings, classLoa
 
   override def release(o: KryoSerializerBackend): Unit = {
     val stored = pool.offer(o)
-    if (!stored) {
-      log.debug("Dispose serializer since pool is full")
+    if (!stored && log.isDebugEnabled()) {
+      val serializersAlive = serializersAliveCount.decrementAndGet()
+      log.debug("Dispose serializer since pool is full/not accepting. Serializers alive:{}", serializersAlive)
     }
   }
 
