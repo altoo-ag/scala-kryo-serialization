@@ -39,7 +39,7 @@ We provide several versions of the library:
 
 | Version | Compatibility | Kryo used  | Available Scala Versions | Tested with                                           |
 |---------|---------------|------------|--------------------------|-------------------------------------------------------|
-| v1.5.x  | JDK >= 17     | Kryo-5.6.2 | 2.13,3                   | JDK: OpenJdk17,21,25     Scala: 2.13.16,3.3.7         |
+| v1.5.x  | JDK >= 17     | Kryo-5.6.2 | 2.13,3                   | JDK: OpenJdk17,21,25     Scala: 2.13.16,3.3.8         |
 | v1.4.x  | JDK >= 11     | Kryo-5.6.2 | 2.12,2.13,3              | JDK: OpenJdk11,17,21,25  Scala: 2.12.20,2.13.16,3.3.7 |
 | v1.3.x  | JDK >= 11     | Kryo-5.6.2 | 2.12,2.13,3              | JDK: OpenJdk11,17,21,25  Scala: 2.12.20,2.13.16,3.3.7 |
 | v1.2.x  | JDK >= 11     | Kryo-5.6.2 | 2.12,2.13,3              | JDK: OpenJdk11,17,21     Scala: 2.12.20,2.13.16,3.3.4 |
@@ -66,7 +66,7 @@ To use the official release of scala-kryo-serialization in Maven projects, pleas
     <dependency>
         <groupId>io.altoo</groupId>
         <artifactId>scala-kryo-serialization_2.13</artifactId>
-        <version>1.4.0</version>
+        <version>1.5.X</version>
     </dependency>
 ```
 

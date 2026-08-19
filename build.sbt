@@ -4,12 +4,12 @@ import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 // Basics
 
 // note: keep in sync to pekko https://github.com/apache/pekko/blob/main/project/Dependencies.scala
-val mainScalaVersion = "3.3.7"
+val mainScalaVersion = "3.3.8"
 val secondaryScalaVersions = Seq("2.13.18")
 
 val kryoVersion = "5.6.2"
 enablePlugins(ReleasePlugin)
-addCommandAlias("validatePullRequest", ";+test")
+addCommandAlias("validatePullRequest", ";+testFull")
 
 lazy val root: Project = project.in(file("."))
   .settings(Test / parallelExecution := false)
@@ -25,18 +25,6 @@ lazy val core: Project = project.in(file("core"))
   .settings(description := "scala serialization implementation using kryo - core implementation")
   .settings(name := "scala-kryo-serialization")
   .settings(libraryDependencies ++= coreDeps ++ testingDeps)
-  .settings(Compile / unmanagedSourceDirectories += {
-    scalaBinaryVersion.value match {
-      case "2.13" => baseDirectory.value / "src" / "main" / "scala-2.13"
-      case _      => baseDirectory.value / "src" / "main" / "scala-3"
-    }
-  })
-  .settings(Test / unmanagedSourceDirectories += {
-    scalaBinaryVersion.value match {
-      case "2.13" => baseDirectory.value / "src" / "test" / "scala-2.13"
-      case _      => baseDirectory.value / "src" / "test" / "scala-3"
-    }
-  })
 
 // Dependencies
 lazy val coreDeps = Seq(
@@ -70,7 +58,7 @@ lazy val moduleSettings: Seq[Setting[?]] = commonSettings ++ noReleaseInSubmodul
   // required to run unsafe with JDK 17
   Test / javaOptions ++= Seq("--add-opens", "java.base/java.nio=ALL-UNNAMED", "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED"),
   pomExtra := pomExtras,
-  publishTo := sonatypePublishToBundle.value,
+  publishTo := localStaging.value,
   publishMavenStyle := true,
   Test / publishArtifact := false,
   pomIncludeRepository := { _ => false })
@@ -161,9 +149,10 @@ lazy val releaseSettings = Seq[ReleaseStep](
   setReleaseVersion,
   commitReleaseVersion,
   tagRelease,
-  // do these manually on checked out tag... verify on https://oss.sonatype.org/#stagingRepositories
+  // Release just tags - we checkout tag manually and sign -> the gpg key to sign is not exposed to github this way.
+  // Do these manually after checking out the tag on the release host:
   //  releaseStepCommandAndRemaining("+publishSigned"),
-  //  releaseStepCommand("sonatypeBundleRelease"),
+  //  releaseStepCommand("sonaRelease"),
   setNextVersion,
   commitNextVersion,
   pushChanges)

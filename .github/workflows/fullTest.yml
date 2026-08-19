@@ -11,7 +11,7 @@ jobs:
         java: [ 17, 21, 25 ]
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set up JDK ${{ matrix.java }}
         uses: actions/setup-java@v5
@@ -23,7 +23,7 @@ jobs:
         uses: sbt/setup-sbt@v1
 
       - name: Cache Coursier cache
-        uses: coursier/cache-action@v6
+        uses: coursier/cache-action@v8
 
       - name: Run tests with Scala 2.13,3.3
-        run: sbt +test +doc
+        run: sbt +testFull +doc
