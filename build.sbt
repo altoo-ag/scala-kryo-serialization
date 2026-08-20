@@ -157,6 +157,7 @@ lazy val releaseSettings = Seq[ReleaseStep](
   commitNextVersion,
   pushChanges)
 releaseCrossBuild := true
+releaseUseGlobalVersion := false
 
 lazy val pomExtras = <url>https://github.com/altoo-ag/scala-kryo-serialization</url>
   <licenses>
